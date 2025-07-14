@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -113,24 +114,25 @@ const Index = () => {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <img 
                 src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
                 alt="Pembimbingmu Logo" 
-                className="h-12 w-auto"
+                className="h-10 md:h-12 w-auto"
               />
-              <div>
-                <h1 className="text-xl font-bold text-[#81b59a]">Pembimbingmu</h1>
-                <p className="text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
+              <div className="text-center md:text-left">
+                <h1 className="text-lg md:text-xl font-bold text-[#81b59a]">Pembimbingmu</h1>
+                <p className="text-xs md:text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
               </div>
             </div>
             <Button 
               onClick={handleWhatsAppClick}
-              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2"
+              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center space-x-2 text-sm md:text-base whitespace-nowrap"
             >
               <Phone className="h-4 w-4" />
-              <span>Hubungi Kami Sekarang</span>
+              <span className="hidden sm:inline">Hubungi Kami Sekarang</span>
+              <span className="sm:hidden">Hubungi Kami</span>
             </Button>
           </div>
         </div>
