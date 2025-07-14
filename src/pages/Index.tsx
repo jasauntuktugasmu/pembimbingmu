@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Index = () => {
-  const whatsappNumber = "6281234567890"; // Replace with actual number
+  const whatsappNumber = "6289525035845"; // Updated WhatsApp number
   const whatsappMessage = "Halo! Saya tertarik dengan layanan bimbingan skripsi Pembimbingmu";
 
   const handleWhatsAppClick = () => {
@@ -156,8 +156,8 @@ const Index = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-white text-white hover:bg-white hover:text-[#81b59a] px-8 py-4"
+              className="bg-[#81b59a] border-2 border-white text-white hover:bg-white hover:text-[#81b59a] font-semibold px-8 py-4 transition-all duration-300"
+              onClick={() => document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Lihat Paket Bimbingan
             </Button>
@@ -239,7 +239,7 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 bg-white">
+      <section id="pricing-section" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pricelist Paket Bimbingan Skripsi S1</h2>
@@ -468,7 +468,7 @@ const Index = () => {
                     <Phone className="h-5 w-5 text-[#81b59a] mr-3" />
                     <div>
                       <p className="font-semibold">WhatsApp</p>
-                      <p className="text-gray-600">0812-3456-7890</p>
+                      <p className="text-gray-600">089525035845</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -550,7 +550,7 @@ const Index = () => {
               <div className="space-y-2 text-green-100">
                 <p className="flex items-center">
                   <Phone className="h-4 w-4 mr-2" />
-                  0812-3456-7890
+                  089525035845
                 </p>
                 <p className="flex items-center">
                   <Mail className="h-4 w-4 mr-2" />
