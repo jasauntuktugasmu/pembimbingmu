@@ -432,7 +432,7 @@ const Index = () => {
                     <span className="text-sm">Timeline Pengerjaan Skripsi</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircleClassName="h-4 w-4 text-[#81b59a] mr-2" />
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
                     <span className="text-sm">Checklist Progress Harian</span>
                   </li>
                   <li className="flex items-center">
