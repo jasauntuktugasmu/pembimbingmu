@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -117,7 +116,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
-                src="https://drive.google.com/uc?export=view&id=1Cdb1-zX37RSAwwNmbNXAyle4Dx2-czUx" 
+                src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
                 alt="Pembimbingmu Logo" 
                 className="h-12 w-auto"
               />
@@ -533,9 +532,9 @@ const Index = () => {
             <div>
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://drive.google.com/uc?export=view&id=1qiHmFLG-J-5f88Uzzldr3YTrNKuvBq8t" 
+                  src="/lovable-uploads/059db273-4d94-449f-a0c2-0239dda77753.png" 
                   alt="Pembimbingmu Logo" 
-                  className="h-10 w-auto mr-3 filter brightness-0 invert"
+                  className="h-10 w-auto mr-3"
                 />
                 <h3 className="text-xl font-bold">Pembimbingmu</h3>
               </div>
