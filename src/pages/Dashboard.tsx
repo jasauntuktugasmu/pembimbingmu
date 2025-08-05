@@ -7,7 +7,8 @@ import {
   FileText, 
   LogOut,
   User,
-  Coins
+  Coins,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,7 @@ import {
   SidebarProvider,
   SidebarFooter,
   SidebarHeader,
+  SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 
@@ -42,8 +44,8 @@ function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar className={isCollapsed ? "w-14" : "w-64"} collapsible="icon">
-      <SidebarHeader className="p-6">
+    <Sidebar className={`${isCollapsed ? "w-14" : "w-64"} bg-[#81b59a]`} collapsible="icon">
+      <SidebarHeader className="p-6 bg-[#81b59a]">
         <div className="flex items-center space-x-3">
           <img 
             src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
@@ -53,13 +55,13 @@ function AppSidebar() {
           {!isCollapsed && (
             <div>
               <h1 className="text-lg font-bold text-white">Pembimbingmu</h1>
-              <p className="text-xs text-gray-300">Dashboard</p>
+              <p className="text-xs text-gray-200">Dashboard</p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-[#81b59a]">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -71,8 +73,8 @@ function AppSidebar() {
                       className={({ isActive }) =>
                         `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
                           isActive 
-                            ? "bg-[#81b59a] text-white font-medium" 
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                            ? "bg-white/20 text-white font-medium" 
+                            : "text-gray-200 hover:bg-white/10 hover:text-white"
                         }`
                       }
                     >
@@ -87,12 +89,12 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 bg-[#81b59a]">
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <NavLink 
               to="/" 
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
             >
               <LogOut className="h-5 w-5" />
               {!isCollapsed && <span className="text-sm">Keluar</span>}
@@ -136,8 +138,10 @@ export default function Dashboard() {
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-            <div className="flex items-center justify-end space-x-4">
+          <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-4">
+            <div className="flex items-center justify-between md:justify-end space-x-4">
+              <SidebarTrigger className="md:hidden" />
+              <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Coins className="h-4 w-4 text-[#81b59a]" />
                 <span>Sisa Kredit: 100</span>
@@ -152,6 +156,7 @@ export default function Dashboard() {
                 </Avatar>
                 <span className="text-sm font-medium text-gray-700">Nama Pengguna</span>
               </div>
+              </div>
             </div>
           </header>
 
@@ -160,12 +165,9 @@ export default function Dashboard() {
             <div className="max-w-6xl mx-auto">
               {/* Welcome Section */}
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Selamat Datang, Nama Pengguna!
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                  Selamat datang Nama Pengguna, silahkan coba fitur kami di bawah ini.
                 </h1>
-                <h2 className="text-xl text-gray-600 font-medium">
-                  Siap Memulai?
-                </h2>
               </div>
 
               {/* Product Cards */}

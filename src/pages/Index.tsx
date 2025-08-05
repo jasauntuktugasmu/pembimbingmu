@@ -1,17 +1,23 @@
 
 import React from 'react';
-import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink } from 'lucide-react';
+import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
+  const navigate = useNavigate();
   const whatsappNumber = "6289525035845"; // Updated WhatsApp number
   const whatsappMessage = "Halo! Saya tertarik dengan layanan bimbingan skripsi Pembimbingmu";
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login');
   };
 
   const packages = [
@@ -127,12 +133,11 @@ const Index = () => {
               </div>
             </div>
             <Button 
-              onClick={handleWhatsAppClick}
+              onClick={handleLoginClick}
               className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center space-x-2 text-sm md:text-base whitespace-nowrap"
             >
-              <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">Hubungi Kami Sekarang</span>
-              <span className="sm:hidden">Hubungi Kami</span>
+              <LogIn className="h-4 w-4" />
+              <span>Masuk</span>
             </Button>
           </div>
         </div>
