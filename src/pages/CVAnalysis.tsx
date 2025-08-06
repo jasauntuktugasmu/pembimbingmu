@@ -316,7 +316,7 @@ export default function CVAnalysis() {
     );
   }
 
-  if (state === 'results' && results) {
+  if (state === 'results' && results && results.analisis_inti) {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6">
         {/* Score Card */}
@@ -325,9 +325,9 @@ export default function CVAnalysis() {
             <CardTitle>Skor & Level CV Anda</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <ScoreGauge score={results.analisis_inti.overall_score} />
+            <ScoreGauge score={results.analisis_inti?.overall_score || 0} />
             <p className="text-xl font-bold mt-4">
-              Level Kekuatan CV: {results.level_kekuatan}
+              Level Kekuatan CV: {results.level_kekuatan || 'Tidak tersedia'}
             </p>
           </CardContent>
         </Card>
@@ -336,13 +336,13 @@ export default function CVAnalysis() {
         <Card className={`transition-all duration-500 delay-200 ${visibleCards >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Ringkasan Analisis</CardTitle>
-            <Badge className="w-fit">{results.analisis_inti.recommendation}</Badge>
+            <Badge className="w-fit">{results.analisis_inti?.recommendation || 'Tidak tersedia'}</Badge>
           </CardHeader>
           <CardContent>
             <div className={expandedSummary ? '' : 'line-clamp-3'}>
-              {renderMarkdown(results.analisis_inti.overall_summary)}
+              {renderMarkdown(results.analisis_inti?.overall_summary || 'Ringkasan tidak tersedia')}
             </div>
-            {results.analisis_inti.overall_summary.split('\n').length > 3 && (
+            {(results.analisis_inti?.overall_summary || '').split('\n').length > 3 && (
               <Button
                 variant="link"
                 onClick={() => setExpandedSummary(!expandedSummary)}
@@ -363,7 +363,7 @@ export default function CVAnalysis() {
                   👍 Kekuatan Anda
                 </h3>
                 <div className="prose prose-sm">
-                  {renderMarkdown(results.analisis_inti.feedback_positif)}
+                  {renderMarkdown(results.analisis_inti?.feedback_positif || 'Feedback tidak tersedia')}
                 </div>
               </div>
               <div>
@@ -371,7 +371,7 @@ export default function CVAnalysis() {
                   🔍 Area Peningkatan
                 </h3>
                 <div className="prose prose-sm">
-                  {renderMarkdown(results.analisis_inti.feedback_area_of_improvement)}
+                  {renderMarkdown(results.analisis_inti?.feedback_area_of_improvement || 'Feedback tidak tersedia')}
                 </div>
               </div>
             </div>
@@ -391,12 +391,12 @@ export default function CVAnalysis() {
               </TabsList>
               <TabsContent value="saran" className="mt-6">
                 <div className="prose prose-sm">
-                  {renderMarkdown(results.saran_perfeksionis)}
+                  {renderMarkdown(results.saran_perfeksionis || 'Saran tidak tersedia')}
                 </div>
               </TabsContent>
               <TabsContent value="interview" className="mt-6">
                 <div className="prose prose-sm">
-                  {renderMarkdown(results.prediksi_interview)}
+                  {renderMarkdown(results.prediksi_interview || 'Prediksi tidak tersedia')}
                 </div>
               </TabsContent>
             </Tabs>
@@ -410,7 +410,7 @@ export default function CVAnalysis() {
           </CardHeader>
           <CardContent>
             <div className="flex space-x-4 overflow-x-auto pb-4">
-              {[results.rekomendasi_video1, results.rekomendasi_video2, results.rekomendasi_video3].map((url, index) => (
+              {[results.rekomendasi_video1, results.rekomendasi_video2, results.rekomendasi_video3].filter(Boolean).map((url, index) => (
                 <a
                   key={index}
                   href={url}
