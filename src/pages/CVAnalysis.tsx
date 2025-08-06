@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, CheckCircle, Clock, AlertCircle, Play } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -166,9 +167,11 @@ export default function CVAnalysis() {
   };
 
   const renderMarkdown = (text: string) => {
-    return text.split('\n').map((line, index) => (
-      <p key={index} className="mb-2">{line}</p>
-    ));
+    return (
+      <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_h3]:text-sm [&_h3]:font-bold [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:rounded [&_code]:text-sm">
+        <ReactMarkdown>{text}</ReactMarkdown>
+      </div>
+    );
   };
 
   const ScoreGauge = ({ score }: { score: number }) => (
@@ -339,14 +342,14 @@ export default function CVAnalysis() {
             <CardTitle>Ringkasan Analisis</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={expandedSummary ? '' : 'line-clamp-3'}>
+            <div className={expandedSummary ? '' : 'line-clamp-3 overflow-hidden'}>
               {renderMarkdown(results.analisis_general || 'Ringkasan tidak tersedia')}
             </div>
-            {(results.analisis_general || '').split('\n').length > 3 && (
+            {(results.analisis_general || '').length > 200 && (
               <Button
                 variant="link"
                 onClick={() => setExpandedSummary(!expandedSummary)}
-                className="p-0 h-auto text-[#81b59a]"
+                className="p-0 h-auto text-[#81b59a] mt-2"
               >
                 {expandedSummary ? 'Tutup' : '...Baca Selengkapnya'}
               </Button>
@@ -366,14 +369,10 @@ export default function CVAnalysis() {
                 <TabsTrigger value="saran">Saran Perfeksionis</TabsTrigger>
               </TabsList>
               <TabsContent value="interview" className="mt-6">
-                <div className="prose prose-sm">
-                  {renderMarkdown(results.prediksi_interview || 'Prediksi tidak tersedia')}
-                </div>
+                {renderMarkdown(results.prediksi_interview || 'Prediksi tidak tersedia')}
               </TabsContent>
               <TabsContent value="saran" className="mt-6">
-                <div className="prose prose-sm">
-                  {renderMarkdown(results.saran_perfeksionis || 'Saran tidak tersedia')}
-                </div>
+                {renderMarkdown(results.saran_perfeksionis || 'Saran tidak tersedia')}
               </TabsContent>
             </Tabs>
           </CardContent>
