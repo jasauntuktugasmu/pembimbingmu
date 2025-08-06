@@ -16,9 +16,15 @@ interface AnalysisResults {
   analisis_general: string;
   prediksi_interview: string;
   saran_perfeksionis: string;
-  rekomendasi_video1: string;
-  rekomendasi_video2: string;
-  rekomendasi_video3: string;
+  thumbnail_v1: string;
+  title_video1: string;
+  playlist_v1: string;
+  thumbnail_v2: string;
+  title_video2: string;
+  playlist_v2: string;
+  thumbnail_v3: string;
+  title_video3: string;
+  playlist_v3: string;
 }
 
 const loadingSteps = [
@@ -199,7 +205,7 @@ export default function CVAnalysis() {
 
   if (state === 'upload') {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-[900px] mx-auto p-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Analisis CV Terbaikmu
@@ -210,7 +216,7 @@ export default function CVAnalysis() {
           </p>
         </div>
 
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto border border-gray-200 rounded-lg shadow-md">
           <CardContent className="p-8">
             <div
               className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-[#81b59a] transition-colors"
@@ -246,7 +252,7 @@ export default function CVAnalysis() {
 
   if (state === 'analyzing') {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-[900px] mx-auto p-6">
         {showSuccess && (
           <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 animate-fade-in">
             <div className="flex items-center">
@@ -264,7 +270,7 @@ export default function CVAnalysis() {
               </h2>
             </div>
 
-            <Card>
+            <Card className="border border-gray-200 rounded-lg shadow-md">
               <CardContent className="p-6">
                 <Textarea
                   value={jobDescription}
@@ -287,7 +293,7 @@ export default function CVAnalysis() {
             <h2 className="text-2xl font-bold text-gray-900">
               AI sedang bekerja untuk Anda...
             </h2>
-            <Card className="max-w-md mx-auto">
+            <Card className="max-w-md mx-auto border border-gray-200 rounded-lg shadow-md">
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {loadingSteps.map((step, index) => (
@@ -313,9 +319,9 @@ export default function CVAnalysis() {
 
   if (state === 'results' && results) {
     return (
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-[900px] mx-auto p-6 space-y-6">
         {/* Score Card */}
-        <Card className={`transition-all duration-500 ${visibleCards >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`border border-gray-200 rounded-lg shadow-md transition-all duration-500 ${visibleCards >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader className="text-center">
             <CardTitle>Skor & Level CV Anda</CardTitle>
           </CardHeader>
@@ -328,7 +334,7 @@ export default function CVAnalysis() {
         </Card>
 
         {/* Summary Card */}
-        <Card className={`transition-all duration-500 delay-200 ${visibleCards >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`border border-gray-200 rounded-lg shadow-md transition-all duration-500 delay-200 ${visibleCards >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Ringkasan Analisis</CardTitle>
           </CardHeader>
@@ -349,7 +355,7 @@ export default function CVAnalysis() {
         </Card>
 
         {/* Actionable Insights Card */}
-        <Card className={`transition-all duration-500 delay-400 ${visibleCards >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`border border-gray-200 rounded-lg shadow-md transition-all duration-500 delay-400 ${visibleCards >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Wawasan yang Dapat Ditindaklanjuti</CardTitle>
           </CardHeader>
@@ -374,25 +380,51 @@ export default function CVAnalysis() {
         </Card>
 
         {/* Playlist Card */}
-        <Card className={`transition-all duration-500 delay-600 ${visibleCards >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`border border-gray-200 rounded-lg shadow-md transition-all duration-500 delay-600 ${visibleCards >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Rekomendasi Playlist Belajar Untukmu</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex space-x-4 overflow-x-auto pb-4">
-              {[results.rekomendasi_video1, results.rekomendasi_video2, results.rekomendasi_video3].filter(Boolean).map((url, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { thumb: results.thumbnail_v1, title: results.title_video1, url: results.playlist_v1 },
+                { thumb: results.thumbnail_v2, title: results.title_video2, url: results.playlist_v2 },
+                { thumb: results.thumbnail_v3, title: results.title_video3, url: results.playlist_v3 }
+              ].filter(video => video.url).map((video, index) => (
                 <a
                   key={index}
-                  href={url}
+                  href={video.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-shrink-0 w-48 bg-gray-100 rounded-lg p-4 hover:bg-gray-200 transition-colors"
+                  className="group block bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 hover:scale-105"
                 >
-                  <div className="w-full h-24 bg-red-500 rounded mb-3 flex items-center justify-center">
-                    <Play className="h-8 w-8 text-white" />
+                  <div className="relative">
+                    {video.thumb ? (
+                      <img 
+                        src={video.thumb} 
+                        alt={video.title || `Video ${index + 1}`}
+                        className="w-full h-32 object-cover"
+                        onError={(e) => {
+                          // Fallback to red background with play icon if image fails
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className={`w-full h-32 bg-red-500 items-center justify-center ${video.thumb ? 'hidden' : 'flex'}`}>
+                      <Play className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                      <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    </div>
                   </div>
-                  <p className="text-sm font-medium">Playlist {index + 1}</p>
-                  <p className="text-xs text-gray-600">YouTube Learning</p>
+                  <div className="p-3">
+                    <p className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                      {video.title || `Playlist ${index + 1}`}
+                    </p>
+                    <p className="text-xs text-gray-500">YouTube Learning</p>
+                  </div>
                 </a>
               ))}
             </div>
