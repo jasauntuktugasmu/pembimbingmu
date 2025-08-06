@@ -11,16 +11,11 @@ import { useToast } from '@/hooks/use-toast';
 type AnalysisState = 'upload' | 'analyzing' | 'results';
 
 interface AnalysisResults {
-  analisis_inti: {
-    overall_score: number;
-    recommendation: string;
-    overall_summary: string;
-    feedback_positif: string;
-    feedback_area_of_improvement: string;
-  };
+  analisis_inti: number;
   level_kekuatan: string;
-  saran_perfeksionis: string;
+  analisis_general: string;
   prediksi_interview: string;
+  saran_perfeksionis: string;
   rekomendasi_video1: string;
   rekomendasi_video2: string;
   rekomendasi_video3: string;
@@ -316,7 +311,7 @@ export default function CVAnalysis() {
     );
   }
 
-  if (state === 'results' && results && results.analisis_inti) {
+  if (state === 'results' && results) {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6">
         {/* Score Card */}
@@ -325,7 +320,7 @@ export default function CVAnalysis() {
             <CardTitle>Skor & Level CV Anda</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <ScoreGauge score={results.analisis_inti?.overall_score || 0} />
+            <ScoreGauge score={results.analisis_inti || 0} />
             <p className="text-xl font-bold mt-4">
               Level Kekuatan CV: {results.level_kekuatan || 'Tidak tersedia'}
             </p>
@@ -336,13 +331,12 @@ export default function CVAnalysis() {
         <Card className={`transition-all duration-500 delay-200 ${visibleCards >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Ringkasan Analisis</CardTitle>
-            <Badge className="w-fit">{results.analisis_inti?.recommendation || 'Tidak tersedia'}</Badge>
           </CardHeader>
           <CardContent>
             <div className={expandedSummary ? '' : 'line-clamp-3'}>
-              {renderMarkdown(results.analisis_inti?.overall_summary || 'Ringkasan tidak tersedia')}
+              {renderMarkdown(results.analisis_general || 'Ringkasan tidak tersedia')}
             </div>
-            {(results.analisis_inti?.overall_summary || '').split('\n').length > 3 && (
+            {(results.analisis_general || '').split('\n').length > 3 && (
               <Button
                 variant="link"
                 onClick={() => setExpandedSummary(!expandedSummary)}
@@ -354,49 +348,25 @@ export default function CVAnalysis() {
           </CardContent>
         </Card>
 
-        {/* Feedback Card */}
-        <Card className={`transition-all duration-500 delay-400 ${visibleCards >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <CardContent className="p-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  👍 Kekuatan Anda
-                </h3>
-                <div className="prose prose-sm">
-                  {renderMarkdown(results.analisis_inti?.feedback_positif || 'Feedback tidak tersedia')}
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  🔍 Area Peningkatan
-                </h3>
-                <div className="prose prose-sm">
-                  {renderMarkdown(results.analisis_inti?.feedback_area_of_improvement || 'Feedback tidak tersedia')}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Actionable Insights Card */}
-        <Card className={`transition-all duration-500 delay-600 ${visibleCards >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`transition-all duration-500 delay-400 ${visibleCards >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Wawasan yang Dapat Ditindaklanjuti</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="saran" className="w-full">
+            <Tabs defaultValue="interview" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="saran">Saran Perfeksionis</TabsTrigger>
                 <TabsTrigger value="interview">Prediksi Interview</TabsTrigger>
+                <TabsTrigger value="saran">Saran Perfeksionis</TabsTrigger>
               </TabsList>
-              <TabsContent value="saran" className="mt-6">
-                <div className="prose prose-sm">
-                  {renderMarkdown(results.saran_perfeksionis || 'Saran tidak tersedia')}
-                </div>
-              </TabsContent>
               <TabsContent value="interview" className="mt-6">
                 <div className="prose prose-sm">
                   {renderMarkdown(results.prediksi_interview || 'Prediksi tidak tersedia')}
+                </div>
+              </TabsContent>
+              <TabsContent value="saran" className="mt-6">
+                <div className="prose prose-sm">
+                  {renderMarkdown(results.saran_perfeksionis || 'Saran tidak tersedia')}
                 </div>
               </TabsContent>
             </Tabs>
@@ -404,7 +374,7 @@ export default function CVAnalysis() {
         </Card>
 
         {/* Playlist Card */}
-        <Card className={`transition-all duration-500 delay-800 ${visibleCards >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <Card className={`transition-all duration-500 delay-600 ${visibleCards >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader>
             <CardTitle>Rekomendasi Playlist Belajar Untukmu</CardTitle>
           </CardHeader>
