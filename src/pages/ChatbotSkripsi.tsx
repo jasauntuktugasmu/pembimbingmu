@@ -109,15 +109,15 @@ const ChatbotSkripsi = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 flex items-center justify-center">
+    <div className="min-h-screen p-4 flex items-center justify-center" style={{ backgroundColor: '#81b59a' }}>
       <div className="w-full max-w-4xl h-[80vh] animate-fade-in">
         {/* Main Chat Widget */}
-        <div className="bg-black/20 backdrop-blur-lg rounded-2xl shadow-2xl shadow-black/10 border border-white/20 h-full flex flex-col overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl h-full flex flex-col overflow-hidden">
           {/* Widget Header */}
-          <div className="p-6 border-b border-white/10">
+          <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h1 className="text-white text-xl font-semibold">Asisten Skripsi AI</h1>
+                <h1 className="text-black text-xl font-semibold">Asisten Skripsi AI</h1>
                 <div className="flex items-center gap-2">
                   <Circle className="w-2 h-2 fill-green-400 text-green-400" />
                   <span className="text-green-400 text-sm">Online</span>
@@ -125,13 +125,13 @@ const ChatbotSkripsi = () => {
               </div>
               
               {/* Mode Selector */}
-              <div className="bg-white/10 rounded-lg p-1 flex">
+              <div className="bg-gray-100 rounded-lg p-1 flex">
                 <button
                   onClick={() => handleModeChange('ruang_cerita')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     currentMode === 'ruang_cerita'
                       ? 'bg-[#81b59a] text-white shadow-lg'
-                      : 'text-white/70 hover:text-white'
+                      : 'text-black/70 hover:text-black'
                   }`}
                 >
                   Ruang Cerita
@@ -141,7 +141,7 @@ const ChatbotSkripsi = () => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     currentMode === 'asisten_akademik'
                       ? 'bg-[#81b59a] text-white shadow-lg'
-                      : 'text-white/70 hover:text-white'
+                      : 'text-black/70 hover:text-black'
                   }`}
                 >
                   Asisten Akademik
@@ -150,8 +150,8 @@ const ChatbotSkripsi = () => {
             </div>
             
             {/* Mode Description Area */}
-            <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-              <div className="text-white/90 text-sm prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="text-black text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                 <ReactMarkdown>
                   {modeDescriptions[currentMode]}
                 </ReactMarkdown>
@@ -169,12 +169,12 @@ const ChatbotSkripsi = () => {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                     message.isBot
-                      ? 'bg-white/10 text-white border border-white/20'
+                      ? 'bg-gray-100 text-black border border-gray-200'
                       : 'bg-[#81b59a] text-white'
                   }`}
                 >
                   {message.isBot ? (
-                    <div className="prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4">
+                    <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4">
                       <ReactMarkdown>
                         {message.content}
                       </ReactMarkdown>
@@ -182,7 +182,7 @@ const ChatbotSkripsi = () => {
                   ) : (
                     <p className="text-sm">{message.content}</p>
                   )}
-                  <div className={`text-xs mt-2 ${message.isBot ? 'text-white/60' : 'text-white/80'}`}>
+                  <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
                     {message.timestamp.toLocaleTimeString('id-ID', { 
                       hour: '2-digit', 
                       minute: '2-digit' 
@@ -194,14 +194,14 @@ const ChatbotSkripsi = () => {
             
             {isLoading && (
               <div className="flex justify-start animate-fade-in">
-                <div className="bg-white/10 text-white border border-white/20 rounded-2xl px-4 py-3">
+                <div className="bg-gray-100 text-black border border-gray-200 rounded-2xl px-4 py-3">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                      <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                     </div>
-                    <span className="text-sm text-white/60">Sedang mengetik...</span>
+                    <span className="text-sm text-black/60">Sedang mengetik...</span>
                   </div>
                 </div>
               </div>
@@ -211,20 +211,20 @@ const ChatbotSkripsi = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-6 border-t border-white/10">
+          <div className="p-6 border-t border-gray-200">
             <div className="flex gap-3">
               <Input
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ketik pesan Anda..."
-                className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
+                className="flex-1 bg-white border-gray-200 text-black placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSendMessage}
                 disabled={isLoading || !inputMessage.trim()}
-                className="bg-[#81b59a] hover:bg-[#81b59a]/90 text-white px-4"
+                className="bg-white hover:bg-gray-50 text-[#81b59a] border border-gray-200 px-4"
               >
                 <Send className="w-4 h-4" />
               </Button>
