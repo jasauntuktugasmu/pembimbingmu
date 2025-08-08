@@ -42,12 +42,41 @@ const ChatbotSkripsi = () => {
   };
 
   const webhookUrls = {
-    ruang_cerita: 'https://diginhubv3.app.n8n.cloud/webhook/agenskripsi',
-    asisten_akademik: 'https://diginhubv3.app.n8n.cloud/webhook/agenskripsipro'
+    ruang_cerita: 'https://n8n.srv930432.hstgr.cloud/webhook/ruangceritaskripsi',
+    asisten_akademik: 'https://n8n.srv930432.hstgr.cloud/webhook/botkonsultasiskripsi'
   };
 
   const handleModeChange = (mode: Mode) => {
     setCurrentMode(mode);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (!allowedTypes.includes(file.type) && ext !== 'pdf' && ext !== 'docx') {
+      // Ignore unsupported files
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('https://n8n.srv930432.hstgr.cloud/webhook/inputskripsi', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      setSessionDocumentId(data.documentId || data.document_id || data.id || '');
+    } catch (err) {
+      console.error('Upload failed', err);
+    } finally {
+      // no-op
+    }
   };
 
   const handleSendMessage = async () => {
@@ -156,6 +185,25 @@ const ChatbotSkripsi = () => {
                   {modeDescriptions[currentMode]}
                 </ReactMarkdown>
               </div>
+
+              {currentMode === 'asisten_akademik' && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Unggah dokumen skripsi (.pdf atau .docx)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleFileUpload}
+                    className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
+                  />
+                  {sessionDocumentId && (
+                    <p className="text-xs text:black/60 mt-2">
+                      Dokumen terunggah. ID sesi: {sessionDocumentId}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
