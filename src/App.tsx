@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import CVAnalysis from "./pages/CVAnalysis";
 import ChatbotSkripsi from "./pages/ChatbotSkripsi";
 import NotFound from "./pages/NotFound";
+import LMSDashboard from "./pages/LMSDashboard";
+import LMSLesson from "./pages/LMSLesson";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/cv" element={<CVAnalysis />} />
           <Route path="/dashboard/chatbotskripsi" element={<ChatbotSkripsi />} />
+          <Route path="/dashboard/lms" element={<LMSDashboard />} />
+          <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
