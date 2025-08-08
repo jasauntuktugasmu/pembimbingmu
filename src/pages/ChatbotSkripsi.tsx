@@ -179,36 +179,36 @@ const ChatbotSkripsi = () => {
         {/* Main Chat Widget */}
         <div className="bg-white rounded-2xl shadow-2xl h-full flex flex-col overflow-hidden">
           {/* Widget Header */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <div className="flex items-center gap-3">
-                <h1 className="text-black text-xl font-semibold">Asisten Skripsi AI</h1>
+                <h1 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h1>
                 <div className="flex items-center gap-2">
                   <Circle className="w-2 h-2 fill-green-400 text-green-400" />
-                  <span className="text-green-400 text-sm">Online</span>
+                  <span className="text-green-400 text-[0.79rem] sm:text-sm">Online</span>
                 </div>
               </div>
               
               {/* Mode Selector */}
-              <div className="bg-gray-100 rounded-lg p-1 flex">
-                <button
-                  onClick={() => handleModeChange('ruang_cerita')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    currentMode === 'ruang_cerita'
-                      ? 'bg-[#81b59a] text-white shadow-lg'
-                      : 'text-black/70 hover:text-black'
-                  }`}
-                >
+              <div className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto">
+                  <button
+                    onClick={() => handleModeChange('ruang_cerita')}
+                    className={`flex-1 text-center px-4 py-2 rounded-md text-[0.79rem] sm:text-sm font-medium transition-all duration-200 ${
+                      currentMode === 'ruang_cerita'
+                        ? 'bg-[#81b59a] text-white shadow-lg'
+                        : 'text-black/70 hover:text-black'
+                    }`}
+                  >
                   Ruang Cerita
                 </button>
-                <button
-                  onClick={() => handleModeChange('asisten_akademik')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                    currentMode === 'asisten_akademik'
-                      ? 'bg-[#81b59a] text-white shadow-lg'
-                      : 'text-black/70 hover:text-black'
-                  }`}
-                >
+                  <button
+                    onClick={() => handleModeChange('asisten_akademik')}
+                    className={`flex-1 text-center px-4 py-2 rounded-md text-[0.79rem] sm:text-sm font-medium transition-all duration-200 ${
+                      currentMode === 'asisten_akademik'
+                        ? 'bg-[#81b59a] text-white shadow-lg'
+                        : 'text-black/70 hover:text-black'
+                    }`}
+                  >
                   Asisten Akademik
                 </button>
               </div>
@@ -216,7 +216,7 @@ const ChatbotSkripsi = () => {
             
             {/* Mode Description Area */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="text-black text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+              <div className="text-black text-[0.79rem] sm:text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                 <ReactMarkdown>
                   {modeDescriptions[currentMode]}
                 </ReactMarkdown>
@@ -224,14 +224,14 @@ const ChatbotSkripsi = () => {
 
               {currentMode === 'asisten_akademik' && (
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-black mb-2">
+                  <label className="block text-[0.79rem] sm:text-sm font-medium text-black mb-2">
                     Unggah dokumen skripsi (.pdf atau .docx)
                   </label>
                   <input
                     type="file"
                     accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     onChange={handleFileUpload}
-                    className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
+                    className="block w-full text-black text-[0.79rem] sm:text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[0.79rem] sm:file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
                   />
                   {showUploadStatus && (
                     <p className="text-xs text-black/60 mt-2">
@@ -249,7 +249,7 @@ const ChatbotSkripsi = () => {
           </div>
 
           {/* Chat History */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -269,7 +269,7 @@ const ChatbotSkripsi = () => {
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-[0.79rem] sm:text-sm">{message.content}</p>
                   )}
                   <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
                     {message.timestamp.toLocaleTimeString('id-ID', { 
@@ -290,7 +290,7 @@ const ChatbotSkripsi = () => {
                       <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
                       <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                     </div>
-                    <span className="text-sm text-black/60">Sedang mengetik...</span>
+                    <span className="text-[0.79rem] sm:text-sm text-black/60">Sedang mengetik...</span>
                   </div>
                 </div>
               </div>
@@ -300,14 +300,14 @@ const ChatbotSkripsi = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-6 border-t border-gray-200">
+          <div className="p-4 sm:p-6 border-t border-gray-200">
             <div className="flex gap-3">
               <Input
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ketik pesan Anda..."
-                className="flex-1 bg-white border-gray-200 text-black placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
+                className="flex-1 bg-white border-gray-200 text-black text-[0.9rem] sm:text-base placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
                 disabled={isLoading}
               />
               <Button
