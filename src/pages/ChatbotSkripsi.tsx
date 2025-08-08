@@ -16,6 +16,9 @@ type Mode = 'ruang_cerita' | 'asisten_akademik';
 const ChatbotSkripsi = () => {
   const [currentMode, setCurrentMode] = useState<Mode>('ruang_cerita');
   const [sessionDocumentId, setSessionDocumentId] = useState<string>('');
+  const [sessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [showUploadStatus, setShowUploadStatus] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -57,9 +60,12 @@ const ChatbotSkripsi = () => {
     const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     const ext = file.name.split('.').pop()?.toLowerCase();
     if (!allowedTypes.includes(file.type) && ext !== 'pdf' && ext !== 'docx') {
-      // Ignore unsupported files
       return;
     }
+
+    // Show loading status
+    setUploadStatus('Sebentar, saya baca dan proses dulu dokumennya skripsimu ya...');
+    setShowUploadStatus(true);
 
     try {
       const formData = new FormData();
@@ -71,11 +77,32 @@ const ChatbotSkripsi = () => {
       });
 
       const data = await res.json();
-      setSessionDocumentId(data.documentId || data.document_id || data.id || '');
+      const documentId = data.documentId || data.document_id || data.id || '';
+      setSessionDocumentId(documentId);
+
+      // Show success status
+      setUploadStatus('Skripsi berhasil saya baca!');
+      
+      // Hide status after 3 seconds
+      setTimeout(() => {
+        setShowUploadStatus(false);
+      }, 3000);
+
+      // Add welcome message to chat
+      const welcomeMessage: Message = {
+        id: `welcome_${Date.now()}`,
+        content: 'Baik, Skripsi Anda sudah saya terima. Silakan ajukan pertanyaan terkait skripsi Anda.',
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, welcomeMessage]);
+
     } catch (err) {
       console.error('Upload failed', err);
-    } finally {
-      // no-op
+      setUploadStatus('Gagal mengunggah dokumen. Silakan coba lagi.');
+      setTimeout(() => {
+        setShowUploadStatus(false);
+      }, 3000);
     }
   };
 
@@ -94,10 +121,19 @@ const ChatbotSkripsi = () => {
     setIsLoading(true);
 
     try {
-      const payload = {
-        message: inputMessage,
-        documentId: sessionDocumentId
-      };
+      let payload;
+      
+      if (currentMode === 'ruang_cerita') {
+        payload = {
+          message: inputMessage,
+          sessionId: sessionId
+        };
+      } else if (currentMode === 'asisten_akademik') {
+        payload = {
+          message: inputMessage,
+          documentId: sessionDocumentId
+        };
+      }
 
       const response = await fetch(webhookUrls[currentMode], {
         method: 'POST',
@@ -197,8 +233,13 @@ const ChatbotSkripsi = () => {
                     onChange={handleFileUpload}
                     className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
                   />
-                  {sessionDocumentId && (
-                    <p className="text-xs text:black/60 mt-2">
+                  {showUploadStatus && (
+                    <p className="text-xs text-black/60 mt-2">
+                      {uploadStatus}
+                    </p>
+                  )}
+                  {sessionDocumentId && !showUploadStatus && (
+                    <p className="text-xs text-black/60 mt-2">
                       Dokumen terunggah. ID sesi: {sessionDocumentId}
                     </p>
                   )}
