@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   MessageCircle, 
@@ -30,9 +30,9 @@ import {
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Chatbot Konsultasi Skripsi", url: "/dashboard/chatbot", icon: MessageCircle },
-  { title: "Simulasi Sidang", url: "/dashboard/simulasi", icon: Mic },
+  { title: "Chatbot Konsultasi Skripsi", url: "/dashboard/chatbotskripsi", icon: MessageCircle },
   { title: "Analisa CV Terbaikmu", url: "/dashboard/cv", icon: FileText },
+  { title: "LMS Skripsi", url: "/dashboard/lms", icon: FileText },
 ];
 
 function AppSidebar() {
@@ -107,29 +107,6 @@ function AppSidebar() {
 }
 
 export default function Dashboard() {
-  const productCards = [
-    {
-      title: "Chatbot Konsultasi Skripsi",
-      description: "Dapatkan jawaban dan bimbingan instan untuk skripsi Anda kapan saja.",
-      buttonText: "Mulai Konsultasi",
-      icon: MessageCircle,
-      href: "/dashboard/chatbot"
-    },
-    {
-      title: "Simulasi Sidang Voicebot",
-      description: "Latih mental dan jawaban Anda dengan simulasi sidang yang realistis.",
-      buttonText: "Coba Simulasi",
-      icon: Mic,
-      href: "/dashboard/simulasi"
-    },
-    {
-      title: "Analisa CV Profesional",
-      description: "Upload CV Anda dan dapatkan skor serta masukan untuk perbaikan.",
-      buttonText: "Analisa Sekarang",
-      icon: FileText,
-      href: "/dashboard/cv"
-    }
-  ];
 
   return (
     <SidebarProvider>
@@ -142,62 +119,27 @@ export default function Dashboard() {
             <div className="flex items-center justify-between md:justify-end space-x-4">
               <SidebarTrigger className="md:hidden" />
               <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Coins className="h-4 w-4 text-[#81b59a]" />
-                <span>Sisa Kredit: 100</span>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback className="bg-[#81b59a] text-white">
-                    <User className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium text-gray-700">Nama Pengguna</span>
-              </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Coins className="h-4 w-4 text-[#81b59a]" />
+                  <span>Sisa Kredit: 100</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/placeholder.svg" />
+                    <AvatarFallback className="bg-[#81b59a] text-white">
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-gray-700">Nama Pengguna</span>
+                </div>
               </div>
             </div>
           </header>
 
           {/* Main Content */}
           <main className="flex-1 p-6">
-            <div className="max-w-6xl mx-auto">
-              {/* Welcome Section */}
-              <div className="mb-8">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Selamat datang Nama Pengguna, silahkan coba fitur kami di bawah ini.
-                </h1>
-              </div>
-
-              {/* Product Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {productCards.map((product, index) => (
-                  <Card key={index} className="hover:shadow-lg transition-shadow duration-200">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="p-2 bg-[#81b59a] rounded-lg">
-                          <product.icon className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
-                      <CardTitle className="text-lg font-semibold text-gray-900">
-                        {product.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm text-gray-600 leading-relaxed">
-                        {product.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button 
-                        className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-medium"
-                        onClick={() => window.location.href = product.href}
-                      >
-                        {product.buttonText}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <div key={location.pathname} className="animate-fade-in">
+              <Outlet />
             </div>
           </main>
 

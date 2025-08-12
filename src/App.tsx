@@ -11,6 +11,8 @@ import ChatbotSkripsi from "./pages/ChatbotSkripsi";
 import NotFound from "./pages/NotFound";
 import LMSDashboard from "./pages/LMSDashboard";
 import LMSLesson from "./pages/LMSLesson";
+import DashboardHome from "./pages/DashboardHome";
+
 
 const queryClient = new QueryClient();
 
@@ -23,9 +25,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/cv" element={<CVAnalysis />} />
-          <Route path="/dashboard/chatbotskripsi" element={<ChatbotSkripsi />} />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="cv" element={<CVAnalysis />} />
+            <Route path="chatbotskripsi" element={<ChatbotSkripsi />} />
+          </Route>
           <Route path="/dashboard/lms" element={<LMSDashboard />} />
           <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
