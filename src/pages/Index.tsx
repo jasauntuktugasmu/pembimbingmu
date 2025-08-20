@@ -121,8 +121,8 @@ const Index = () => {
     "@type": "Organization",
     "name": "Pembimbingmu",
     "description": "Platform bimbingan skripsi profesional yang membantu mahasiswa menyelesaikan skripsi dengan sukses",
-    "url": "https://pembimbingmu.lovable.app",
-    "logo": "https://pembimbingmu.lovable.app/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png",
+    "url": "https://pembimbingmu.com",
+    "logo": "https://pembimbingmu.com/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+62-895-2503-5845",
@@ -150,7 +150,7 @@ const Index = () => {
       <SEO 
         title="Pembimbingmu - Bimbingan Skripsi #1 di Indonesia | Mentor Berpengalaman"
         description="Platform bimbingan skripsi profesional dengan mentor berpengalaman. Paket Basic, Pro & Premium. Garansi ACC untuk paket premium. Konsultasi gratis sekarang!"
-        canonical="https://pembimbingmu.lovable.app"
+        canonical="https://pembimbingmu.com"
         jsonLd={structuredData}
       />
       <div className="min-h-screen bg-white">

@@ -54,7 +54,7 @@ export default function LMSLesson() {
     "provider": {
       "@type": "Organization", 
       "name": "Pembimbingmu",
-      "url": "https://pembimbingmu.lovable.app"
+      "url": "https://pembimbingmu.com"
     },
     "courseCode": moduleId,
     "numberOfCredits": module.lessons.length,
@@ -73,7 +73,7 @@ export default function LMSLesson() {
       <SEO 
         title={`${module.title} - LMS Skripsi | Pembimbingmu`}
         description={`Pelajari ${module.title} melalui video pembelajaran interaktif, materi download, dan kuis. Tingkatkan skill akademik untuk sukses skripsi.`}
-        canonical={`https://pembimbingmu.lovable.app/dashboard/lms/${moduleId}`}
+        canonical={`https://pembimbingmu.com/dashboard/lms/${moduleId}`}
         jsonLd={structuredData}
       />
       <main className="container mx-auto px-4 py-6">

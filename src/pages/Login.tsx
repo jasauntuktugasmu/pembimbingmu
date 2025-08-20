@@ -31,13 +31,13 @@ export default function Login() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://pembimbingmu.lovable.app/login",
+    "@id": "https://pembimbingmu.com/login",
     "name": "Login - Pembimbingmu",
     "description": "Masuk ke akun Pembimbingmu untuk mengakses layanan bimbingan skripsi terbaik",
     "isPartOf": {
       "@type": "WebSite",
       "name": "Pembimbingmu",
-      "url": "https://pembimbingmu.lovable.app"
+      "url": "https://pembimbingmu.com"
     }
   };
 
@@ -46,7 +46,7 @@ export default function Login() {
       <SEO 
         title="Login - Masuk ke Akun Pembimbingmu | Platform Bimbingan Skripsi"
         description="Masuk ke akun Pembimbingmu untuk mengakses layanan bimbingan skripsi, analisis CV, dan konsultasi akademik dengan mentor berpengalaman."
-        canonical="https://pembimbingmu.lovable.app/login"
+        canonical="https://pembimbingmu.com/login"
         jsonLd={structuredData}
       />
       <div className="min-h-screen bg-gray-50">
