@@ -134,15 +134,15 @@ All colors MUST be HSL.
 
   /* Brand-specific utilities */
   .text-pembimbingmu {
-    color: hsl(var(--pembimbingmu-green));
+    color: #81b59a;
   }
 
   .bg-pembimbingmu {
-    background-color: hsl(var(--pembimbingmu-green));
+    background-color: #81b59a;
   }
 
   .border-pembimbingmu {
-    border-color: hsl(var(--pembimbingmu-green));
+    border-color: #81b59a;
   }
 
   /* WhatsApp button styling */
@@ -152,18 +152,18 @@ All colors MUST be HSL.
     height: 60px;
     bottom: 40px;
     right: 40px;
-    background-color: hsl(120 100% 40%);
-    color: hsl(0 0% 100%);
+    background-color: #25d366;
+    color: #FFF;
     border-radius: 50px;
     text-align: center;
     font-size: 30px;
-    box-shadow: 2px 2px 3px hsl(0 0% 60%);
+    box-shadow: 2px 2px 3px #999;
     z-index: 100;
     transition: all 0.3s ease;
   }
 
   .whatsapp-float:hover {
     transform: scale(1.1);
-    box-shadow: 2px 2px 10px hsl(0 0% 60%);
+    box-shadow: 2px 2px 10px #999;
   }
 }

@@ -66,7 +66,7 @@ export default function LMSDashboard() {
       <SEO 
         title="LMS Skripsi - Learning Management System | Pembimbingmu"
         description="Learning Management System Pembimbingmu. Akses modul metodologi penelitian, penulisan akademik, presentasi, dan pengembangan diri untuk sukses skripsi."
-        canonical="https://pembimbingmu.com/dashboard/lms"
+        canonical="https://pembimbingmu.lovable.app/dashboard/lms"
         jsonLd={structuredData}
       />
       <main className="container mx-auto px-4 py-8">

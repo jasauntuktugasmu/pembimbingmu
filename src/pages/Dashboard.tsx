@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavLink, useLocation, Outlet } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -10,8 +10,6 @@ import {
   Coins,
   Menu
 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { CreditDisplay } from '@/components/CreditDisplay';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -38,7 +36,7 @@ const navigationItems = [
   { title: "LMS Skripsi", url: "/dashboard/lms", icon: FileText },
 ];
 
-function AppSidebar({ onSignOut }: { onSignOut: () => void }) {
+function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -95,13 +93,13 @@ function AppSidebar({ onSignOut }: { onSignOut: () => void }) {
       <SidebarFooter className="p-4 bg-[#81b59a]">
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <button 
-              onClick={onSignOut}
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full text-left"
+            <NavLink 
+              to="/" 
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
             >
               <LogOut className="h-5 w-5" />
               {!isCollapsed && <span className="text-sm">Keluar</span>}
-            </button>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarFooter>
@@ -110,38 +108,18 @@ function AppSidebar({ onSignOut }: { onSignOut: () => void }) {
 }
 
 export default function Dashboard() {
-  const location = useLocation()
-  const { user, profile, loading, requireAuth, signOut } = useAuth()
-
-  useEffect(() => {
-    requireAuth()
-  }, [requireAuth])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#81b59a] mx-auto"></div>
-          <p className="text-gray-600">Memuat...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user || !profile) {
-    return null // Will redirect to login
-  }
+  const location = useLocation();
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://pembimbingmu.com/dashboard",
+    "@id": "https://pembimbingmu.lovable.app/dashboard",
     "name": "Dashboard - Pembimbingmu",
     "description": "Dashboard pengguna Pembimbingmu - akses semua fitur bimbingan skripsi, analisis CV, dan konsultasi akademik",
     "isPartOf": {
       "@type": "WebSite",
       "name": "Pembimbingmu",
-      "url": "https://pembimbingmu.com"
+      "url": "https://pembimbingmu.lovable.app"
     }
   };
 
@@ -150,12 +128,12 @@ export default function Dashboard() {
       <SEO 
         title="Dashboard - Pembimbingmu | Platform Bimbingan Skripsi"
         description="Dashboard pengguna Pembimbingmu. Akses fitur bimbingan skripsi, analisis CV, chatbot konsultasi, dan LMS pembelajaran akademik."
-        canonical={`https://pembimbingmu.com${location.pathname}`}
+        canonical={`https://pembimbingmu.lovable.app${location.pathname}`}
         jsonLd={structuredData}
       />
       <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        <AppSidebar onSignOut={signOut} />
+        <AppSidebar />
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
@@ -163,10 +141,10 @@ export default function Dashboard() {
             <div className="flex items-center justify-between md:justify-end space-x-4">
               <SidebarTrigger className="md:hidden" />
               <div className="flex items-center space-x-4">
-                <CreditDisplay 
-                  cvCredits={profile.cv_credits} 
-                  skripsiCredits={profile.skripsi_credits} 
-                />
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Coins className="h-4 w-4 text-[#81b59a]" />
+                  <span>Sisa Kredit: 100</span>
+                </div>
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/placeholder.svg" />
@@ -174,7 +152,7 @@ export default function Dashboard() {
                       <User className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-gray-700">{profile.email}</span>
+                  <span className="text-sm font-medium text-gray-700">Nama Pengguna</span>
                 </div>
               </div>
             </div>

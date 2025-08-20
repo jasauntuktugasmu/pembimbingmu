@@ -24,7 +24,7 @@ const NotFound = () => {
       <SEO 
         title="404 - Halaman Tidak Ditemukan | Pembimbingmu"
         description="Halaman yang Anda cari tidak ditemukan. Kembali ke beranda Pembimbingmu untuk mengakses layanan bimbingan skripsi terbaik."
-        canonical="https://pembimbingmu.com/404"
+        canonical="https://pembimbingmu.lovable.app/404"
         jsonLd={structuredData}
       />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">

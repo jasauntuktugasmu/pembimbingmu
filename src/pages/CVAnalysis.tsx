@@ -210,13 +210,13 @@ export default function CVAnalysis() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://pembimbingmu.com/dashboard/cv",
+    "@id": "https://pembimbingmu.lovable.app/dashboard/cv",
     "name": "Analisis CV Terbaikmu - Pembimbingmu",
     "description": "Analisis CV berbasis AI dengan skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar",
     "isPartOf": {
       "@type": "WebSite",
       "name": "Pembimbingmu",
-      "url": "https://pembimbingmu.com"
+      "url": "https://pembimbingmu.lovable.app"
     }
   };
 
@@ -226,7 +226,7 @@ export default function CVAnalysis() {
         <SEO 
           title="Analisis CV Terbaikmu - AI CV Scanner | Pembimbingmu"
           description="Dapatkan analisis CV mendalam berbasis AI, skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar. Upload CV PDF/DOCX sekarang!"
-        canonical="https://pembimbingmu.com/dashboard/cv"
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
           jsonLd={structuredData}
         />
         <div className="max-w-[900px] mx-auto p-6">
@@ -281,7 +281,7 @@ export default function CVAnalysis() {
         <SEO 
           title="Menganalisis CV - Analisis CV Terbaikmu | Pembimbingmu"
           description="AI sedang menganalisis CV Anda. Tunggu sebentar untuk mendapatkan skor ATS, prediksi interview, dan rekomendasi terbaik."
-        canonical="https://pembimbingmu.com/dashboard/cv"
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
           jsonLd={structuredData}
         />
         <div className="max-w-[900px] mx-auto p-6">
@@ -356,7 +356,7 @@ export default function CVAnalysis() {
         <SEO 
           title={`Hasil Analisis CV - Skor ${results.analisis_inti}/100 | Pembimbingmu`}
           description={`CV Anda mendapat skor ${results.analisis_inti}/100 dengan level ${results.level_kekuatan}. Lihat analisis lengkap, prediksi interview, dan rekomendasi belajar.`}
-          canonical="https://pembimbingmu.com/dashboard/cv"
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
           jsonLd={structuredData}
         />
         <div className="max-w-[900px] mx-auto p-6 space-y-6">

@@ -11,13 +11,13 @@ export default function DashboardHome() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://pembimbingmu.com/dashboard", 
+    "@id": "https://pembimbingmu.lovable.app/dashboard",
     "name": "Dashboard Home - Pembimbingmu",
-    "description": "Dashboard utama Pembimbingmu dengan akses ke semua fitur: analisis CV, chatbot konsultasi, dan LMS pembelajaran",
+    "description": "Halaman utama dashboard dengan akses ke semua fitur: analisis CV, chatbot skripsi, dan LMS pembelajaran",
     "isPartOf": {
       "@type": "WebSite",
       "name": "Pembimbingmu",
-      "url": "https://pembimbingmu.com"
+      "url": "https://pembimbingmu.lovable.app"
     }
   };
 
@@ -50,7 +50,7 @@ export default function DashboardHome() {
       <SEO 
         title="Dashboard - Pilih Fitur Terbaik | Pembimbingmu"
         description="Akses semua fitur Pembimbingmu: Analisis CV dengan AI, Chatbot Konsultasi Skripsi, dan LMS Pembelajaran Akademik. Mulai perjalanan sukses Anda!"
-        canonical="https://pembimbingmu.com/dashboard"
+        canonical="https://pembimbingmu.lovable.app/dashboard"
         jsonLd={structuredData}
       />
       <div className="max-w-6xl mx-auto animate-fade-in">
