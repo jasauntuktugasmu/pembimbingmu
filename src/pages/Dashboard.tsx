@@ -27,6 +27,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
+import SEO from '@/components/SEO';
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -107,9 +108,30 @@ function AppSidebar() {
 }
 
 export default function Dashboard() {
+  const location = useLocation();
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://pembimbingmu.lovable.app/dashboard",
+    "name": "Dashboard - Pembimbingmu",
+    "description": "Dashboard pengguna Pembimbingmu - akses semua fitur bimbingan skripsi, analisis CV, dan konsultasi akademik",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Pembimbingmu",
+      "url": "https://pembimbingmu.lovable.app"
+    }
+  };
 
   return (
-    <SidebarProvider>
+    <>
+      <SEO 
+        title="Dashboard - Pembimbingmu | Platform Bimbingan Skripsi"
+        description="Dashboard pengguna Pembimbingmu. Akses fitur bimbingan skripsi, analisis CV, chatbot konsultasi, dan LMS pembelajaran akademik."
+        canonical={`https://pembimbingmu.lovable.app${location.pathname}`}
+        jsonLd={structuredData}
+      />
+      <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
         <AppSidebar />
         
@@ -162,5 +184,6 @@ export default function Dashboard() {
         </div>
       </div>
     </SidebarProvider>
+    </>
   );
 }

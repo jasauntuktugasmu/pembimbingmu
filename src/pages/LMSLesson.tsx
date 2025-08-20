@@ -46,23 +46,37 @@ export default function LMSLesson() {
   const lesson = module.lessons[activeIndex];
   const completedUntil = Math.max(0, activeIndex - 1);
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Course',
-    name: module.title,
-    provider: {
-      '@type': 'Organization',
-      name: 'Pembimbingmu'
-    }
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": module.title,
+    "description": `Pembelajaran ${module.title} melalui video pembelajaran interaktif dan materi downloadable`,
+    "provider": {
+      "@type": "Organization", 
+      "name": "Pembimbingmu",
+      "url": "https://pembimbingmu.lovable.app"
+    },
+    "courseCode": moduleId,
+    "numberOfCredits": module.lessons.length,
+    "hasCourseInstance": [{
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "instructor": {
+        "@type": "Organization",
+        "name": "Pembimbingmu"
+      }
+    }]
   };
 
   return (
-    <main className="container mx-auto px-4 py-6">
-      <SEO
-        title={`LMS Skripsi: ${module.title}`}
-        description={`Pelajaran dan materi untuk ${module.title}.`}
-        jsonLd={jsonLd}
+    <>
+      <SEO 
+        title={`${module.title} - LMS Skripsi | Pembimbingmu`}
+        description={`Pelajari ${module.title} melalui video pembelajaran interaktif, materi download, dan kuis. Tingkatkan skill akademik untuk sukses skripsi.`}
+        canonical={`https://pembimbingmu.lovable.app/dashboard/lms/${moduleId}`}
+        jsonLd={structuredData}
       />
+      <main className="container mx-auto px-4 py-6">
 
       <header className="mb-4 flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight">{module.title}</h1>
@@ -150,5 +164,6 @@ export default function LMSLesson() {
         </section>
       </section>
     </main>
+    </>
   );
 }

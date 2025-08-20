@@ -44,25 +44,32 @@ const modules: ModuleCard[] = [
 ];
 
 export default function LMSDashboard() {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    itemListElement: modules.map((m, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      url: `${window.location.origin}/dashboard/lms/${m.slug}`,
-      name: m.title,
-      description: m.description,
-    })),
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "LMS Skripsi - Pembimbingmu",
+    "description": "Learning Management System untuk pembelajaran metodologi penelitian, penulisan akademik, dan skill pengembangan diri",
+    "provider": {
+      "@type": "Organization",
+      "name": "Pembimbingmu"
+    },
+    "courseCode": "LMS-SKRIPSI",
+    "hasCourseInstance": modules.map(module => ({
+      "@type": "CourseInstance",
+      "name": module.title,
+      "description": module.description
+    }))
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <SEO
-        title="LMS Skripsi: Dashboard Modul"
-        description="Jelajahi modul kursus skripsi Anda dan pantau progres belajar."
-        jsonLd={jsonLd}
+    <>
+      <SEO 
+        title="LMS Skripsi - Learning Management System | Pembimbingmu"
+        description="Learning Management System Pembimbingmu. Akses modul metodologi penelitian, penulisan akademik, presentasi, dan pengembangan diri untuk sukses skripsi."
+        canonical="https://pembimbingmu.lovable.app/dashboard/lms"
+        jsonLd={structuredData}
       />
+      <main className="container mx-auto px-4 py-8">
 
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">LMS Skripsi: Dashboard Modul</h1>
@@ -93,5 +100,6 @@ export default function LMSDashboard() {
         ))}
       </section>
     </main>
+    </>
   );
 }

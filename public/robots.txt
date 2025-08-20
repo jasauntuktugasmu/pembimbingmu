@@ -1,8 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pembimbingmu.lovable.app/sitemap.xml
+
+# Block certain crawlers if needed
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +19,13 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Block access to private areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /lovable-uploads/
+
+# Allow specific files
+Allow: /lovable-uploads/*.png
+Allow: /lovable-uploads/*.jpg
+Allow: /lovable-uploads/*.jpeg

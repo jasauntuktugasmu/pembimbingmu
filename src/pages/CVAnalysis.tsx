@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import SEO from '@/components/SEO';
 
 type AnalysisState = 'upload' | 'analyzing' | 'results';
 
@@ -206,9 +207,29 @@ export default function CVAnalysis() {
     </div>
   );
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://pembimbingmu.lovable.app/dashboard/cv",
+    "name": "Analisis CV Terbaikmu - Pembimbingmu",
+    "description": "Analisis CV berbasis AI dengan skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Pembimbingmu",
+      "url": "https://pembimbingmu.lovable.app"
+    }
+  };
+
   if (state === 'upload') {
     return (
-      <div className="max-w-[900px] mx-auto p-6">
+      <>
+        <SEO 
+          title="Analisis CV Terbaikmu - AI CV Scanner | Pembimbingmu"
+          description="Dapatkan analisis CV mendalam berbasis AI, skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar. Upload CV PDF/DOCX sekarang!"
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
+          jsonLd={structuredData}
+        />
+        <div className="max-w-[900px] mx-auto p-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Analisis CV Terbaikmu
@@ -250,12 +271,20 @@ export default function CVAnalysis() {
           </CardContent>
         </Card>
       </div>
+      </>
     );
   }
 
   if (state === 'analyzing') {
     return (
-      <div className="max-w-[900px] mx-auto p-6">
+      <>
+        <SEO 
+          title="Menganalisis CV - Analisis CV Terbaikmu | Pembimbingmu"
+          description="AI sedang menganalisis CV Anda. Tunggu sebentar untuk mendapatkan skor ATS, prediksi interview, dan rekomendasi terbaik."
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
+          jsonLd={structuredData}
+        />
+        <div className="max-w-[900px] mx-auto p-6">
         {showSuccess && (
           <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6 animate-fade-in">
             <div className="flex items-center">
@@ -317,12 +346,20 @@ export default function CVAnalysis() {
           </div>
         )}
       </div>
+      </>
     );
   }
 
   if (state === 'results' && results) {
     return (
-      <div className="max-w-[900px] mx-auto p-6 space-y-6">
+      <>
+        <SEO 
+          title={`Hasil Analisis CV - Skor ${results.analisis_inti}/100 | Pembimbingmu`}
+          description={`CV Anda mendapat skor ${results.analisis_inti}/100 dengan level ${results.level_kekuatan}. Lihat analisis lengkap, prediksi interview, dan rekomendasi belajar.`}
+          canonical="https://pembimbingmu.lovable.app/dashboard/cv"
+          jsonLd={structuredData}
+        />
+        <div className="max-w-[900px] mx-auto p-6 space-y-6">
         {/* Score Card */}
         <Card className={`border border-gray-200 rounded-lg shadow-md transition-all duration-500 ${visibleCards >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <CardHeader className="text-center">
@@ -430,6 +467,7 @@ export default function CVAnalysis() {
           </CardContent>
         </Card>
       </div>
+      </>
     );
   }
 

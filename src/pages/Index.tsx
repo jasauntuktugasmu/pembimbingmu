@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -115,9 +116,45 @@ const Index = () => {
     }
   ];
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Pembimbingmu",
+    "description": "Platform bimbingan skripsi profesional yang membantu mahasiswa menyelesaikan skripsi dengan sukses",
+    "url": "https://pembimbingmu.lovable.app",
+    "logo": "https://pembimbingmu.lovable.app/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+62-895-2503-5845",
+      "contactType": "customer service",
+      "availableLanguage": "Indonesian"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "ID"
+    },
+    "sameAs": [
+      "https://www.instagram.com/pembimbingmu"
+    ],
+    "offers": packages.map(pkg => ({
+      "@type": "Offer",
+      "name": `Paket ${pkg.name}`,
+      "description": pkg.features.join(", "),
+      "price": pkg.price.replace(/[^\d]/g, ''),
+      "priceCurrency": "IDR"
+    }))
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
+    <>
+      <SEO 
+        title="Pembimbingmu - Bimbingan Skripsi #1 di Indonesia | Mentor Berpengalaman"
+        description="Platform bimbingan skripsi profesional dengan mentor berpengalaman. Paket Basic, Pro & Premium. Garansi ACC untuk paket premium. Konsultasi gratis sekarang!"
+        canonical="https://pembimbingmu.lovable.app"
+        jsonLd={structuredData}
+      />
+      <div className="min-h-screen bg-white">
+        {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -587,6 +624,7 @@ const Index = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 

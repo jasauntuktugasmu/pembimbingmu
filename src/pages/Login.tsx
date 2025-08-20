@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import SEO from '@/components/SEO';
 
 const carouselImages = [
   "/lovable-uploads/059db273-4d94-449f-a0c2-0239dda77753.png",
@@ -27,8 +28,28 @@ export default function Login() {
     navigate('/dashboard');
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://pembimbingmu.lovable.app/login",
+    "name": "Login - Pembimbingmu",
+    "description": "Masuk ke akun Pembimbingmu untuk mengakses layanan bimbingan skripsi terbaik",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Pembimbingmu",
+      "url": "https://pembimbingmu.lovable.app"
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <SEO 
+        title="Login - Masuk ke Akun Pembimbingmu | Platform Bimbingan Skripsi"
+        description="Masuk ke akun Pembimbingmu untuk mengakses layanan bimbingan skripsi, analisis CV, dan konsultasi akademik dengan mentor berpengalaman."
+        canonical="https://pembimbingmu.lovable.app/login"
+        jsonLd={structuredData}
+      />
+      <div className="min-h-screen bg-gray-50">
       {/* Image Carousel Section */}
       <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden">
         {carouselImages.map((image, index) => (
@@ -119,5 +140,6 @@ export default function Login() {
         </div>
       </footer>
     </div>
+    </>
   );
 }

@@ -3,9 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Mic, FileText } from "lucide-react";
+import SEO from "@/components/SEO";
 
 export default function DashboardHome() {
   const navigate = useNavigate();
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://pembimbingmu.lovable.app/dashboard",
+    "name": "Dashboard Home - Pembimbingmu",
+    "description": "Halaman utama dashboard dengan akses ke semua fitur: analisis CV, chatbot skripsi, dan LMS pembelajaran",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Pembimbingmu",
+      "url": "https://pembimbingmu.lovable.app"
+    }
+  };
 
   const productCards = [
     {
@@ -32,7 +46,14 @@ export default function DashboardHome() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+    <>
+      <SEO 
+        title="Dashboard - Pilih Fitur Terbaik | Pembimbingmu"
+        description="Akses semua fitur Pembimbingmu: Analisis CV dengan AI, Chatbot Konsultasi Skripsi, dan LMS Pembelajaran Akademik. Mulai perjalanan sukses Anda!"
+        canonical="https://pembimbingmu.lovable.app/dashboard"
+        jsonLd={structuredData}
+      />
+      <div className="max-w-6xl mx-auto animate-fade-in">
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -67,5 +88,6 @@ export default function DashboardHome() {
         ))}
       </div>
     </div>
+    </>
   );
 }
