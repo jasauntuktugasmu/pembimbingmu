@@ -20,14 +20,28 @@ const ChatbotSkripsi = () => {
   const [sessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [showUploadStatus, setShowUploadStatus] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
+  // Separate message states for each mode
+  const [ruangCeritaMessages, setRuangCeritaMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Halo! Saya asisten AI untuk membantu perjalanan skripsi Anda. Silakan pilih mode yang sesuai dengan kebutuhan Anda.',
+      content: 'Halo! Selamat datang di Ruang Cerita. Saya di sini untuk mendengarkan cerita Anda dan memberikan dukungan motivasi. Bagaimana kabar Anda hari ini?',
       isBot: true,
       timestamp: new Date()
     }
   ]);
+  
+  const [asistenAkademikMessages, setAsistenAkademikMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: 'Halo! Saya Asisten Akademik yang akan membantu menganalisis skripsi Anda. Silakan unggah dokumen skripsi terlebih dahulu untuk memulai konsultasi.',
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
+
+  // Get current messages based on mode
+  const messages = currentMode === 'ruang_cerita' ? ruangCeritaMessages : asistenAkademikMessages;
+  const setMessages = currentMode === 'ruang_cerita' ? setRuangCeritaMessages : setAsistenAkademikMessages;
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -46,8 +60,8 @@ const ChatbotSkripsi = () => {
   };
 
   const webhookUrls = {
-    ruang_cerita: 'https://n8n.srv930432.hstgr.cloud/webhook/ruangceritaskripsi',
-    asisten_akademik: 'https://n8n.srv930432.hstgr.cloud/webhook/botkonsultasiskripsi'
+    ruang_cerita: 'https://jasauntuktugasmu.app.n8n.cloud/webhook/ruangcerita',
+    asisten_akademik: 'https://jasauntuktugasmu.app.n8n.cloud/webhook/botkonsultasiskripsi'
   };
 
   const handleModeChange = (mode: Mode) => {
@@ -72,7 +86,7 @@ const ChatbotSkripsi = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://n8n.srv930432.hstgr.cloud/webhook/inputskripsi', {
+      const res = await fetch('https://jasauntuktugasmu.app.n8n.cloud/webhook/inputskripsi', {
         method: 'POST',
         body: formData,
       });
@@ -89,14 +103,14 @@ const ChatbotSkripsi = () => {
         setShowUploadStatus(false);
       }, 3000);
 
-      // Add welcome message to chat
+      // Add welcome message to asisten akademik chat
       const welcomeMessage: Message = {
         id: `welcome_${Date.now()}`,
         content: 'Baik, Skripsi Anda sudah saya terima. Silakan ajukan pertanyaan terkait skripsi Anda.',
         isBot: true,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, welcomeMessage]);
+      setAsistenAkademikMessages(prev => [...prev, welcomeMessage]);
 
     } catch (err) {
       console.error('Upload failed', err);
