@@ -80,11 +80,11 @@ export default function Register() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: normalizedEmail,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/chatbot`
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
       });
 
@@ -92,12 +92,22 @@ export default function Register() {
         throw error;
       }
 
+      // Auto sign in the user after successful signup
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password
+      });
+
+      if (signInError) {
+        throw signInError;
+      }
+
       toast({
         title: "Registrasi berhasil",
-        description: "Akun Anda telah dibuat. Silakan cek email untuk konfirmasi."
+        description: "Akun Anda telah dibuat dan Anda sudah masuk."
       });
       
-      navigate('/chatbot');
+      navigate('/dashboard');
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({

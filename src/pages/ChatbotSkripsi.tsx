@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ReactMarkdown from 'react-markdown';
 import SEO from '@/components/SEO';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
@@ -121,8 +123,34 @@ const ChatbotSkripsi = () => {
     }
   };
 
+  const { toast } = useToast();
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
+
+    // First, try to deduct credit
+    try {
+      const { data, error } = await supabase.rpc('decrement_credits');
+      if (error) throw error;
+      
+      console.log('Credits decremented, remaining:', data);
+    } catch (error: any) {
+      if (error.code === 'P0001') {
+        toast({
+          title: "Kredit Habis",
+          description: "Anda tidak memiliki cukup kredit untuk mengirim pesan.",
+          variant: "destructive"
+        });
+        return;
+      }
+      console.error('Error deducting credits:', error);
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat memproses kredit. Silakan coba lagi.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),

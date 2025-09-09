@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/SEO';
+import { supabase } from '@/integrations/supabase/client';
 
 type AnalysisState = 'upload' | 'analyzing' | 'results';
 
@@ -100,6 +101,36 @@ export default function CVAnalysis() {
       toast({
         title: "Input Required",
         description: "Silakan masukkan deskripsi pekerjaan.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // First, try to deduct CV credit using the specific function
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Anda harus login terlebih dahulu.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase.rpc('kurangi_cv_credit', {
+        user_id_input: user.id,
+        jumlah: 1
+      });
+      
+      if (error) throw error;
+      
+      console.log('CV credit deducted successfully');
+    } catch (error: any) {
+      console.error('Error deducting CV credits:', error);
+      toast({
+        title: "Kredit CV Habis",
+        description: "Anda tidak memiliki cukup kredit CV untuk melakukan analisis.",
         variant: "destructive"
       });
       return;

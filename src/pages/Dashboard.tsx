@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink, useLocation, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   MessageCircle, 
@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import {
   Sidebar,
   SidebarContent,
@@ -36,7 +38,7 @@ const navigationItems = [
   { title: "LMS Skripsi", url: "/dashboard/lms", icon: FileText },
 ];
 
-function AppSidebar() {
+function AppSidebar({ onLogout }: { onLogout: () => void }) {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -93,13 +95,13 @@ function AppSidebar() {
       <SidebarFooter className="p-4 bg-[#81b59a]">
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <NavLink 
-              to="/" 
-              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
+            <button 
+              onClick={onLogout}
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full text-left"
             >
               <LogOut className="h-5 w-5" />
               {!isCollapsed && <span className="text-sm">Keluar</span>}
-            </NavLink>
+            </button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarFooter>
@@ -109,6 +111,77 @@ function AppSidebar() {
 
 export default function Dashboard() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    // Check auth state and get user profile
+    const getSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error || !session) {
+        navigate('/login');
+        return;
+      }
+      
+      setUser(session.user);
+      
+      // Fetch user profile with credits
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      } else {
+        setProfile(profileData);
+      }
+    };
+
+    getSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!session) {
+          navigate('/login');
+          return;
+        }
+        
+        setUser(session.user);
+        
+        // Fetch updated profile
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (!profileError) {
+          setProfile(profileData);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat logout",
+        variant: "destructive"
+      });
+    } else {
+      navigate('/');
+    }
+  };
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -133,7 +206,7 @@ export default function Dashboard() {
       />
       <SidebarProvider>
       <div className="min-h-screen flex w-full bg-gray-50">
-        <AppSidebar />
+        <AppSidebar onLogout={handleLogout} />
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
@@ -141,9 +214,15 @@ export default function Dashboard() {
             <div className="flex items-center justify-between md:justify-end space-x-4">
               <SidebarTrigger className="md:hidden" />
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Coins className="h-4 w-4 text-[#81b59a]" />
-                  <span>Sisa Kredit: 100</span>
+                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <Coins className="h-4 w-4 text-[#81b59a]" />
+                    <span>Kredit Chat: {profile?.credits || 0}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-4 w-4 text-[#81b59a]" />
+                    <span>Kredit CV: {profile?.cv_credits || 0}</span>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
@@ -152,7 +231,9 @@ export default function Dashboard() {
                       <User className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-gray-700">Nama Pengguna</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {user?.email || 'Loading...'}
+                  </span>
                 </div>
               </div>
             </div>
