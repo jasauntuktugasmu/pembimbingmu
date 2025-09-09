@@ -89,6 +89,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      is_email_authorized: {
+        Args: { email_to_check: string }
+        Returns: boolean
+      }
       kurangi_cv_credit: {
         Args: { jumlah: number; user_id_input: string }
         Returns: undefined
