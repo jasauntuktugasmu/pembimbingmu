@@ -23,17 +23,17 @@ export default function Register() {
     setErrorMessage('');
 
     try {
-      const { data, error } = await supabase
-        .from('authorized_emails')
-        .select('email')
-        .eq('email', email.toLowerCase())
-        .maybeSingle();
+      const normalizedEmail = email.trim().toLowerCase();
+      
+      const { data, error } = await supabase.rpc('is_email_authorized', {
+        email_to_check: normalizedEmail
+      });
 
       if (error) {
         throw error;
       }
 
-      if (data) {
+      if (data === true) {
         setIsEmailVerified(true);
         toast({
           title: "Email terverifikasi",
@@ -78,11 +78,13 @@ export default function Register() {
     setIsLoading(true);
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+      
       const { error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          emailRedirectTo: `${window.location.origin}/chatbot`
         }
       });
 
@@ -95,7 +97,7 @@ export default function Register() {
         description: "Akun Anda telah dibuat. Silakan cek email untuk konfirmasi."
       });
       
-      navigate('/dashboard');
+      navigate('/chatbot');
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({
