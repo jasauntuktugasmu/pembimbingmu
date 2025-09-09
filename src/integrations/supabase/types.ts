@@ -61,18 +61,21 @@ export type Database = {
       }
       profiles: {
         Row: {
+          credits: number
           cv_credits: number | null
           email: string | null
           id: string
           skripsi_credits: number | null
         }
         Insert: {
+          credits?: number
           cv_credits?: number | null
           email?: string | null
           id: string
           skripsi_credits?: number | null
         }
         Update: {
+          credits?: number
           cv_credits?: number | null
           email?: string | null
           id?: string
