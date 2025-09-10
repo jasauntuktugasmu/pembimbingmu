@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Circle, Mic, Camera, Video, Paperclip } from 'lucide-react';
+import { Send, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import ReactMarkdown from 'react-markdown';
 import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,10 +22,24 @@ const ChatbotSkripsi = () => {
   const [sessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [showUploadStatus, setShowUploadStatus] = useState(false);
-  const [isInputFocused, setIsInputFocused] = useState(false);
   // Separate message states for each mode
-  const [ruangCeritaMessages, setRuangCeritaMessages] = useState<Message[]>([]);
-  const [asistenAkademikMessages, setAsistenAkademikMessages] = useState<Message[]>([]);
+  const [ruangCeritaMessages, setRuangCeritaMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: 'Halo! Selamat datang di Ruang Cerita. Saya di sini untuk mendengarkan cerita Anda dan memberikan dukungan motivasi. Bagaimana kabar Anda hari ini?',
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
+  
+  const [asistenAkademikMessages, setAsistenAkademikMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: 'Halo! Saya Asisten Akademik yang akan membantu menganalisis skripsi Anda. Silakan unggah dokumen skripsi terlebih dahulu untuk memulai konsultasi.',
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
 
   // Get current messages based on mode
   const messages = currentMode === 'ruang_cerita' ? ruangCeritaMessages : asistenAkademikMessages;
@@ -202,190 +216,160 @@ const ChatbotSkripsi = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
-      <SEO
-        title="Asisten Skripsi AI | Pembimbingmu"
-        description="Asisten Skripsi AI: Ruang Cerita dan Asisten Akademik. Unggah skripsi dan mulai konsultasi."
-      />
-      
-      {/* Header with Tabs */}
-      <header className="flex items-center justify-center p-4">
-        <nav className="flex bg-gray-800 rounded-full p-1">
-          <button
-            onClick={() => handleModeChange('ruang_cerita')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
-              currentMode === 'ruang_cerita'
-                ? 'bg-gray-700 text-white'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Circle className="w-4 h-4" />
-            Ruang Cerita
-          </button>
-          <button
-            onClick={() => handleModeChange('asisten_akademik')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
-              currentMode === 'asisten_akademik'
-                ? 'bg-gray-700 text-white'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Paperclip className="w-4 h-4" />
-            Asisten Akademik
-          </button>
-        </nav>
-      </header>
-
-      {/* Chat Area */}
-      <main className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto py-6 space-y-4">
-          {messages.length === 0 && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Circle className="w-8 h-8 text-gray-400" />
-                </div>
-                <h2 className="text-white text-lg font-medium mb-2">
-                  {currentMode === 'ruang_cerita' ? 'Ruang Cerita' : 'Asisten Akademik'}
-                </h2>
-                <p className="text-gray-400 text-sm">
-                  {currentMode === 'ruang_cerita' 
-                    ? 'Berbagi cerita dan dapatkan motivasi' 
-                    : 'Upload dokumen skripsi dan mulai konsultasi'}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} animate-fade-in`}
-            >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  message.isBot
-                    ? 'bg-gray-800 text-white'
-                    : 'bg-blue-600 text-white'
-                }`}
-              >
-                {message.isBot ? (
-                  <div className="prose prose-sm max-w-none text-white [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                    <ReactMarkdown>
-                      {message.content}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  <p className="text-sm">{message.content}</p>
-                )}
-                <div className="text-xs mt-2 text-white/60">
-                  {message.timestamp.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {isLoading && (
-            <div className="flex justify-start animate-fade-in">
-              <div className="bg-gray-800 text-white rounded-2xl px-4 py-3">
+    return (
+      <div className="min-h-screen bg-pembimbingmu p-4">
+        <SEO
+          title="Asisten Skripsi AI | Pembimbingmu"
+          description="Asisten Skripsi AI: Ruang Cerita dan Asisten Akademik. Unggah skripsi dan mulai konsultasi."
+        />
+        <main className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
+          {/* Top Controls Panel (outside chat box) */}
+          <section className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
+            <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <h1 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h1>
                 <div className="flex items-center gap-2">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                  </div>
-                  <span className="text-sm text-white/60">Sedang mengetik...</span>
+                  <Circle className="w-2 h-2 text-[hsl(var(--pembimbingmu-green))] fill-[hsl(var(--pembimbingmu-green))]" />
+                  <span className="text-[hsl(var(--pembimbingmu-green))] text-[0.79rem] sm:text-sm">Online</span>
                 </div>
               </div>
-            </div>
-          )}
 
-          <div ref={messagesEndRef} />
-        </div>
+              {/* Mode Selector */}
+              <nav className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto" aria-label="Pilih Mode">
+                <button
+                  onClick={() => handleModeChange('ruang_cerita')}
+                  className={`flex-1 text-center px-4 py-2 rounded-md text-[0.79rem] sm:text-sm font-medium transition-all duration-200 ${
+                    currentMode === 'ruang_cerita'
+                      ? 'bg-pembimbingmu text-white shadow-lg'
+                      : 'text-black/70 hover:text-black'
+                  }`}
+                >
+                  Ruang Cerita
+                </button>
+                <button
+                  onClick={() => handleModeChange('asisten_akademik')}
+                  className={`flex-1 text-center px-4 py-2 rounded-md text-[0.79rem] sm:text-sm font-medium transition-all duration-200 ${
+                    currentMode === 'asisten_akademik'
+                      ? 'bg-pembimbingmu text-white shadow-lg'
+                      : 'text-black/70 hover:text-black'
+                  }`}
+                >
+                  Asisten Akademik
+                </button>
+              </nav>
+            </header>
 
-        {/* File Upload for Asisten Akademik */}
-        {currentMode === 'asisten_akademik' && !sessionDocumentId && (
-          <div className="pb-4">
-            <div className="bg-gray-800 rounded-2xl p-4">
-              <label className="block text-white text-sm font-medium mb-2">
-                Upload dokumen skripsi (.pdf atau .docx)
-              </label>
-              <input
-                type="file"
-                accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                onChange={handleFileUpload}
-                className="block w-full text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600 border border-gray-700 rounded-lg p-2 bg-gray-700"
-              />
-              {showUploadStatus && (
-                <p className="text-xs text-gray-400 mt-2">
-                  {uploadStatus}
-                </p>
+            {/* Mode Description + Upload */}
+            <article className="bg-gray-50 rounded-lg p-4 border border-gray-200 mt-4">
+              <div className="text-black text-[0.79rem] sm:text-sm prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                <ReactMarkdown>
+                  {modeDescriptions[currentMode]}
+                </ReactMarkdown>
+              </div>
+
+              {currentMode === 'asisten_akademik' && (
+                <div className="mt-4">
+                  <label className="block text-[0.79rem] sm:text-sm font-medium text-black mb-2">
+                    Unggah dokumen skripsi (.pdf atau .docx)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleFileUpload}
+                    className="block w-full text-black text-[0.79rem] sm:text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-[0.79rem] sm:file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
+                  />
+                  {showUploadStatus && (
+                    <p className="text-xs text-black/60 mt-2">
+                      {uploadStatus}
+                    </p>
+                  )}
+                  {sessionDocumentId && !showUploadStatus && (
+                    <p className="text-xs text-black/60 mt-2">
+                      Dokumen terunggah. ID sesi: {sessionDocumentId}
+                    </p>
+                  )}
+                </div>
               )}
-            </div>
-          </div>
-        )}
-      </main>
+            </article>
+          </section>
 
-      {/* Bottom Input Area */}
-      <footer className={`transition-all duration-300 ${isInputFocused ? 'pb-8' : 'pb-4'}`}>
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-4 mb-4 px-4">
-          <button className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-gray-800 text-gray-400 hover:text-white transition-colors">
-            <Video className="w-5 h-5" />
-            <span className="text-xs">Create Videos</span>
-          </button>
-          <button className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-gray-800 text-gray-400 hover:text-white transition-colors">
-            <Camera className="w-5 h-5" />
-            <span className="text-xs">Open Camera</span>
-          </button>
-          <button className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-gray-800 text-gray-400 hover:text-white transition-colors">
-            <Mic className="w-5 h-5" />
-            <span className="text-xs">Voice Mode</span>
-          </button>
-        </div>
+          {/* Chat Widget (history + input only) */}
+          <section className="bg-white rounded-2xl shadow-2xl h-[70vh] flex flex-col overflow-hidden">
+            {/* Chat History */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} animate-fade-in`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                      message.isBot
+                        ? 'bg-gray-100 text-black border border-gray-200'
+                        : 'bg-pembimbingmu text-white'
+                    }`}
+                  >
+                    {message.isBot ? (
+                      <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4">
+                        <ReactMarkdown>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-[0.79rem] sm:text-sm">{message.content}</p>
+                    )}
+                    <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
+                      {message.timestamp.toLocaleTimeString('id-ID', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
 
-        {/* Input Area */}
-        <div className="px-4 max-w-4xl mx-auto w-full">
-          <div className="relative">
-            <Textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => setIsInputFocused(false)}
-              placeholder="Tanya apa saja"
-              className="w-full min-h-[50px] max-h-[150px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 rounded-2xl pr-12 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={isLoading}
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={isLoading || !inputMessage.trim()}
-              className="absolute right-2 top-2 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition-colors"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="flex items-center justify-between mt-2 px-2">
-            <button className="p-1">
-              <Paperclip className="w-4 h-4 text-gray-400" />
-            </button>
-            <div className="text-xs text-gray-400">
-              Fast
+              {isLoading && (
+                <div className="flex justify-start animate-fade-in">
+                  <div className="bg-gray-100 text-black border border-gray-200 rounded-2xl px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                      <span className="text-[0.79rem] sm:text-sm text-black/60">Sedang mengetik...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
             </div>
-            <button className="p-1">
-              <Mic className="w-4 h-4 text-gray-400" />
-            </button>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
+
+            {/* Input Area */}
+            <div className="p-4 sm:p-6 border-t border-gray-200">
+              <div className="flex gap-3">
+                <Input
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ketik pesan Anda..."
+                  className="flex-1 bg-white border-gray-200 text-black text-[0.9rem] sm:text-base placeholder:text-black/50 focus:border-[hsl(var(--pembimbingmu-green))] focus:ring-[hsl(var(--pembimbingmu-green))]/20"
+                  disabled={isLoading}
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={isLoading || !inputMessage.trim()}
+                  className="bg-white hover:bg-gray-50 text-[hsl(var(--pembimbingmu-green))] border border-gray-200 px-4"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
 };
 
 export default ChatbotSkripsi;
