@@ -182,54 +182,29 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Bimbingan Skripsi #1 di Indonesia
-              </h1>
-              <p className="text-xl md:text-2xl mb-8">
-                Wujudkan impian lulus tepat waktu dengan bimbingan profesional dari mentor berpengalaman
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button 
-                  onClick={handleWhatsAppClick}
-                  size="lg" 
-                  className="bg-white text-[#81b59a] hover:bg-gray-100 font-semibold px-8 py-4"
-                >
-                  <Phone className="mr-2 h-5 w-5" />
-                  Konsultasi Gratis Sekarang
-                </Button>
-                <Button 
-                  size="lg" 
-                  className="bg-[#81b59a] border-2 border-white text-white hover:bg-white hover:text-[#81b59a] font-semibold px-8 py-4 transition-all duration-300"
-                  onClick={() => document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  Lihat Paket Bimbingan
-                </Button>
-              </div>
-            </div>
-
-            {/* Right Video */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="w-72 h-72 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl backdrop-blur-sm">
-                  <video 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    className="w-full h-full object-cover"
-                  >
-                    <source src="/graduation-animation.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-                {/* Decorative glow effect */}
-                <div className="absolute inset-0 rounded-full bg-white/10 animate-pulse"></div>
-              </div>
-            </div>
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Bimbingan Skripsi #1 di Indonesia
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+            Wujudkan impian lulus tepat waktu dengan bimbingan profesional dari mentor berpengalaman
+          </p>
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleWhatsAppClick}
+              size="lg" 
+              className="bg-white text-[#81b59a] hover:bg-gray-100 font-semibold px-8 py-4"
+            >
+              <Phone className="mr-2 h-5 w-5" />
+              Konsultasi Gratis Sekarang
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-[#81b59a] border-2 border-white text-white hover:bg-white hover:text-[#81b59a] font-semibold px-8 py-4 transition-all duration-300"
+              onClick={() => document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Lihat Paket Bimbingan
+            </Button>
           </div>
         </div>
       </section>
