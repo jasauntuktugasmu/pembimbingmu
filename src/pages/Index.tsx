@@ -291,7 +291,7 @@ const Index = () => {
           {mobileMenuOpen && (
             <div className="md:hidden mt-4 pb-4 border-t pt-4">
               <div className="flex flex-col space-y-4">
-                <div className="sm:hidden">
+                <div className="text-center">
                   <h1 className="text-lg font-bold text-[#81b59a]">Pembimbingmu</h1>
                   <p className="text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
                 </div>
@@ -382,143 +382,166 @@ const Index = () => {
             <p className="text-lg text-gray-600">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Ruang Cerita */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-2 border-[#81b59a]/20">
-              <CardHeader className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white rounded-t-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <MessageCircle className="h-8 w-8" />
-                    <div>
-                      <CardTitle className="text-xl">Ruang Cerita</CardTitle>
-                      <CardDescription className="text-white/90">Tempat curhat & motivasi</CardDescription>
+          <div className="max-w-6xl mx-auto">
+            {/* Chat Interface */}
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Top Controls Panel */}
+              <div className="bg-white p-4 sm:p-6 border-b">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#81b59a] rounded-full"></div>
+                      <span className="text-[#81b59a] text-sm">Online</span>
                     </div>
                   </div>
-                  <Badge className="bg-white/20 text-white">
-                    {ruangCeriteCredits} kredit tersisa
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
-                  Butuh tempat untuk berkeluh kesah tentang skripsi? Ceritakan semua keresahan Anda di sini. 
-                  Dapatkan motivasi dan dukungan emosional selama perjalanan skripsi.
-                </p>
-                
-                {/* Chat Area */}
-                <div className="bg-gray-50 rounded-lg p-4 h-48 overflow-y-auto mb-4">
-                  {ruangCeriteChat.length === 0 ? (
-                    <p className="text-gray-500 text-center mt-16">Mulai ceritakan keresahan Anda...</p>
-                  ) : (
-                    <div className="space-y-3">
-                      {ruangCeriteChat.map((msg, idx) => (
-                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[80%] p-3 rounded-lg ${
-                            msg.role === 'user' 
-                              ? 'bg-[#81b59a] text-white' 
-                              : 'bg-white border border-gray-200'
-                          }`}>
-                            <p className="text-sm">{msg.content}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Input Area */}
-                <div className="flex space-x-2">
-                  <Input 
-                    placeholder="Ceritakan keresahan Anda..."
-                    value={ruangCeriteMessage}
-                    onChange={(e) => setRuangCeriteMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleRuangCeriteSend()}
-                    className="flex-1"
-                  />
-                  <Button 
-                    onClick={handleRuangCeriteSend}
-                    disabled={ruangCeriteCredits <= 0 || !ruangCeriteMessage.trim()}
-                    className="bg-[#81b59a] hover:bg-[#6fa085] text-white"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Asisten Akademik */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-2 border-[#81b59a]/20">
-              <CardHeader className="bg-gradient-to-r from-[#6fa085] to-[#81b59a] text-white rounded-t-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <BookOpen className="h-8 w-8" />
-                    <div>
-                      <CardTitle className="text-xl">Asisten Akademik</CardTitle>
-                      <CardDescription className="text-white/90">Tips & panduan skripsi</CardDescription>
-                    </div>
+                  {/* Mode Selector */}
+                  <div className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto">
+                    <button
+                      className="flex-1 text-center px-4 py-2 rounded-md text-sm font-medium bg-[#81b59a] text-white shadow-lg"
+                    >
+                      Ruang Cerita ({ruangCeriteCredits})
+                    </button>
+                    <button
+                      className="flex-1 text-center px-4 py-2 rounded-md text-sm font-medium text-black/70"
+                    >
+                      Asisten Akademik ({assistantCredits})
+                    </button>
                   </div>
-                  <Badge className="bg-white/20 text-white">
-                    {assistantCredits} kredit tersisa
-                  </Badge>
                 </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-gray-700 mb-4">
-                  Butuh bantuan teknis untuk skripsi? Tanyakan tips metodologi, struktur penulisan, 
-                  cara menghadapi dosen pembimbing, dan panduan akademik lainnya.
-                </p>
-                
-                {/* Chat Area */}
-                <div className="bg-gray-50 rounded-lg p-4 h-48 overflow-y-auto mb-4">
-                  {assistantChat.length === 0 ? (
-                    <p className="text-gray-500 text-center mt-16">Tanyakan tips skripsi Anda...</p>
-                  ) : (
-                    <div className="space-y-3">
-                      {assistantChat.map((msg, idx) => (
-                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[80%] p-3 rounded-lg ${
-                            msg.role === 'user' 
-                              ? 'bg-[#6fa085] text-white' 
-                              : 'bg-white border border-gray-200'
-                          }`}>
-                            <p className="text-sm">{msg.content}</p>
+
+                {/* Mode Description */}
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="text-black text-sm">
+                    <p className="mb-2"><strong>Ruang Cerita:</strong> ✅ Berbagi cerita, mengatasi stres, & mencari motivasi</p>
+                    <p><strong>Asisten Akademik:</strong> ✅ Tips metodologi, struktur penulisan, & panduan akademik</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Chat Area - Side by Side */}
+              <div className="flex flex-col lg:flex-row min-h-[500px]">
+                {/* Ruang Cerita Chat */}
+                <div className="flex-1 flex flex-col border-r border-gray-200">
+                  <div className="bg-[#81b59a] text-white p-3 text-center">
+                    <h4 className="font-semibold">Ruang Cerita</h4>
+                    <p className="text-xs">Tempat curhat & motivasi</p>
+                  </div>
+                  
+                  {/* Chat Messages */}
+                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50/50" style={{ maxHeight: '300px' }}>
+                    {ruangCeriteChat.length === 0 ? (
+                      <div className="text-center text-gray-500 mt-8">
+                        <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p>Ceritakan keresahan skripsi Anda...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {ruangCeriteChat.map((msg, idx) => (
+                          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                              msg.role === 'user' 
+                                ? 'bg-[#81b59a] text-white' 
+                                : 'bg-white border border-gray-200 text-gray-800'
+                            }`}>
+                              {msg.content}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Input Area */}
+                  <div className="p-3 border-t bg-white">
+                    <div className="flex space-x-2">
+                      <Input 
+                        placeholder="Ceritakan keresahan Anda..."
+                        value={ruangCeriteMessage}
+                        onChange={(e) => setRuangCeriteMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleRuangCeriteSend()}
+                        className="flex-1 text-sm"
+                        disabled={ruangCeriteCredits <= 0}
+                      />
+                      <Button 
+                        onClick={handleRuangCeriteSend}
+                        disabled={ruangCeriteCredits <= 0 || !ruangCeriteMessage.trim()}
+                        className="bg-[#81b59a] hover:bg-[#6fa085] text-white"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
+                    <p className="text-xs text-gray-500 mt-1">Kredit tersisa: {ruangCeriteCredits}</p>
+                  </div>
                 </div>
-                
-                {/* Input Area */}
-                <div className="flex space-x-2">
-                  <Input 
-                    placeholder="Tanyakan tips tentang skripsi..."
-                    value={assistantMessage}
-                    onChange={(e) => setAssistantMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAssistantSend()}
-                    className="flex-1"
-                  />
-                  <Button 
-                    onClick={handleAssistantSend}
-                    disabled={assistantCredits <= 0 || !assistantMessage.trim()}
-                    className="bg-[#6fa085] hover:bg-[#81b59a] text-white"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
+
+                {/* Asisten Akademik Chat */}
+                <div className="flex-1 flex flex-col">
+                  <div className="bg-[#6fa085] text-white p-3 text-center">
+                    <h4 className="font-semibold">Asisten Akademik</h4>
+                    <p className="text-xs">Tips & panduan skripsi</p>
+                  </div>
+                  
+                  {/* Chat Messages */}
+                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50/50" style={{ maxHeight: '300px' }}>
+                    {assistantChat.length === 0 ? (
+                      <div className="text-center text-gray-500 mt-8">
+                        <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p>Tanyakan tips skripsi Anda...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {assistantChat.map((msg, idx) => (
+                          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                              msg.role === 'user' 
+                                ? 'bg-[#6fa085] text-white' 
+                                : 'bg-white border border-gray-200 text-gray-800'
+                            }`}>
+                              {msg.content}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Input Area */}
+                  <div className="p-3 border-t bg-white">
+                    <div className="flex space-x-2">
+                      <Input 
+                        placeholder="Tanyakan tips tentang skripsi..."
+                        value={assistantMessage}
+                        onChange={(e) => setAssistantMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleAssistantSend()}
+                        className="flex-1 text-sm"
+                        disabled={assistantCredits <= 0}
+                      />
+                      <Button 
+                        onClick={handleAssistantSend}
+                        disabled={assistantCredits <= 0 || !assistantMessage.trim()}
+                        className="bg-[#6fa085] hover:bg-[#81b59a] text-white"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Kredit tersisa: {assistantCredits}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="text-center mt-8">
-            <p className="text-gray-600 mb-4">Ingin kredit tambahan?</p>
-            <Button 
-              onClick={handleWhatsAppClick}
-              className="bg-[#81b59a] hover:bg-[#6fa085] text-white px-6 py-3"
-            >
-              <Phone className="mr-2 h-4 w-4" />
-              Hubungi Kami di WhatsApp
-            </Button>
+              </div>
+            </div>
+            
+            <div className="text-center mt-8">
+              <p className="text-gray-600 mb-4">Ingin kredit tambahan atau bimbingan penuh?</p>
+              <Button 
+                onClick={handleWhatsAppClick}
+                className="bg-[#81b59a] hover:bg-[#6fa085] text-white px-6 py-3"
+              >
+                <Phone className="mr-2 h-4 w-4" />
+                Hubungi Kami di WhatsApp
+              </Button>
+            </div>
           </div>
         </div>
       </section>
