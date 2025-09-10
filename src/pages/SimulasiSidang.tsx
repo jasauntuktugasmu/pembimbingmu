@@ -1,12 +1,12 @@
 import SEO from '@/components/SEO';
 
-export default function CVAnalysis() {
+export default function SimulasiSidang() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": "https://pembimbingmu.lovable.app/dashboard/cv",
-    "name": "Analisis CV Terbaikmu - Pembimbingmu",
-    "description": "Analisis CV berbasis AI dengan skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar",
+    "@id": "https://pembimbingmu.lovable.app/dashboard/simulasi-sidang",
+    "name": "Simulasi Sidang Voicebot - Pembimbingmu",
+    "description": "Simulasi sidang skripsi dengan voicebot AI untuk latihan presentasi dan tanya jawab",
     "isPartOf": {
       "@type": "WebSite",
       "name": "Pembimbingmu",
@@ -17,23 +17,23 @@ export default function CVAnalysis() {
   return (
     <>
       <SEO 
-        title="Analisis CV Terbaikmu - Coming Soon | Pembimbingmu"
-        description="Fitur Analisis CV berbasis AI akan segera hadir. Dapatkan skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar."
-        canonical="https://pembimbingmu.lovable.app/dashboard/cv"
+        title="Simulasi Sidang Voicebot - Coming Soon | Pembimbingmu"
+        description="Fitur Simulasi Sidang dengan Voicebot AI akan segera hadir. Latih presentasi dan tanya jawab sidang skripsi Anda."
+        canonical="https://pembimbingmu.lovable.app/dashboard/simulasi-sidang"
         jsonLd={structuredData}
       />
       <div className="max-w-[900px] mx-auto p-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Analisis CV Terbaikmu
+            Simulasi Sidang Voicebot
           </h1>
           <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-8 rounded-lg">
             <h2 className="text-xl font-semibold mb-2">🚧 Coming Soon</h2>
             <p className="text-lg">
-              Fitur Analisis CV berbasis AI sedang dalam tahap pengembangan dan akan segera hadir untuk Anda!
+              Fitur Simulasi Sidang dengan Voicebot AI sedang dalam tahap pengembangan dan akan segera hadir!
             </p>
             <p className="mt-4 text-sm">
-              Nantikan fitur analisis mendalam dengan skor ATS, prediksi pertanyaan interview, dan rekomendasi belajar.
+              Nantikan simulasi sidang interaktif dengan voice AI untuk latihan presentasi dan sesi tanya jawab.
             </p>
           </div>
         </div>

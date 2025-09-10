@@ -36,6 +36,7 @@ const navigationItems = [
   { title: "Chatbot Konsultasi Skripsi", url: "/dashboard/chatbotskripsi", icon: MessageCircle },
   { title: "Analisa CV Terbaikmu", url: "/dashboard/cv", icon: FileText },
   { title: "LMS Skripsi", url: "/dashboard/lms", icon: FileText },
+  { title: "Simulasi Sidang Chatbot", url: "/dashboard/simulasi-sidang", icon: Mic },
 ];
 
 function AppSidebar({ onLogout }: { onLogout: () => void }) {
@@ -140,6 +141,29 @@ export default function Dashboard() {
       } else {
         setProfile(profileData);
       }
+
+      // Set up real-time subscription for profile changes
+      const profileSubscription = supabase
+        .channel('profile-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${session.user.id}`
+          },
+          (payload) => {
+            if (payload.new) {
+              setProfile(payload.new);
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        profileSubscription.unsubscribe();
+      };
     };
 
     getSession();
@@ -218,10 +242,6 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-2">
                     <Coins className="h-4 w-4 text-[#81b59a]" />
                     <span>Kredit Chat: {profile?.credits || 0}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-[#81b59a]" />
-                    <span>Kredit CV: {profile?.cv_credits || 0}</span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">

@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CVAnalysis from "./pages/CVAnalysis";
 import ChatbotSkripsi from "./pages/ChatbotSkripsi";
+import SimulasiSidang from "./pages/SimulasiSidang";
 import NotFound from "./pages/NotFound";
 import LMSDashboard from "./pages/LMSDashboard";
 import LMSLesson from "./pages/LMSLesson";
@@ -31,6 +32,7 @@ const App = () => (
             <Route index element={<DashboardHome />} />
             <Route path="cv" element={<CVAnalysis />} />
             <Route path="chatbotskripsi" element={<ChatbotSkripsi />} />
+            <Route path="simulasi-sidang" element={<SimulasiSidang />} />
           </Route>
           <Route path="/dashboard/lms" element={<LMSDashboard />} />
           <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
