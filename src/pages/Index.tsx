@@ -1,17 +1,50 @@
 
-import React from 'react';
-import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink, LogIn } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Phone, CheckCircle, Users, Clock, Award, Mail, MapPin, Instagram, ExternalLink, LogIn, Menu, X, MessageCircle, BookOpen, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [ruangCeriteCredits, setRuangCeriteCredits] = useState(5);
+  const [assistantCredits, setAssistantCredits] = useState(1);
+  const [ruangCeriteMessage, setRuangCeriteMessage] = useState('');
+  const [assistantMessage, setAssistantMessage] = useState('');
+  const [ruangCeriteChat, setRuangCeriteChat] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
+  const [assistantChat, setAssistantChat] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
+  
   const whatsappNumber = "6289525035845"; // Updated WhatsApp number
   const whatsappMessage = "Halo! Saya tertarik dengan layanan bimbingan skripsi Pembimbingmu";
+
+  // Load credits from localStorage on component mount
+  useEffect(() => {
+    const savedRuangCredits = localStorage.getItem('ruangCeriteCredits');
+    const savedAssistantCredits = localStorage.getItem('assistantCredits');
+    
+    if (savedRuangCredits !== null) {
+      setRuangCeriteCredits(parseInt(savedRuangCredits));
+    }
+    if (savedAssistantCredits !== null) {
+      setAssistantCredits(parseInt(savedAssistantCredits));
+    }
+  }, []);
+
+  // Save credits to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('ruangCeriteCredits', ruangCeriteCredits.toString());
+  }, [ruangCeriteCredits]);
+
+  useEffect(() => {
+    localStorage.setItem('assistantCredits', assistantCredits.toString());
+  }, [assistantCredits]);
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
@@ -19,6 +52,70 @@ const Index = () => {
 
   const handleLoginClick = () => {
     navigate('/login');
+  };
+
+  const handleRuangCeriteSend = () => {
+    if (!ruangCeriteMessage.trim()) return;
+    
+    if (ruangCeriteCredits <= 0) {
+      toast({
+        title: "Kredit habis!",
+        description: "Kredit Ruang Cerita Anda sudah habis. Silakan hubungi kami untuk mendapatkan lebih banyak kredit.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newChat = [...ruangCeriteChat, { role: 'user' as const, content: ruangCeriteMessage }];
+    setRuangCeriteChat(newChat);
+    setRuangCeriteMessage('');
+    setRuangCeriteCredits(prev => prev - 1);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const responses = [
+        "Saya memahami perasaan Anda. Mengerjakan skripsi memang bisa terasa overwhelming. Coba break down tugas menjadi bagian kecil dan fokus satu per satu.",
+        "Wajar kalau merasa tertekan menjelang sidang. Yang penting adalah persiapan yang matang. Sudah coba latihan presentasi di depan teman atau keluarga?",
+        "Perasaan takut gagal itu normal. Ingat bahwa dosen pembimbing ingin Anda berhasil. Mereka ada untuk membantu, bukan menjatuhkan.",
+        "Stress itu wajar, tapi jangan sampai berlebihan. Coba atur waktu dengan baik dan jangan lupa istirahat. Self-care juga penting loh!",
+        "Setiap mahasiswa pasti merasakan hal yang sama. Kamu tidak sendirian! Fokus pada progress yang sudah dicapai, bukan yang belum."
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      setRuangCeriteChat(prev => [...prev, { role: 'assistant', content: randomResponse }]);
+    }, 1000);
+  };
+
+  const handleAssistantSend = () => {
+    if (!assistantMessage.trim()) return;
+    
+    if (assistantCredits <= 0) {
+      toast({
+        title: "Kredit habis!",
+        description: "Kredit Asisten Akademik Anda sudah habis. Silakan hubungi kami untuk mendapatkan lebih banyak kredit.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newChat = [...assistantChat, { role: 'user' as const, content: assistantMessage }];
+    setAssistantChat(newChat);
+    setAssistantMessage('');
+    setAssistantCredits(prev => prev - 1);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const responses = [
+        "Untuk bab pendahuluan yang baik, pastikan ada latar belakang masalah yang jelas, rumusan masalah, tujuan penelitian, dan manfaat penelitian. Semuanya harus saling terhubung.",
+        "Tips metodologi penelitian: Pilih metode yang sesuai dengan jenis penelitian Anda. Jelaskan populasi, sampel, teknik pengumpulan data, dan analisis data secara detail.",
+        "Untuk landasan teori yang kuat, gunakan referensi terbaru (5-10 tahun terakhir), kombinasikan buku dan jurnal, dan pastikan teori mendukung variable penelitian Anda.",
+        "Struktur proposal yang baik: Judul, Pendahuluan, Landasan Teori, Metodologi, Daftar Pustaka. Pastikan setiap bab memiliki alur yang logis dan berkesinambungan.",
+        "Tips menghadapi dosen pembimbing: Datang dengan persiapan matang, bawa draft yang sudah dibaca berkali-kali, dan siapkan pertanyaan spesifik untuk didiskusikan."
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      setAssistantChat(prev => [...prev, { role: 'assistant', content: randomResponse }]);
+    }, 1000);
   };
 
   const packages = [
@@ -157,26 +254,57 @@ const Index = () => {
         {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
                 src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
                 alt="Pembimbingmu Logo" 
                 className="h-10 md:h-12 w-auto"
               />
-              <div className="text-center md:text-left">
+              <div className="hidden sm:block">
                 <h1 className="text-lg md:text-xl font-bold text-[#81b59a]">Pembimbingmu</h1>
                 <p className="text-xs md:text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
               </div>
             </div>
-            <Button 
-              onClick={handleLoginClick}
-              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded-lg flex items-center space-x-2 text-sm md:text-base whitespace-nowrap"
+            
+            {/* Desktop Menu */}
+            <div className="hidden md:block">
+              <Button 
+                onClick={handleLoginClick}
+                className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Masuk</span>
+              </Button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
             >
-              <LogIn className="h-4 w-4" />
-              <span>Masuk</span>
-            </Button>
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t pt-4">
+              <div className="flex flex-col space-y-4">
+                <div className="sm:hidden">
+                  <h1 className="text-lg font-bold text-[#81b59a]">Pembimbingmu</h1>
+                  <p className="text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
+                </div>
+                <Button 
+                  onClick={handleLoginClick}
+                  className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center space-x-2 w-full"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Masuk</span>
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -242,6 +370,155 @@ const Index = () => {
               <h3 className="text-xl font-semibold mb-2">Garansi ACC</h3>
               <p className="text-gray-600">Jaminan ACC untuk paket premium</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Chatbot Products Section */}
+      <section className="py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Asisten AI Pembimbingmu</h2>
+            <p className="text-lg text-gray-600">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Ruang Cerita */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-2 border-[#81b59a]/20">
+              <CardHeader className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <MessageCircle className="h-8 w-8" />
+                    <div>
+                      <CardTitle className="text-xl">Ruang Cerita</CardTitle>
+                      <CardDescription className="text-white/90">Tempat curhat & motivasi</CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-white/20 text-white">
+                    {ruangCeriteCredits} kredit tersisa
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-gray-700 mb-4">
+                  Butuh tempat untuk berkeluh kesah tentang skripsi? Ceritakan semua keresahan Anda di sini. 
+                  Dapatkan motivasi dan dukungan emosional selama perjalanan skripsi.
+                </p>
+                
+                {/* Chat Area */}
+                <div className="bg-gray-50 rounded-lg p-4 h-48 overflow-y-auto mb-4">
+                  {ruangCeriteChat.length === 0 ? (
+                    <p className="text-gray-500 text-center mt-16">Mulai ceritakan keresahan Anda...</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {ruangCeriteChat.map((msg, idx) => (
+                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[80%] p-3 rounded-lg ${
+                            msg.role === 'user' 
+                              ? 'bg-[#81b59a] text-white' 
+                              : 'bg-white border border-gray-200'
+                          }`}>
+                            <p className="text-sm">{msg.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Input Area */}
+                <div className="flex space-x-2">
+                  <Input 
+                    placeholder="Ceritakan keresahan Anda..."
+                    value={ruangCeriteMessage}
+                    onChange={(e) => setRuangCeriteMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleRuangCeriteSend()}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleRuangCeriteSend}
+                    disabled={ruangCeriteCredits <= 0 || !ruangCeriteMessage.trim()}
+                    className="bg-[#81b59a] hover:bg-[#6fa085] text-white"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Asisten Akademik */}
+            <Card className="hover:shadow-xl transition-all duration-300 border-2 border-[#81b59a]/20">
+              <CardHeader className="bg-gradient-to-r from-[#6fa085] to-[#81b59a] text-white rounded-t-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <BookOpen className="h-8 w-8" />
+                    <div>
+                      <CardTitle className="text-xl">Asisten Akademik</CardTitle>
+                      <CardDescription className="text-white/90">Tips & panduan skripsi</CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-white/20 text-white">
+                    {assistantCredits} kredit tersisa
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-gray-700 mb-4">
+                  Butuh bantuan teknis untuk skripsi? Tanyakan tips metodologi, struktur penulisan, 
+                  cara menghadapi dosen pembimbing, dan panduan akademik lainnya.
+                </p>
+                
+                {/* Chat Area */}
+                <div className="bg-gray-50 rounded-lg p-4 h-48 overflow-y-auto mb-4">
+                  {assistantChat.length === 0 ? (
+                    <p className="text-gray-500 text-center mt-16">Tanyakan tips skripsi Anda...</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {assistantChat.map((msg, idx) => (
+                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[80%] p-3 rounded-lg ${
+                            msg.role === 'user' 
+                              ? 'bg-[#6fa085] text-white' 
+                              : 'bg-white border border-gray-200'
+                          }`}>
+                            <p className="text-sm">{msg.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Input Area */}
+                <div className="flex space-x-2">
+                  <Input 
+                    placeholder="Tanyakan tips tentang skripsi..."
+                    value={assistantMessage}
+                    onChange={(e) => setAssistantMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAssistantSend()}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={handleAssistantSend}
+                    disabled={assistantCredits <= 0 || !assistantMessage.trim()}
+                    className="bg-[#6fa085] hover:bg-[#81b59a] text-white"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="text-center mt-8">
+            <p className="text-gray-600 mb-4">Ingin kredit tambahan?</p>
+            <Button 
+              onClick={handleWhatsAppClick}
+              className="bg-[#81b59a] hover:bg-[#6fa085] text-white px-6 py-3"
+            >
+              <Phone className="mr-2 h-4 w-4" />
+              Hubungi Kami di WhatsApp
+            </Button>
           </div>
         </div>
       </section>
