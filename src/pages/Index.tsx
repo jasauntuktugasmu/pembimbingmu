@@ -14,6 +14,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
   const [currentMode, setCurrentMode] = useState<'ruang_cerita' | 'asisten_akademik'>('ruang_cerita');
   const [sessionDocumentId, setSessionDocumentId] = useState<string>('');
   const [sessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
@@ -154,11 +155,6 @@ const Index = () => {
     // Check credits
     const currentCredits = currentMode === 'ruang_cerita' ? ruangCeriteCredits : assistantCredits;
     if (currentCredits <= 0) {
-      toast({
-        title: "Kredit habis!",
-        description: `Kredit ${currentMode === 'ruang_cerita' ? 'Ruang Cerita' : 'Asisten Akademik'} Anda sudah habis.`,
-        variant: "destructive"
-      });
       return;
     }
 
@@ -482,157 +478,204 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Chatbot Products Section - Exact Copy of Dashboard */}
+      {/* AI Assistant Section */}
       <section className="py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Asisten AI Pembimbingmu</h2>
-            <p className="text-lg text-gray-600">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
+            <p className="text-lg text-gray-600 mb-8">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
+            
+            <Button 
+              onClick={() => {
+                setShowChatbot(!showChatbot);
+                if (!showChatbot) {
+                  setTimeout(() => {
+                    document.getElementById('chatbot-section')?.scrollIntoView({ 
+                      behavior: 'smooth', 
+                      block: 'start' 
+                    });
+                  }, 100);
+                }
+              }}
+              size="lg"
+              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-8 py-4 rounded-lg"
+            >
+              {showChatbot ? 'Tutup Assistant' : 'Coba Sekarang'}
+            </Button>
           </div>
           
-          <div className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
-            {/* Top Controls Panel */}
-            <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h3>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 text-[#81b59a] fill-[#81b59a] bg-[#81b59a] rounded-full"></div>
-                    <span className="text-[#81b59a] text-sm">Online</span>
-                  </div>
-                </div>
-
-                {/* Mode Selector */}
-                <div className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto">
-                  <button
-                    onClick={() => handleModeChange('ruang_cerita')}
-                    className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                      currentMode === 'ruang_cerita'
-                        ? 'bg-[#81b59a] text-white shadow-lg'
-                        : 'text-black/70 hover:text-black'
-                    }`}
+          {/* Chatbot Interface - Only show when toggled */}
+          {showChatbot && (
+            <div id="chatbot-section" className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
+              {/* Show credit exhaustion message when both credits are zero */}
+              {ruangCeriteCredits <= 0 && assistantCredits <= 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">
+                    Kredit uji coba kamu habis, yah
+                  </h3>
+                  <p className="text-red-700 mb-4">
+                    Silahkan dapatkan akses penuh untuk melanjutkan menggunakan asisten AI
+                  </p>
+                  <Button 
+                    onClick={handleWhatsAppClick}
+                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
                   >
-                    Ruang Cerita ({ruangCeriteCredits})
-                  </button>
-                  <button
-                    onClick={() => handleModeChange('asisten_akademik')}
-                    className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                      currentMode === 'asisten_akademik'
-                        ? 'bg-[#81b59a] text-white shadow-lg'
-                        : 'text-black/70 hover:text-black'
-                    }`}
-                  >
-                    Asisten Akademik ({assistantCredits})
-                  </button>
-                </div>
-              </div>
-
-              {/* Mode Description + Upload */}
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mt-4">
-                <div className="text-black text-sm">
-                  <p>{modeDescriptions[currentMode]}</p>
-                </div>
-
-                {currentMode === 'asisten_akademik' && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-black mb-2">
-                      Unggah dokumen skripsi (.pdf atau .docx)
-                    </label>
-                    <input
-                      type="file"
-                      accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={handleFileUpload}
-                      className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
-                    />
-                    {showUploadStatus && (
-                      <p className="text-xs text-black/60 mt-2">
-                        {uploadStatus}
-                      </p>
-                    )}
-                    {sessionDocumentId && !showUploadStatus && (
-                      <p className="text-xs text-black/60 mt-2">
-                        Dokumen terunggah. ID sesi: {sessionDocumentId}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Chat Widget */}
-            <div className="bg-white rounded-2xl shadow-2xl h-[70vh] flex flex-col overflow-hidden">
-              {/* Chat History */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                        message.isBot
-                          ? 'bg-gray-100 text-black border border-gray-200'
-                          : 'bg-[#81b59a] text-white'
-                      }`}
-                    >
-                      {message.isBot ? (
-                        <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                          <p className="text-sm">{message.content}</p>
-                        </div>
-                      ) : (
-                        <p className="text-sm">{message.content}</p>
-                      )}
-                      <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
-                        {message.timestamp.toLocaleTimeString('id-ID', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 text-black border border-gray-200 rounded-2xl px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse"></div>
-                          <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                          <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                        </div>
-                        <span className="text-sm text-black/60">Sedang mengetik...</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Input Area */}
-              <div className="p-4 sm:p-6 border-t border-gray-200">
-                <div className="flex gap-3">
-                  <Input
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                    placeholder="Ketik pesan Anda..."
-                    className="flex-1 bg-white border-gray-200 text-black text-base placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
-                    disabled={isLoading}
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    disabled={isLoading || !inputMessage.trim() || (currentMode === 'ruang_cerita' ? ruangCeriteCredits <= 0 : assistantCredits <= 0)}
-                    className="bg-white hover:bg-gray-50 text-[#81b59a] border border-gray-200 px-4"
-                  >
-                    <Send className="w-4 h-4" />
+                    <Phone className="mr-2 h-4 w-4" />
+                    Dapatkan Akses Disini
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Kredit tersisa: {currentMode === 'ruang_cerita' ? ruangCeriteCredits : assistantCredits}
-                </p>
-              </div>
+              )}
+              
+              {/* Show chatbot interface only when there are credits */}
+              {(ruangCeriteCredits > 0 || assistantCredits > 0) && (
+                <>
+                  {/* Top Controls Panel */}
+                  <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <h3 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h3>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 text-[#81b59a] fill-[#81b59a] bg-[#81b59a] rounded-full"></div>
+                          <span className="text-[#81b59a] text-sm">Online</span>
+                        </div>
+                      </div>
+
+                      {/* Mode Selector */}
+                      <div className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto">
+                        <button
+                          onClick={() => handleModeChange('ruang_cerita')}
+                          className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                            currentMode === 'ruang_cerita'
+                              ? 'bg-[#81b59a] text-white shadow-lg'
+                              : 'text-black/70 hover:text-black'
+                          }`}
+                          disabled={ruangCeriteCredits <= 0}
+                        >
+                          Ruang Cerita ({ruangCeriteCredits})
+                        </button>
+                        <button
+                          onClick={() => handleModeChange('asisten_akademik')}
+                          className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                            currentMode === 'asisten_akademik'
+                              ? 'bg-[#81b59a] text-white shadow-lg'
+                              : 'text-black/70 hover:text-black'
+                          }`}
+                          disabled={assistantCredits <= 0}
+                        >
+                          Asisten Akademik ({assistantCredits})
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mode Description + Upload */}
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mt-4">
+                      <div className="text-black text-sm">
+                        <p>{modeDescriptions[currentMode]}</p>
+                      </div>
+
+                      {currentMode === 'asisten_akademik' && (
+                        <div className="mt-4">
+                          <label className="block text-sm font-medium text-black mb-2">
+                            Unggah dokumen skripsi (.pdf atau .docx)
+                          </label>
+                          <input
+                            type="file"
+                            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            onChange={handleFileUpload}
+                            className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
+                          />
+                          {showUploadStatus && (
+                            <p className="text-xs text-black/60 mt-2">
+                              {uploadStatus}
+                            </p>
+                          )}
+                          {sessionDocumentId && !showUploadStatus && (
+                            <p className="text-xs text-black/60 mt-2">
+                              Dokumen terunggah. ID sesi: {sessionDocumentId}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Chat Widget */}
+                  <div className="bg-white rounded-2xl shadow-2xl h-[70vh] flex flex-col overflow-hidden">
+                    {/* Chat History */}
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                      {messages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+                        >
+                          <div
+                            className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                              message.isBot
+                                ? 'bg-gray-100 text-black border border-gray-200'
+                                : 'bg-[#81b59a] text-white'
+                            }`}
+                          >
+                            {message.isBot ? (
+                              <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                                <p className="text-sm">{message.content}</p>
+                              </div>
+                            ) : (
+                              <p className="text-sm">{message.content}</p>
+                            )}
+                            <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
+                              {message.timestamp.toLocaleTimeString('id-ID', { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-gray-100 text-black border border-gray-200 rounded-2xl px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <div className="flex gap-1">
+                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                              </div>
+                              <span className="text-sm text-black/60">Sedang mengetik...</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Input Area */}
+                    <div className="p-4 sm:p-6 border-t border-gray-200">
+                      <div className="flex gap-3">
+                        <Input
+                          value={inputMessage}
+                          onChange={(e) => setInputMessage(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                          placeholder="Ketik pesan Anda..."
+                          className="flex-1 bg-white border-gray-200 text-black text-base placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
+                          disabled={isLoading}
+                        />
+                        <Button
+                          onClick={handleSendMessage}
+                          disabled={isLoading || !inputMessage.trim() || (currentMode === 'ruang_cerita' ? ruangCeriteCredits <= 0 : assistantCredits <= 0)}
+                          className="bg-white hover:bg-gray-50 text-[#81b59a] border border-gray-200 px-4"
+                        >
+                          <Send className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Kredit tersisa: {currentMode === 'ruang_cerita' ? ruangCeriteCredits : assistantCredits}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
+          )}
           
           <div className="text-center mt-8">
             <p className="text-gray-600 mb-4">Ingin kredit tambahan atau bimbingan penuh?</p>
