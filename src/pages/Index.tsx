@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -506,21 +507,21 @@ const Index = () => {
           
           {/* Chatbot Interface - Only show when toggled */}
           {showChatbot && (
-            <div id="chatbot-section" className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            <div id="chatbot-section" className="w-full max-w-md mx-auto">
               {/* Show credit exhaustion message when both credits are zero */}
               {ruangCeriteCredits <= 0 && assistantCredits <= 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center mb-4">
                   <h3 className="text-lg font-semibold text-red-800 mb-2">
                     Kredit uji coba kamu habis, yah
                   </h3>
-                  <p className="text-red-700 mb-4">
+                  <p className="text-red-700 mb-4 text-sm">
                     Silahkan dapatkan akses penuh untuk melanjutkan menggunakan asisten AI
                   </p>
                   <Button 
-                    onClick={handleWhatsAppClick}
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
+                    onClick={() => window.open('http://lynk.id/pembimbingmu/xwek5peo1noy', '_blank')}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm"
                   >
-                    <Phone className="mr-2 h-4 w-4" />
+                    <Phone className="mr-2 h-3 w-3" />
                     Dapatkan Akses Disini
                   </Button>
                 </div>
@@ -529,100 +530,97 @@ const Index = () => {
               {/* Show chatbot interface only when there are credits */}
               {(ruangCeriteCredits > 0 || assistantCredits > 0) && (
                 <>
-                  {/* Top Controls Panel */}
-                  <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-black text-lg sm:text-xl font-semibold">Asisten Skripsi AI</h3>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 text-[#81b59a] fill-[#81b59a] bg-[#81b59a] rounded-full"></div>
-                          <span className="text-[#81b59a] text-sm">Online</span>
+                  {/* Mode Tabs - Minimal */}
+                  <div className="bg-white rounded-xl p-1 mb-4 shadow-sm flex">
+                    <button
+                      onClick={() => handleModeChange('ruang_cerita')}
+                      disabled={ruangCeriteCredits <= 0}
+                      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                        currentMode === 'ruang_cerita'
+                          ? 'bg-green-100 text-green-700'
+                          : 'text-gray-600 hover:text-gray-900'
+                      } ${ruangCeriteCredits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      Ruang Cerita ({ruangCeriteCredits})
+                    </button>
+                    <button
+                      onClick={() => handleModeChange('asisten_akademik')}
+                      disabled={assistantCredits <= 0}
+                      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                        currentMode === 'asisten_akademik'
+                          ? 'bg-green-100 text-green-700'
+                          : 'text-gray-600 hover:text-gray-900'
+                      } ${assistantCredits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      Asisten Akademik ({assistantCredits})
+                    </button>
+                  </div>
+
+                  {/* Info Card - Compact */}
+                  <div className="bg-white rounded-xl p-3 mb-4 shadow-sm">
+                    <div className="text-sm text-gray-700 space-y-1">
+                      {currentMode === 'ruang_cerita' ? (
+                        <div>
+                          <p><span className="text-green-600 font-medium">✓</span> Berbagi cerita & motivasi</p>
+                          <p><span className="text-red-500 font-medium">✗</span> Analisis dokumen</p>
                         </div>
-                      </div>
-
-                      {/* Mode Selector */}
-                      <div className="bg-gray-100 rounded-lg p-1 flex w-full sm:w-auto">
-                        <button
-                          onClick={() => handleModeChange('ruang_cerita')}
-                          className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                            currentMode === 'ruang_cerita'
-                              ? 'bg-[#81b59a] text-white shadow-lg'
-                              : 'text-black/70 hover:text-black'
-                          }`}
-                          disabled={ruangCeriteCredits <= 0}
-                        >
-                          Ruang Cerita ({ruangCeriteCredits})
-                        </button>
-                        <button
-                          onClick={() => handleModeChange('asisten_akademik')}
-                          className={`flex-1 text-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                            currentMode === 'asisten_akademik'
-                              ? 'bg-[#81b59a] text-white shadow-lg'
-                              : 'text-black/70 hover:text-black'
-                          }`}
-                          disabled={assistantCredits <= 0}
-                        >
-                          Asisten Akademik ({assistantCredits})
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Mode Description + Upload */}
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mt-4">
-                      <div className="text-black text-sm">
-                        <p>{modeDescriptions[currentMode]}</p>
-                      </div>
-
-                      {currentMode === 'asisten_akademik' && (
-                        <div className="mt-4">
-                          <label className="block text-sm font-medium text-black mb-2">
-                            Unggah dokumen skripsi (.pdf atau .docx)
-                          </label>
-                          <input
-                            type="file"
-                            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            onChange={handleFileUpload}
-                            className="block w-full text-black text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-white file:text-black hover:file:bg-gray-100 border border-gray-200 rounded-md p-2 bg-white"
-                          />
-                          {showUploadStatus && (
-                            <p className="text-xs text-black/60 mt-2">
-                              {uploadStatus}
-                            </p>
-                          )}
-                          {sessionDocumentId && !showUploadStatus && (
-                            <p className="text-xs text-black/60 mt-2">
-                              Dokumen terunggah. ID sesi: {sessionDocumentId}
-                            </p>
-                          )}
+                      ) : (
+                        <div>
+                          <p><span className="text-green-600 font-medium">✓</span> Analisis dokumen skripsi</p>
+                          <p><span className="text-orange-500 font-medium">!</span> Wajib upload dokumen dulu</p>
                         </div>
                       )}
                     </div>
+
+                    {/* File Upload - Only show when needed */}
+                    {currentMode === 'asisten_akademik' && (
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <input
+                          type="file"
+                          accept=".pdf,.docx"
+                          onChange={handleFileUpload}
+                          className="w-full text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-green-50 file:text-green-700 file:font-medium hover:file:bg-green-100 cursor-pointer"
+                        />
+                        {showUploadStatus && (
+                          <p className="text-xs text-gray-500 mt-2">{uploadStatus}</p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Chat Widget */}
-                  <div className="bg-white rounded-2xl shadow-2xl h-[70vh] flex flex-col overflow-hidden">
-                    {/* Chat History */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                  {/* Chat Container - Full Focus */}
+                  <div className="bg-white rounded-xl shadow-sm flex flex-col" style={{ height: '60vh' }}>
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
                       {messages.map((message) => (
                         <div
                           key={message.id}
                           className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
                         >
                           <div
-                            className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                            className={`max-w-[85%] rounded-xl px-3 py-2 ${
                               message.isBot
-                                ? 'bg-gray-100 text-black border border-gray-200'
-                                : 'bg-[#81b59a] text-white'
+                                ? 'bg-gray-50 text-gray-900'
+                                : 'bg-green-600 text-white'
                             }`}
                           >
                             {message.isBot ? (
-                              <div className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                                <p className="text-sm">{message.content}</p>
+                              <div className="text-sm leading-relaxed prose-sm prose-green max-w-none">
+                                <div className="[&>p]:my-1 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:ml-4 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:my-2 [&_li]:my-0.5">
+                                  <ReactMarkdown 
+                                    components={{
+                                      strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                                      p: ({ children }) => <p className="my-1">{children}</p>,
+                                    }}
+                                  >
+                                    {message.content}
+                                  </ReactMarkdown>
+                                </div>
                               </div>
                             ) : (
                               <p className="text-sm">{message.content}</p>
                             )}
-                            <div className={`text-xs mt-2 ${message.isBot ? 'text-black/60' : 'text-white/80'}`}>
+                            <div className={`text-xs mt-1 ${message.isBot ? 'text-gray-500' : 'text-white/80'}`}>
                               {message.timestamp.toLocaleTimeString('id-ID', { 
                                 hour: '2-digit', 
                                 minute: '2-digit' 
@@ -634,40 +632,41 @@ const Index = () => {
 
                       {isLoading && (
                         <div className="flex justify-start">
-                          <div className="bg-gray-100 text-black border border-gray-200 rounded-2xl px-4 py-3">
+                          <div className="bg-gray-50 rounded-xl px-3 py-2">
                             <div className="flex items-center gap-2">
                               <div className="flex gap-1">
-                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse"></div>
-                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                <div className="w-2 h-2 bg-black/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse"></div>
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                               </div>
-                              <span className="text-sm text-black/60">Sedang mengetik...</span>
+                              <span className="text-xs text-gray-500">Mengetik...</span>
                             </div>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* Input Area */}
-                    <div className="p-4 sm:p-6 border-t border-gray-200">
-                      <div className="flex gap-3">
+                    {/* Input - Clean & Focused */}
+                    <div className="p-3 border-t border-gray-100">
+                      <div className="flex gap-2 mb-2">
                         <Input
                           value={inputMessage}
                           onChange={(e) => setInputMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                          placeholder="Ketik pesan Anda..."
-                          className="flex-1 bg-white border-gray-200 text-black text-base placeholder:text-black/50 focus:border-[#81b59a] focus:ring-[#81b59a]/20"
-                          disabled={isLoading}
+                          placeholder="Tulis pesan..."
+                          className="flex-1 border-gray-200 text-sm focus:border-green-500 focus:ring-green-500/20 rounded-lg"
+                          disabled={isLoading || (currentMode === 'ruang_cerita' ? ruangCeriteCredits <= 0 : assistantCredits <= 0)}
                         />
                         <Button
                           onClick={handleSendMessage}
                           disabled={isLoading || !inputMessage.trim() || (currentMode === 'ruang_cerita' ? ruangCeriteCredits <= 0 : assistantCredits <= 0)}
-                          className="bg-white hover:bg-gray-50 text-[#81b59a] border border-gray-200 px-4"
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white px-3 rounded-lg"
                         >
                           <Send className="w-4 h-4" />
                         </Button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-gray-500 text-center">
                         Kredit tersisa: {currentMode === 'ruang_cerita' ? ruangCeriteCredits : assistantCredits}
                       </p>
                     </div>
