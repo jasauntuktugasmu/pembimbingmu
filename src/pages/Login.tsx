@@ -209,7 +209,7 @@ export default function Login() {
                 </button>
                 <div className="text-sm text-muted-foreground">
                   Belum dapat akses?{' '}
-                  <a href="#" className="text-primary hover:text-primary/80 underline">
+                  <a href="http://lynk.id/pembimbingmu/xwek5peo1noy" className="text-primary hover:text-primary/80 underline" target="_blank" rel="noopener noreferrer">
                     Dapatkan sekarang
                   </a>
                 </div>
