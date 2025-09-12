@@ -727,7 +727,7 @@ const Index = () => {
                   </li>
                 </ul>
                 <Button 
-                  onClick={() => window.open('http://lynk.id/pembimbingmu/2jPD6RL/checkout', '_blank')}
+                  onClick={() => window.open('http://lynk.id/pembimbingmu/2jPD6RL', '_blank')}
                   className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
@@ -766,7 +766,7 @@ const Index = () => {
                   </li>
                 </ul>
                 <Button 
-                  onClick={() => window.open('http://lynk.id/pembimbingmu/djdv4e263p1g/checkout', '_blank')}
+                  onClick={() => window.open('http://lynk.id/pembimbingmu/djdv4e263p1g', '_blank')}
                   className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
