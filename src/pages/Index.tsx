@@ -689,8 +689,97 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Services Section */}
+      {/* Digital Products Section */}
       <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Produk Digital Kami</h2>
+            <p className="text-lg text-gray-600">Dapatkan panduan dan template untuk mendukung skripsi Anda</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
+                  <h3 className="text-2xl font-bold">E-Book</h3>
+                  <p className="text-lg">Skripsi? Gampang Kok!</p>
+                </div>
+                <CardTitle className="text-xl">E-Book Panduan Skripsi</CardTitle>
+                <CardDescription>
+                  Panduan lengkap dan praktis untuk menyelesaikan skripsi dengan mudah
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center mb-4">
+                  <span className="text-3xl font-bold text-[#81b59a]">Rp20.000</span>
+                </div>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Tips & Trik Menulis Skripsi</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Strategi Menghadapi Dosen</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Template Proposal & Skripsi</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => window.open('http://lynk.id/pembimbingmu/2jPD6RL/checkout', '_blank')}
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Beli E-Book Sekarang
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
+                  <h3 className="text-2xl font-bold">Template</h3>
+                  <p className="text-lg">Work List Skripsi</p>
+                </div>
+                <CardTitle className="text-xl">Template Work List Skripsi</CardTitle>
+                <CardDescription>
+                  Template terstruktur untuk manajemen waktu dan progress skripsi Anda
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center mb-4">
+                  <span className="text-3xl font-bold text-[#81b59a]">Rp15.000</span>
+                </div>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Timeline Pengerjaan Skripsi</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Checklist Progress Harian</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
+                    <span className="text-sm">Template Excel Siap Pakai</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => window.open('http://lynk.id/pembimbingmu/djdv4e263p1g/checkout', '_blank')}
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Dapatkan Template
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Layanan Bimbingan Skripsi Terbaik</h2>
@@ -850,94 +939,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Digital Products Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Produk Digital Kami</h2>
-            <p className="text-lg text-gray-600">Dapatkan panduan dan template untuk mendukung skripsi Anda</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
-                  <h3 className="text-2xl font-bold">E-Book</h3>
-                  <p className="text-lg">Skripsi? Gampang Kok!</p>
-                </div>
-                <CardTitle className="text-xl">E-Book Panduan Skripsi</CardTitle>
-                <CardDescription>
-                  Panduan lengkap dan praktis untuk menyelesaikan skripsi dengan mudah
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center mb-4">
-                  <span className="text-3xl font-bold text-[#81b59a]">Rp20.000</span>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Tips & Trik Menulis Skripsi</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Strategi Menghadapi Dosen</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Template Proposal & Skripsi</span>
-                  </li>
-                </ul>
-                <Button 
-                  onClick={() => window.open('http://lynk.id/pembimbingmu/2jPD6RL/checkout', '_blank')}
-                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
-                >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Beli E-Book Sekarang
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
-                  <h3 className="text-2xl font-bold">Template</h3>
-                  <p className="text-lg">Work List Skripsi</p>
-                </div>
-                <CardTitle className="text-xl">Template Work List Skripsi</CardTitle>
-                <CardDescription>
-                  Template terstruktur untuk manajemen waktu dan progress skripsi Anda
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center mb-4">
-                  <span className="text-3xl font-bold text-[#81b59a]">Rp15.000</span>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Timeline Pengerjaan Skripsi</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Checklist Progress Harian</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-[#81b59a] mr-2" />
-                    <span className="text-sm">Template Excel Siap Pakai</span>
-                  </li>
-                </ul>
-                <Button 
-                  onClick={() => window.open('http://lynk.id/pembimbingmu/djdv4e263p1g/checkout', '_blank')}
-                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white"
-                >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Dapatkan Template
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* Contact Section */}
       <section className="py-16 bg-gray-50">
