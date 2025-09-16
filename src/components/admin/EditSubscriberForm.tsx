@@ -36,9 +36,11 @@ export const EditSubscriberForm: React.FC<EditSubscriberFormProps> = ({
   subscriber, 
   onSuccess 
 }) => {
-  const [selectedPackage, setSelectedPackage] = useState(subscriber.paket_pembelajaran.id);
-  const [status, setStatus] = useState(subscriber.status);
-  const [endDate, setEndDate] = useState(format(new Date(subscriber.durasi_akhir), 'yyyy-MM-dd'));
+  const [selectedPackage, setSelectedPackage] = useState(subscriber.paket_pembelajaran?.id || '');
+  const [status, setStatus] = useState(subscriber.status || 'active');
+  const [endDate, setEndDate] = useState(
+    subscriber.durasi_akhir ? format(new Date(subscriber.durasi_akhir), 'yyyy-MM-dd') : ''
+  );
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingPackages, setLoadingPackages] = useState(true);
@@ -129,7 +131,7 @@ export const EditSubscriberForm: React.FC<EditSubscriberFormProps> = ({
       <div>
         <Label>Email</Label>
         <Input
-          value={subscriber.profiles.email}
+          value={subscriber.profiles?.email || 'No email'}
           disabled
           className="bg-muted"
         />
