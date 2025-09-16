@@ -64,50 +64,30 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
     setLoading(true);
 
     try {
-      // First, create user account
-      const password = Math.random().toString(36).slice(-8); // Generate random password
-      
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true
+      // Call the Edge Function to create subscriber
+      const { data, error } = await supabase.functions.invoke('create-subscriber', {
+        body: {
+          email,
+          paket_id: selectedPackage,
+          custom_duration: customDuration
+        }
       });
 
-      if (authError) {
-        console.error('Error creating user:', authError);
+      if (error) {
+        console.error('Error calling create-subscriber function:', error);
         toast({
           title: 'Error',
-          description: 'Gagal membuat akun user: ' + authError.message,
+          description: 'Gagal menghubungi server: ' + error.message,
           variant: 'destructive',
         });
         return;
       }
 
-      // Get package duration
-      const selectedPkg = packages.find(pkg => pkg.id === selectedPackage);
-      const durationDays = customDuration ? parseInt(customDuration) : selectedPkg?.durasi_hari || 30;
-
-      // Calculate end date
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(startDate.getDate() + durationDays);
-
-      // Create subscription
-      const { error: subscriptionError } = await supabase
-        .from('subscribers')
-        .insert({
-          user_id: authData.user.id,
-          paket_id: selectedPackage,
-          durasi_mulai: startDate.toISOString(),
-          durasi_akhir: endDate.toISOString(),
-          status: 'active'
-        });
-
-      if (subscriptionError) {
-        console.error('Error creating subscription:', subscriptionError);
+      if (data.error) {
+        console.error('Error from create-subscriber function:', data.error);
         toast({
           title: 'Error',
-          description: 'Gagal membuat subscription: ' + subscriptionError.message,
+          description: 'Gagal membuat subscriber: ' + data.error,
           variant: 'destructive',
         });
         return;
@@ -115,7 +95,7 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
 
       toast({
         title: 'Success',
-        description: `Subscriber berhasil ditambahkan dengan password: ${password}`,
+        description: `Subscriber berhasil ditambahkan dengan password: ${data.password}`,
       });
 
       // Reset form
