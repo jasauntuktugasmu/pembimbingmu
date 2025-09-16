@@ -57,20 +57,20 @@ export const AdminSidebar = () => {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-black dark:text-white">Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === '/admin'}
-                      className={({ isActive }) =>
-                        isActive 
-                          ? "bg-primary text-primary-foreground font-medium" 
-                          : "hover:bg-muted/50"
-                      }
+                     <NavLink 
+                       to={item.url} 
+                       end={item.url === '/admin'}
+                       className={({ isActive }) =>
+                         isActive 
+                           ? "bg-primary text-primary-foreground font-medium" 
+                           : "hover:bg-muted/50 text-black dark:text-white"
+                       }
                     >
                       <item.icon className="mr-2 h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
