@@ -15,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
   SidebarContent,
@@ -31,11 +32,15 @@ import {
 } from '@/components/ui/sidebar';
 import SEO from '@/components/SEO';
 
-const navigationItems = [
+const getNavigationItems = (isSuperAdmin: boolean) => [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Chatbot Konsultasi Skripsi", url: "/dashboard/chatbotskripsi", icon: MessageCircle },
   { title: "Analisa CV Terbaikmu", url: "/dashboard/cv", icon: FileText },
-  { title: "LMS Skripsi", url: "/dashboard/lms", icon: FileText },
+  { 
+    title: isSuperAdmin ? "Management LMS" : "LMS Skripsi", 
+    url: isSuperAdmin ? "/admin" : "/dashboard/lms", 
+    icon: FileText 
+  },
   { title: "Simulasi Sidang Chatbot", url: "/dashboard/simulasi-sidang", icon: Mic },
 ];
 
@@ -43,9 +48,11 @@ function AppSidebar({ onLogout }: { onLogout: () => void }) {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const { isSuperAdmin } = useAuth();
 
   const isActive = (path: string) => currentPath === path;
   const isCollapsed = state === "collapsed";
+  const navigationItems = getNavigationItems(isSuperAdmin);
 
   return (
     <Sidebar className={`${isCollapsed ? "w-14" : "w-64"} bg-[#81b59a]`} collapsible="icon">
