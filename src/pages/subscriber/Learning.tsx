@@ -192,7 +192,7 @@ export const Learning = () => {
                   <Separator className="my-3" />
                 </div>
               ))}
-            </div>
+            </CardContent>
           </Card>
         </div>
 
