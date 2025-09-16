@@ -127,8 +127,8 @@ export const ManageSubscribers = () => {
   };
 
   const filteredSubscribers = subscribers.filter(subscriber =>
-    subscriber.profiles.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subscriber.paket_pembelajaran.nama_paket.toLowerCase().includes(searchTerm.toLowerCase())
+    (subscriber.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+    (subscriber.paket_pembelajaran?.nama_paket?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
   );
 
   if (loading) {
@@ -187,7 +187,7 @@ export const ManageSubscribers = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center">
                   <Mail className="h-4 w-4 mr-2" />
-                  {subscriber.profiles.email}
+                  {subscriber.profiles?.email || 'No email'}
                 </CardTitle>
                 {getStatusBadge(subscriber.status, subscriber.durasi_akhir)}
               </div>
@@ -195,7 +195,7 @@ export const ManageSubscribers = () => {
             <CardContent>
               <div className="space-y-3">
                 <div>
-                  <p className="font-medium">{subscriber.paket_pembelajaran.nama_paket}</p>
+                  <p className="font-medium">{subscriber.paket_pembelajaran?.nama_paket || 'No package'}</p>
                 </div>
                 
                 <div className="space-y-2 text-sm">
