@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      akses_log: {
+        Row: {
+          halaman: string
+          id: string
+          paket_id: string | null
+          user_id: string
+          waktu_akses: string
+        }
+        Insert: {
+          halaman: string
+          id?: string
+          paket_id?: string | null
+          user_id: string
+          waktu_akses?: string
+        }
+        Update: {
+          halaman?: string
+          id?: string
+          paket_id?: string | null
+          user_id?: string
+          waktu_akses?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "akses_log_paket_id_fkey"
+            columns: ["paket_id"]
+            isOneToOne: false
+            referencedRelation: "paket_pembelajaran"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "akses_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       authorized_emails: {
         Row: {
           created_at: string
@@ -59,12 +98,81 @@ export type Database = {
         }
         Relationships: []
       }
+      paket_content: {
+        Row: {
+          created_at: string
+          id: string
+          judul: string
+          konten: string | null
+          paket_id: string
+          updated_at: string
+          urutan: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          judul: string
+          konten?: string | null
+          paket_id: string
+          updated_at?: string
+          urutan?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          judul?: string
+          konten?: string | null
+          paket_id?: string
+          updated_at?: string
+          urutan?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paket_content_paket_id_fkey"
+            columns: ["paket_id"]
+            isOneToOne: false
+            referencedRelation: "paket_pembelajaran"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paket_pembelajaran: {
+        Row: {
+          created_at: string
+          deskripsi: string | null
+          durasi_hari: number
+          harga: number | null
+          id: string
+          nama_paket: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deskripsi?: string | null
+          durasi_hari?: number
+          harga?: number | null
+          id?: string
+          nama_paket: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deskripsi?: string | null
+          durasi_hari?: number
+          harga?: number | null
+          id?: string
+          nama_paket?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           credits: number
           cv_credits: number | null
           email: string | null
           id: string
+          role: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits: number | null
         }
         Insert: {
@@ -72,6 +180,7 @@ export type Database = {
           cv_credits?: number | null
           email?: string | null
           id: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
         }
         Update: {
@@ -79,9 +188,58 @@ export type Database = {
           cv_credits?: number | null
           email?: string | null
           id?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
         }
         Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          durasi_akhir: string
+          durasi_mulai: string
+          id: string
+          paket_id: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          durasi_akhir: string
+          durasi_mulai?: string
+          id?: string
+          paket_id: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          durasi_akhir?: string
+          durasi_mulai?: string
+          id?: string
+          paket_id?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscribers_paket_id_fkey"
+            columns: ["paket_id"]
+            isOneToOne: false
+            referencedRelation: "paket_pembelajaran"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscribers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -92,8 +250,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      has_paket_access: {
+        Args: { paket_id_input: string }
+        Returns: boolean
+      }
       is_email_authorized: {
         Args: { email_to_check: string }
+        Returns: boolean
+      }
+      is_superadmin: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       kurangi_cv_credit: {
@@ -106,7 +276,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "superadmin" | "subscriber"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -233,6 +403,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["superadmin", "subscriber"],
+    },
   },
 } as const

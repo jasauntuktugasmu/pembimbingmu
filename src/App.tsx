@@ -14,33 +14,69 @@ import NotFound from "./pages/NotFound";
 import LMSDashboard from "./pages/LMSDashboard";
 import LMSLesson from "./pages/LMSLesson";
 import DashboardHome from "./pages/DashboardHome";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminLayout } from "./components/layout/AdminLayout";
+import { SubscriberLayout } from "./components/layout/SubscriberLayout";
+import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { ManageSubscribers } from "./pages/admin/ManageSubscribers";
+import { ManagePackages } from "./pages/admin/ManagePackages";
+import { SubscriberDashboard } from "./pages/subscriber/SubscriberDashboard";
+import { MyPackages } from "./pages/subscriber/MyPackages";
+import { Learning } from "./pages/subscriber/Learning";
 
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="cv" element={<CVAnalysis />} />
-            <Route path="chatbotskripsi" element={<ChatbotSkripsi />} />
-            <Route path="simulasi-sidang" element={<SimulasiSidang />} />
-          </Route>
-          <Route path="/dashboard/lms" element={<LMSDashboard />} />
-          <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={
+              <ProtectedRoute requireRole="superadmin">
+                <AdminLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<AdminDashboard />} />
+              <Route path="subscribers" element={<ManageSubscribers />} />
+              <Route path="packages" element={<ManagePackages />} />
+            </Route>
+            
+            {/* Subscriber Routes */}
+            <Route path="/subscriber" element={
+              <ProtectedRoute requireRole="subscriber">
+                <SubscriberLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<SubscriberDashboard />} />
+              <Route path="my-packages" element={<MyPackages />} />
+              <Route path="learning" element={<Learning />} />
+            </Route>
+
+            {/* Legacy Dashboard Routes */}
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="cv" element={<CVAnalysis />} />
+              <Route path="chatbotskripsi" element={<ChatbotSkripsi />} />
+              <Route path="simulasi-sidang" element={<SimulasiSidang />} />
+            </Route>
+            <Route path="/dashboard/lms" element={<LMSDashboard />} />
+            <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
