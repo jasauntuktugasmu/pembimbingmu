@@ -37,8 +37,8 @@ const getNavigationItems = (isSuperAdmin: boolean) => [
   { title: "Chatbot Konsultasi Skripsi", url: "/dashboard/chatbotskripsi", icon: MessageCircle },
   { title: "Analisa CV Terbaikmu", url: "/dashboard/cv", icon: FileText },
   { 
-    title: isSuperAdmin ? "Management LMS" : "LMS Skripsi", 
-    url: isSuperAdmin ? "/admin" : "/dashboard/lms", 
+    title: isSuperAdmin ? "Management LMS" : "Paket Saya", 
+    url: isSuperAdmin ? "/admin" : "/subscriber/my-packages", 
     icon: FileText 
   },
   { title: "Simulasi Sidang Chatbot", url: "/dashboard/simulasi-sidang", icon: Mic },
