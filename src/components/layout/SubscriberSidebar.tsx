@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
@@ -18,7 +18,8 @@ import {
   Package, 
   BookOpen, 
   LogOut,
-  GraduationCap
+  GraduationCap,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -31,10 +32,15 @@ const menuItems = [
 export const SubscriberSidebar = () => {
   const { signOut, profile } = useAuth();
   const { state } = useSidebar();
+  const navigate = useNavigate();
   const collapsed = state === "collapsed";
 
   const handleLogout = async () => {
     await signOut();
+  };
+
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -84,7 +90,18 @@ export const SubscriberSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 bg-[#81b59a]">
+      <SidebarFooter className="p-4 bg-[#81b59a] space-y-2">
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <button 
+              onClick={handleBackToDashboard}
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full text-left"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              {!collapsed && <span className="text-sm">Kembali ke Dashboard</span>}
+            </button>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <button 
