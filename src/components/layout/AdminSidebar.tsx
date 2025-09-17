@@ -40,24 +40,25 @@ export const AdminSidebar = () => {
   };
 
   return (
-    <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible="icon">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-primary-foreground" />
-          </div>
+    <Sidebar className={`${collapsed ? "w-14" : "w-64"} bg-[#81b59a]`} collapsible="icon">
+      <SidebarHeader className="p-6 bg-[#81b59a]">
+        <div className="flex items-center space-x-3">
+          <img 
+            src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
+            alt="Pembimbingmu Logo" 
+            className="h-10 w-auto"
+          />
           {!collapsed && (
             <div>
-              <h2 className="font-semibold text-foreground">Admin Panel</h2>
-              <p className="text-sm text-muted-foreground">{profile?.email}</p>
+              <h1 className="text-lg font-bold text-white">Admin Panel</h1>
+              <p className="text-xs text-gray-200">{profile?.email}</p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-[#81b59a]">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-black dark:text-white">Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -67,13 +68,15 @@ export const AdminSidebar = () => {
                        to={item.url} 
                        end={item.url === '/admin'}
                        className={({ isActive }) =>
-                         isActive 
-                           ? "bg-primary text-primary-foreground font-medium" 
-                           : "hover:bg-muted/50 text-black dark:text-white"
+                         `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                           isActive 
+                             ? "bg-white/20 text-white font-medium" 
+                             : "text-gray-200 hover:bg-white/10 hover:text-white"
+                         }`
                        }
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-5 w-5" />
+                      {!collapsed && <span className="text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -83,15 +86,18 @@ export const AdminSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
-        <Button 
-          variant="outline" 
-          onClick={handleLogout}
-          className="w-full justify-start"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          {!collapsed && <span>Logout</span>}
-        </Button>
+      <SidebarFooter className="p-4 bg-[#81b59a]">
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full text-left"
+            >
+              <LogOut className="h-5 w-5" />
+              {!collapsed && <span className="text-sm">Logout</span>}
+            </button>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarFooter>
     </Sidebar>
   );
