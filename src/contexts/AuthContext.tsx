@@ -18,11 +18,14 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
+  profileLoading: boolean;
+  authError: string | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isSubscriber: boolean;
   isSuperAdmin: boolean;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,9 +43,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, retryCount = 0) => {
     try {
+      setProfileLoading(true);
+      setAuthError(null);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -51,26 +59,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) {
         console.error('Error fetching profile:', error);
+        if (retryCount < 2) {
+          // Retry after delay
+          setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
+          return;
+        }
+        setAuthError('Failed to load profile data');
         return;
       }
       
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      if (retryCount < 2) {
+        setTimeout(() => fetchProfile(userId, retryCount + 1), 1000);
+        return;
+      }
+      setAuthError('Network error while loading profile');
+    } finally {
+      setProfileLoading(false);
     }
   };
 
   useEffect(() => {
+    let profileSubscription: any = null;
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        // Clean up previous subscription
+        if (profileSubscription) {
+          profileSubscription.unsubscribe();
+          profileSubscription = null;
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Defer profile fetch to avoid deadlock
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
+          
+          // Set up realtime subscription for profile changes
+          setTimeout(() => {
+            profileSubscription = supabase
+              .channel(`profile-${session.user.id}`)
+              .on(
+                'postgres_changes',
+                {
+                  event: 'UPDATE',
+                  schema: 'public',
+                  table: 'profiles',
+                  filter: `id=eq.${session.user.id}`
+                },
+                (payload) => {
+                  console.log('Profile updated via realtime:', payload.new);
+                  if (payload.new) {
+                    setProfile(payload.new as Profile);
+                  }
+                }
+              )
+              .subscribe();
+          }, 100);
         } else {
           setProfile(null);
         }
@@ -80,18 +134,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          setAuthError('Authentication error');
+          setLoading(false);
+          return;
+        }
+        
+        if (session?.user) {
+          setSession(session);
+          setUser(session.user);
+          fetchProfile(session.user.id);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Initialize auth error:', error);
+        setAuthError('Failed to initialize authentication');
+        setLoading(false);
       }
-      
-      setLoading(false);
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    initializeAuth();
+
+    return () => {
+      subscription.unsubscribe();
+      if (profileSubscription) {
+        profileSubscription.unsubscribe();
+      }
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -116,7 +191,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    setAuthError(null);
     await supabase.auth.signOut();
+  };
+
+  const refreshProfile = async () => {
+    if (user?.id) {
+      await fetchProfile(user.id);
+    }
   };
 
   const isSubscriber = profile?.role === 'subscriber';
@@ -127,11 +209,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     profile,
     loading,
+    profileLoading,
+    authError,
     signIn,
     signUp,
     signOut,
     isSubscriber,
     isSuperAdmin,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

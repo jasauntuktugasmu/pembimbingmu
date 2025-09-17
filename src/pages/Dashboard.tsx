@@ -121,115 +121,37 @@ export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, profile, loading, profileLoading, authError, signOut } = useAuth();
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    // Check auth state and get user profile
-    const getSession = async () => {
-      try {
-        setLoading(true);
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error || !session) {
-          navigate('/login');
-          return;
-        }
-        
-        setUser(session.user);
-        
-        // Fetch user profile with credits
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          toast({
-            title: "Error",
-            description: "Gagal memuat data profil. Silakan refresh halaman.",
-            variant: "destructive"
-          });
-        } else {
-          setProfile(profileData);
-        }
+    if (!loading && !user) {
+      console.log('No user found, redirecting to login');
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
 
-        // Set up real-time subscription for profile changes
-        const profileSubscription = supabase
-          .channel('profile-changes')
-          .on(
-            'postgres_changes',
-            {
-              event: 'UPDATE',
-              schema: 'public',
-              table: 'profiles',
-              filter: `id=eq.${session.user.id}`
-            },
-            (payload) => {
-              if (payload.new) {
-                setProfile(payload.new);
-              }
-            }
-          )
-          .subscribe();
-
-        return () => {
-          profileSubscription.unsubscribe();
-        };
-      } catch (error) {
-        console.error('Session error:', error);
-        toast({
-          title: "Error", 
-          description: "Terjadi kesalahan saat memuat data. Silakan login ulang.",
-          variant: "destructive"
-        });
-        navigate('/login');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getSession();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!session) {
-          navigate('/login');
-          return;
-        }
-        
-        setUser(session.user);
-        
-        // Fetch updated profile
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (!profileError) {
-          setProfile(profileData);
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  // Show error toast for auth errors
+  useEffect(() => {
+    if (authError) {
+      toast({
+        title: "Error",
+        description: authError,
+        variant: "destructive"
+      });
+    }
+  }, [authError, toast]);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
       toast({
         title: "Error",
         description: "Terjadi kesalahan saat logout",
         variant: "destructive"
       });
-    } else {
-      navigate('/');
     }
   };
 
@@ -252,10 +174,20 @@ export default function Dashboard() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#81b59a] mx-auto mb-4"></div>
-          <p className="text-gray-600">Memuat dashboard...</p>
+          <p className="text-gray-600">
+            {profileLoading ? "Memuat profil..." : "Memuat dashboard..."}
+          </p>
+          {authError && (
+            <p className="text-red-600 text-sm mt-2">{authError}</p>
+          )}
         </div>
       </div>
     );
+  }
+
+  // Don't render dashboard if no user (will redirect to login)
+  if (!user) {
+    return null;
   }
 
   return (
