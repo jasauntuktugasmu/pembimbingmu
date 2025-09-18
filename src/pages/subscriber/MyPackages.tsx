@@ -138,7 +138,7 @@ export const MyPackages = () => {
                     <Button
                       onClick={() => handleViewClasses(paket.id)}
                       variant="outline"
-                      className="bg-transparent border-2 border-white text-white font-medium px-8 py-3 rounded-lg hover:bg-[#81b59a] hover:border-[#81b59a] transition-all duration-300 backdrop-blur-sm"
+                      className="bg-white/20 border-2 border-white/80 text-white font-bold px-10 py-4 rounded-xl hover:bg-[#81b59a] hover:border-[#81b59a] hover:shadow-lg hover:shadow-[#81b59a]/30 transition-all duration-300 backdrop-blur-md text-sm uppercase tracking-wide shadow-lg"
                     >
                       Lihat Kelas
                     </Button>
