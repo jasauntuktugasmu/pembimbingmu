@@ -17,6 +17,7 @@ import { Plus, Edit, Trash2, Star, Users, Clock, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { ManageClassContentDialog } from './ManageClassContentDialog';
+import { generateDurationText } from '@/lib/duration-utils';
 
 interface Class {
   id: string;
@@ -207,11 +208,16 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                 alt={classItem.judul}
                                 className="w-full h-full object-cover"
                               />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                                <span className="text-sm text-gray-500 font-medium">No Image</span>
-                              </div>
-                            )}
+                             ) : (
+                               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#81b59a]/10 via-[#6da085]/10 to-[#81b59a]/20">
+                                 <div className="text-center">
+                                   <div className="w-12 h-12 bg-gradient-to-br from-[#81b59a] to-[#6da085] rounded-full flex items-center justify-center mb-2 shadow-lg">
+                                     <Clock className="h-6 w-6 text-white" />
+                                   </div>
+                                   <span className="text-xs text-gray-600 font-medium">Kelas {classItem.level}</span>
+                                 </div>
+                               </div>
+                             )}
                           </div>
 
                           {/* Class Info */}
@@ -379,6 +385,13 @@ function ClassForm({ paketId, class: classData, maxUrutan, onSuccess, onCancel }
   const [jumlahUser, setJumlahUser] = useState(classData?.jumlah_user || 0);
   const [durasiText, setDurasiText] = useState(classData?.durasi_text || '');
   const [durasiMenit, setDurasiMenit] = useState(classData?.durasi_menit || 0);
+
+  // Auto-calculate duration text when minutes change
+  useEffect(() => {
+    if (durasiMenit > 0 && !durasiText) {
+      setDurasiText(generateDurationText(durasiMenit));
+    }
+  }, [durasiMenit]);
   const [hargaAsli, setHargaAsli] = useState(classData?.harga_asli?.toString() || '');
   const [hargaDiskon, setHargaDiskon] = useState(classData?.harga_diskon?.toString() || '');
   const [urutan, setUrutan] = useState(classData?.urutan || maxUrutan + 1);
@@ -623,33 +636,37 @@ function ClassForm({ paketId, class: classData, maxUrutan, onSuccess, onCancel }
           />
         </div>
 
-        {/* Duration Text */}
-        <div className="space-y-2">
-          <Label htmlFor="durasiText" className="text-sm font-semibold">
-            Durasi (contoh: 5h 30m)
-          </Label>
-          <Input
-            id="durasiText"
-            value={durasiText}
-            onChange={(e) => setDurasiText(e.target.value)}
-            placeholder="5h 30m"
-            className="border-2 border-gray-200 focus:border-[#81b59a]"
-          />
-        </div>
-
-        {/* Duration Minutes */}
-        <div className="space-y-2">
-          <Label htmlFor="durasi" className="text-sm font-semibold">
-            Durasi (Menit)
-          </Label>
-          <Input
-            id="durasi"
-            type="number"
-            min="0"
-            value={durasiMenit}
-            onChange={(e) => setDurasiMenit(Number(e.target.value))}
-            className="border-2 border-gray-200 focus:border-[#81b59a]"
-          />
+        {/* Duration Text and Minutes - Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="durasi" className="text-sm font-semibold">
+              Durasi (Menit)
+            </Label>
+            <Input
+              id="durasi"
+              type="number"
+              min="0"
+              value={durasiMenit}
+              onChange={(e) => setDurasiMenit(Number(e.target.value))}
+              className="border-2 border-gray-200 focus:border-[#81b59a]"
+              placeholder="60"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="durasiText" className="text-sm font-semibold">
+              Durasi Text (Opsional)
+            </Label>
+            <Input
+              id="durasiText"
+              value={durasiText}
+              onChange={(e) => setDurasiText(e.target.value)}
+              placeholder="Auto-generated dari durasi menit"
+              className="border-2 border-gray-200 focus:border-[#81b59a]"
+            />
+            <p className="text-xs text-muted-foreground">
+              Otomatis terisi berdasarkan durasi menit. Bisa diubah manual.
+            </p>
+          </div>
         </div>
 
         {/* Original Price */}

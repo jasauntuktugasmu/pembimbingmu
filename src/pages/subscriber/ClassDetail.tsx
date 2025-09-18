@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, Users, Clock, ArrowLeft, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/SEO';
+import { formatDuration } from '@/lib/duration-utils';
 
 interface Class {
   id: string;
@@ -212,11 +213,18 @@ export default function ClassDetail() {
                   alt={classData.judul}
                   className="w-full h-full object-cover"
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Play className="h-16 w-16 text-white/80" />
-                </div>
-              )}
+               ) : (
+                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#81b59a] to-[#6da085] relative overflow-hidden">
+                   <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-white/10"></div>
+                   <div className="text-center z-10">
+                     <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm border border-white/20">
+                       <Play className="h-10 w-10 text-white" />
+                     </div>
+                     <h3 className="text-white text-lg font-semibold">{classData.judul}</h3>
+                     <p className="text-white/80 text-sm">dengan {classData.pengajar}</p>
+                   </div>
+                 </div>
+               )}
               <div className="absolute inset-0 bg-black/20"></div>
             </div>
 
@@ -259,44 +267,66 @@ export default function ClassDetail() {
                   {/* Duration */}
                   <div className="flex items-center gap-2 text-gray-600">
                     <Clock className="h-5 w-5" />
-                    <span className="font-medium">
-                      {classData.durasi_text || `${classData.durasi_menit} menit`}
-                    </span>
+                     <span className="font-medium">
+                       {formatDuration(classData.durasi_menit, classData.durasi_text)}
+                     </span>
                   </div>
                 </div>
 
-                {/* Description */}
-                {classData.deskripsi && (
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-3">
-                      Tentang Kelas Ini
-                    </h2>
-                    <p className="text-gray-700 leading-relaxed">
-                      {classData.deskripsi}
-                    </p>
-                  </div>
-                )}
+                 {/* Description */}
+                 <div>
+                   <h2 className="text-xl font-bold text-gray-900 mb-3">
+                     Tentang Kelas Ini
+                   </h2>
+                   {classData.deskripsi ? (
+                     <p className="text-gray-700 leading-relaxed">
+                       {classData.deskripsi}
+                     </p>
+                   ) : (
+                     <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-200">
+                       <p className="text-gray-600 text-center">
+                         Deskripsi kelas akan segera ditambahkan. Mulai belajar untuk melihat materi yang tersedia!
+                       </p>
+                     </div>
+                   )}
+                 </div>
 
-                {/* Pricing */}
-                {(classData.harga_asli || classData.harga_diskon) && (
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-3">
-                      Harga
-                    </h2>
-                    <div className="flex items-center gap-3">
-                      {classData.harga_asli && (
-                        <span className="text-lg text-gray-400 line-through">
-                          Rp{classData.harga_asli.toLocaleString('id-ID')}
-                        </span>
-                      )}
-                      {classData.harga_diskon && (
-                        <span className="text-2xl font-bold text-orange-600">
-                          Rp{classData.harga_diskon.toLocaleString('id-ID')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
+                 {/* Pricing */}
+                 <div>
+                   <h2 className="text-xl font-bold text-gray-900 mb-3">
+                     Harga & Akses
+                   </h2>
+                   {classData.harga_diskon || classData.harga_asli ? (
+                     <div className="flex items-center gap-3">
+                       {classData.harga_asli && (
+                         <span className="text-lg text-gray-400 line-through">
+                           Rp{classData.harga_asli.toLocaleString('id-ID')}
+                         </span>
+                       )}
+                       {classData.harga_diskon ? (
+                         <span className="text-2xl font-bold text-orange-600">
+                           Rp{classData.harga_diskon.toLocaleString('id-ID')}
+                         </span>
+                       ) : (
+                         <span className="text-2xl font-bold text-gray-900">
+                           Rp{classData.harga_asli?.toLocaleString('id-ID')}
+                         </span>
+                       )}
+                     </div>
+                   ) : (
+                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                       <div className="flex items-center gap-3">
+                         <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                           <Users className="h-5 w-5 text-green-600" />
+                         </div>
+                         <div>
+                           <p className="font-semibold text-green-800">Sudah Termasuk dalam Paket Anda</p>
+                           <p className="text-sm text-green-600">Akses penuh ke semua materi kelas ini</p>
+                         </div>
+                       </div>
+                     </div>
+                   )}
+                 </div>
 
                 {/* Start Learning Button */}
                 <div className="pt-6">

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, Users, Clock, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/SEO';
+import { formatDurationCompact } from '@/lib/duration-utils';
 
 interface Class {
   id: string;
@@ -251,14 +252,16 @@ export default function ClassList() {
                         alt={classItem.judul}
                         className="w-full h-full object-cover"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                        <div className="text-center">
-                          <Clock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                          <span className="text-sm text-gray-500 font-medium">No Image</span>
-                        </div>
-                      </div>
-                    )}
+                     ) : (
+                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#81b59a]/10 via-[#6da085]/10 to-[#81b59a]/20">
+                         <div className="text-center">
+                           <div className="w-16 h-16 bg-gradient-to-br from-[#81b59a] to-[#6da085] rounded-full flex items-center justify-center mb-3 shadow-lg">
+                             <Clock className="h-8 w-8 text-white" />
+                           </div>
+                           <span className="text-sm text-gray-600 font-medium">Kelas {classItem.level}</span>
+                         </div>
+                       </div>
+                     )}
                     
                     {/* Level Badge - Top Left */}
                     <div className="absolute top-3 left-3">
@@ -305,29 +308,35 @@ export default function ClassList() {
                         <Users className="h-4 w-4 text-gray-400" />
                         <span className="font-medium">{classItem.jumlah_user}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 text-gray-400" />
-                        <span className="font-medium">
-                          {classItem.durasi_text || `${Math.floor(classItem.durasi_menit / 60)}h ${classItem.durasi_menit % 60}m`}
-                        </span>
-                      </div>
+                       <div className="flex items-center gap-1">
+                         <Clock className="h-4 w-4 text-gray-400" />
+                         <span className="font-medium">
+                           {formatDurationCompact(classItem.durasi_menit, classItem.durasi_text)}
+                         </span>
+                       </div>
                     </div>
 
-                    {/* Price */}
-                    {(classItem.harga_asli || classItem.harga_diskon) && (
-                      <div className="flex items-center gap-3">
-                        {classItem.harga_asli && (
-                          <span className="text-sm text-gray-400 line-through font-medium">
-                            Rp{classItem.harga_asli.toLocaleString('id-ID')}
-                          </span>
-                        )}
-                        {classItem.harga_diskon && (
-                          <span className="text-lg font-bold text-orange-600">
-                            Rp{classItem.harga_diskon.toLocaleString('id-ID')}
-                          </span>
-                        )}
-                      </div>
-                    )}
+                     {/* Price */}
+                     <div className="flex items-center gap-3">
+                       {classItem.harga_asli && (
+                         <span className="text-sm text-gray-400 line-through font-medium">
+                           Rp{classItem.harga_asli.toLocaleString('id-ID')}
+                         </span>
+                       )}
+                       {classItem.harga_diskon ? (
+                         <span className="text-lg font-bold text-orange-600">
+                           Rp{classItem.harga_diskon.toLocaleString('id-ID')}
+                         </span>
+                       ) : classItem.harga_asli ? (
+                         <span className="text-lg font-bold text-gray-900">
+                           Rp{classItem.harga_asli.toLocaleString('id-ID')}
+                         </span>
+                       ) : (
+                         <span className="text-sm font-medium text-[#81b59a] bg-[#81b59a]/10 px-3 py-1 rounded-full">
+                           Termasuk dalam paket
+                         </span>
+                       )}
+                     </div>
 
                     {/* Action Button */}
                     <div className="pt-2">
