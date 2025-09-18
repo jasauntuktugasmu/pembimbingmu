@@ -66,7 +66,7 @@ export const MyPackages = () => {
   };
 
   const handleViewClasses = (packageId: string) => {
-    navigate(`/subscriber/learning?package=${packageId}`);
+    navigate('/subscriber/classes');
   };
 
   if (loading) {
