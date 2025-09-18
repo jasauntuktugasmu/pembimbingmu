@@ -147,8 +147,8 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+          <DialogHeader className="pr-8">
             <DialogTitle className="flex items-center justify-between">
               <span>Kelola Kelas - {pkg.nama_paket}</span>
               {isSuperAdmin && (
