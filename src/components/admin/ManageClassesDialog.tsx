@@ -13,9 +13,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, Star, Users, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, Star, Users, Clock, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { ManageClassContentDialog } from './ManageClassContentDialog';
 
 interface Class {
   id: string;
@@ -55,6 +56,8 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
   const [loading, setLoading] = useState(true);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showContentDialog, setShowContentDialog] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const { toast } = useToast();
   const { isSuperAdmin } = useAuth();
 
@@ -121,6 +124,11 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
       case 'Advanced': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const handleManageContent = (classItem: Class) => {
+    setSelectedClass(classItem);
+    setShowContentDialog(true);
   };
 
   const renderStars = (rating: number) => {
@@ -279,12 +287,14 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                 )}
                               </div>
 
-                              {/* Lanjutkan Button */}
+                              {/* Manage Content Button */}
                               <Button
                                 className="bg-[#81b59a] hover:bg-[#6da085] text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                                 size="sm"
+                                onClick={() => handleManageContent(classItem)}
                               >
-                                Lanjutkan
+                                <Settings className="h-4 w-4 mr-2" />
+                                Manage Class
                               </Button>
                             </div>
                           </div>
@@ -298,6 +308,18 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Manage Class Content Dialog */}
+      {selectedClass && (
+        <ManageClassContentDialog
+          classData={selectedClass}
+          open={showContentDialog}
+          onClose={() => {
+            setShowContentDialog(false);
+            setSelectedClass(null);
+          }}
+        />
+      )}
 
       {/* Add/Edit Class Form Dialog */}
       <Dialog 
