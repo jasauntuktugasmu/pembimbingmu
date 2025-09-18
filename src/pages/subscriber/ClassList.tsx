@@ -193,22 +193,24 @@ export default function ClassList() {
         {/* Content */}
         {userPackages.length === 0 ? (
           // No Active Packages Placeholder
-          <div className="max-w-md mx-auto">
-            <Card className="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl">
-              <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                  <Users className="h-8 w-8 text-gray-400" />
+          <div className="max-w-lg mx-auto">
+            <Card className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl">
+              <CardContent className="space-y-6">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                  <Users className="h-10 w-10 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Belum Ada Paket Aktif
-                </h3>
-                <p className="text-gray-500">
-                  Anda belum memiliki paket pembelajaran aktif. 
-                  Hubungi admin untuk mengaktifkan paket Anda.
-                </p>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Belum Ada Paket Aktif
+                  </h3>
+                  <p className="text-gray-500 text-lg">
+                    Anda belum memiliki paket pembelajaran aktif. 
+                    Hubungi admin untuk mengaktifkan paket Anda.
+                  </p>
+                </div>
                 <Button 
                   onClick={() => navigate('/lms/packages')}
-                  className="bg-[#81b59a] hover:bg-[#6da085] text-white"
+                  className="bg-[#81b59a] hover:bg-[#6da085] text-white px-8 py-3 text-lg rounded-xl"
                 >
                   Lihat Paket Tersedia
                 </Button>
@@ -217,116 +219,127 @@ export default function ClassList() {
           </div>
         ) : classes.length === 0 ? (
           // No Classes in Active Packages
-          <div className="max-w-md mx-auto">
-            <Card className="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl">
-              <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                  <Clock className="h-8 w-8 text-gray-400" />
+          <div className="max-w-lg mx-auto">
+            <Card className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl">
+              <CardContent className="space-y-6">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                  <Clock className="h-10 w-10 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Belum Ada Kelas
-                </h3>
-                <p className="text-gray-500">
-                  Kelas untuk paket Anda sedang dalam persiapan. 
-                  Silakan cek kembali nanti.
-                </p>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Belum Ada Kelas
+                  </h3>
+                  <p className="text-gray-500 text-lg">
+                    Kelas untuk paket Anda sedang dalam persiapan. 
+                    Silakan cek kembali nanti.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
         ) : (
-          // Classes Grid
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          // Classes Grid - New vertical card design matching reference
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
             {classes.map((classItem) => (
-              <Card key={classItem.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-2xl border-0">
-                <CardContent className="p-0">
-                  <div className="flex">
-                    {/* Thumbnail */}
-                    <div className="w-48 h-36 bg-muted flex-shrink-0 relative">
-                      {classItem.thumbnail_url ? (
-                        <img
-                          src={classItem.thumbnail_url}
-                          alt={classItem.judul}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                          <div className="text-center">
-                            <Clock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                            <span className="text-sm text-gray-500 font-medium">No Image</span>
-                          </div>
+              <Card key={classItem.id} className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 rounded-2xl border-0 bg-white">
+                <div className="relative">
+                  {/* Large Thumbnail */}
+                  <div className="relative h-48 bg-muted overflow-hidden">
+                    {classItem.thumbnail_url ? (
+                      <img
+                        src={classItem.thumbnail_url}
+                        alt={classItem.judul}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="text-center">
+                          <Clock className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                          <span className="text-sm text-gray-500 font-medium">No Image</span>
                         </div>
-                      )}
+                      </div>
+                    )}
+                    
+                    {/* Level Badge - Top Left */}
+                    <div className="absolute top-3 left-3">
+                      <Badge className={`${getLevelColor(classItem.level)} font-medium text-xs px-3 py-1.5 shadow-md`}>
+                        {classItem.level === 'Beginner' ? 'All Levels' : classItem.level}
+                      </Badge>
                     </div>
 
-                    {/* Class Info */}
-                    <div className="flex-1 p-5">
-                      <div className="space-y-3">
-                        {/* Level Badge */}
-                        <Badge className={`${getLevelColor(classItem.level)} font-medium text-xs px-3 py-1`}>
-                          {classItem.level}
-                        </Badge>
-
-                        {/* Title */}
-                        <h3 className="font-bold text-lg text-gray-900 leading-tight line-clamp-2">
-                          {classItem.judul}
-                        </h3>
-                        
-                        {/* Rating */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex">
-                            {renderStars(classItem.rating)}
-                          </div>
-                          <span className="text-sm font-semibold text-gray-700">
-                            {classItem.rating.toFixed(1)}
+                    {/* Instructor Photo - Top Right */}
+                    <div className="absolute top-3 right-3">
+                      <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-lg border-2 border-white">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#81b59a] to-[#6da085] flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">
+                            {classItem.pengajar.charAt(0).toUpperCase()}
                           </span>
-                          <span className="text-sm text-gray-500">
-                            ({classItem.jumlah_review})
-                          </span>
-                        </div>
-
-                        {/* Stats */}
-                        <div className="flex items-center gap-6 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4 text-gray-400" />
-                            <span className="font-medium">{classItem.jumlah_user}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4 text-gray-400" />
-                            <span className="font-medium">
-                              {classItem.durasi_text || `${classItem.durasi_menit}m`}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Price */}
-                        {(classItem.harga_asli || classItem.harga_diskon) && (
-                          <div className="flex items-center gap-3">
-                            {classItem.harga_asli && (
-                              <span className="text-sm text-gray-400 line-through font-medium">
-                                Rp{classItem.harga_asli.toLocaleString('id-ID')}
-                              </span>
-                            )}
-                            {classItem.harga_diskon && (
-                              <span className="text-lg font-bold text-orange-600">
-                                Rp{classItem.harga_diskon.toLocaleString('id-ID')}
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Continue Button */}
-                        <div className="pt-2">
-                          <Button
-                            onClick={() => handleContinueClass(classItem.id)}
-                            className="w-full bg-[#81b59a] hover:bg-[#6da085] text-white font-semibold py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                          >
-                            Lanjutkan
-                          </Button>
                         </div>
                       </div>
                     </div>
                   </div>
-                </CardContent>
+
+                  {/* Card Content */}
+                  <CardContent className="p-5 space-y-4">
+                    {/* Rating */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {renderStars(classItem.rating)}
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">
+                        {classItem.rating.toFixed(2)}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        ({classItem.jumlah_review})
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-bold text-lg text-gray-900 leading-tight line-clamp-2 min-h-[3.5rem]">
+                      {classItem.judul}
+                    </h3>
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-gray-400" />
+                        <span className="font-medium">{classItem.jumlah_user}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <span className="font-medium">
+                          {classItem.durasi_text || `${Math.floor(classItem.durasi_menit / 60)}h ${classItem.durasi_menit % 60}m`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    {(classItem.harga_asli || classItem.harga_diskon) && (
+                      <div className="flex items-center gap-3">
+                        {classItem.harga_asli && (
+                          <span className="text-sm text-gray-400 line-through font-medium">
+                            Rp{classItem.harga_asli.toLocaleString('id-ID')}
+                          </span>
+                        )}
+                        {classItem.harga_diskon && (
+                          <span className="text-lg font-bold text-orange-600">
+                            Rp{classItem.harga_diskon.toLocaleString('id-ID')}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Action Button */}
+                    <div className="pt-2">
+                      <Button
+                        onClick={() => handleContinueClass(classItem.id)}
+                        className="w-full bg-[#81b59a] hover:bg-[#6da085] text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                      >
+                        Lanjutkan
+                      </Button>
+                    </div>
+                  </CardContent>
+                </div>
               </Card>
             ))}
           </div>
@@ -334,15 +347,19 @@ export default function ClassList() {
 
         {/* Active Packages Info */}
         {userPackages.length > 0 && (
-          <div className="mt-12 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-center mb-6">Paket Aktif Anda</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mt-16 max-w-5xl mx-auto animate-fade-in">
+            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">Paket Aktif Anda</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userPackages.map((pkg) => (
-                <Card key={pkg.id} className="bg-gradient-to-r from-[#81b59a] to-[#6da085] text-white border-0">
-                  <CardContent className="p-4 text-center">
-                    <h3 className="font-semibold text-lg mb-2">{pkg.nama_paket}</h3>
+                <Card key={pkg.id} className="bg-gradient-to-br from-[#81b59a] to-[#6da085] text-white border-0 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <CardContent className="p-6 text-center">
+                    <h3 className="font-bold text-xl mb-3">{pkg.nama_paket}</h3>
                     <p className="text-sm opacity-90">
-                      Berlaku hingga: {new Date(pkg.durasi_akhir).toLocaleDateString('id-ID')}
+                      Berlaku hingga: {new Date(pkg.durasi_akhir).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
                     </p>
                   </CardContent>
                 </Card>
