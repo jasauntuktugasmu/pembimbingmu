@@ -61,6 +61,11 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'admin-green': {
+					DEFAULT: 'hsl(var(--admin-green))',
+					foreground: 'hsl(var(--admin-green-foreground))',
+					hover: 'hsl(var(--admin-green-hover))'
 				}
 			},
 			borderRadius: {

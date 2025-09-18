@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, BookOpen } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, BookOpen, Eye, ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -23,6 +23,8 @@ interface Package {
   harga: number;
   durasi_hari: number;
   created_at: string;
+  thumbnail_url?: string;
+  courseCount?: number;
 }
 
 export const ManagePackages = () => {
@@ -55,7 +57,22 @@ export const ManagePackages = () => {
         return;
       }
 
-      setPackages(data || []);
+      // Fetch course count for each package
+      const packagesWithCourseCount = await Promise.all(
+        (data || []).map(async (pkg) => {
+          const { count } = await supabase
+            .from('kelas')
+            .select('*', { count: 'exact', head: true })
+            .eq('paket_id', pkg.id);
+          
+          return {
+            ...pkg,
+            courseCount: count || 0
+          };
+        })
+      );
+
+      setPackages(packagesWithCourseCount);
     } catch (error) {
       console.error('Error fetching packages:', error);
     } finally {
@@ -120,7 +137,7 @@ export const ManagePackages = () => {
         
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground">
               <Plus className="mr-2 h-4 w-4" />
               Add Package
             </Button>
@@ -151,61 +168,85 @@ export const ManagePackages = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPackages.map((pkg) => (
-          <Card key={pkg.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <CardTitle className="text-lg">{pkg.nama_paket}</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
+            {/* Thumbnail Image */}
+            <div className="relative h-48 bg-muted overflow-hidden">
+              {pkg.thumbnail_url ? (
+                <img 
+                  src={pkg.thumbnail_url} 
+                  alt={pkg.nama_paket}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-muted">
+                  <div className="text-center">
+                    <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                    <span className="text-sm text-muted-foreground">No Image</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <CardContent className="p-4">
               <div className="space-y-3">
-                <p className="text-muted-foreground text-sm">
+                {/* Title & Price */}
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                    {pkg.nama_paket}
+                  </h3>
+                  <p className="text-xl font-bold text-admin-green">
+                    Rp {pkg.harga?.toLocaleString('id-ID') || '0'}
+                  </p>
+                </div>
+
+                {/* Description */}
+                <p className="text-muted-foreground text-sm line-clamp-2">
                   {pkg.deskripsi || 'Tidak ada deskripsi'}
                 </p>
                 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Harga:</span>
-                    <span className="font-medium">
-                      Rp {pkg.harga?.toLocaleString('id-ID') || '0'}
-                    </span>
+                {/* Package Info */}
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Jumlah Kelas:</span>
+                    <span className="font-medium">{pkg.courseCount || 0} kelas</span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Durasi:</span>
                     <span className="font-medium">{pkg.durasi_hari} hari</span>
                   </div>
                 </div>
 
+                {/* Action Buttons */}
                 <div className="flex flex-col space-y-2 pt-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setManagingContentPackage(pkg)}
-                    className="w-full"
-                  >
-                    <BookOpen className="h-4 w-4 mr-1" />
-                    Manage Content
-                  </Button>
-                  
                   <div className="flex space-x-2">
                     <Button
-                      variant="outline"
+                      size="sm"
+                      onClick={() => setManagingContentPackage(pkg)}
+                      className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                    <Button
                       size="sm"
                       onClick={() => setEditingPackage(pkg)}
-                      className="flex-1"
+                      className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
                     >
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeletePackage(pkg.id)}
-                      className="flex-1"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
                   </div>
+                  
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeletePackage(pkg.id)}
+                    className="w-full"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -214,18 +255,29 @@ export const ManagePackages = () => {
       </div>
 
       {filteredPackages.length === 0 && (
-        <Card>
+        <Card className="shadow-md">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Search className="h-12 w-12 text-muted-foreground mb-4" />
+            <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mb-4">
+              <ImageIcon className="h-8 w-8 text-muted-foreground" />
+            </div>
             <h3 className="text-lg font-semibold mb-2">
               {searchTerm ? 'Tidak ada hasil' : 'Belum ada paket'}
             </h3>
-            <p className="text-muted-foreground text-center">
+            <p className="text-muted-foreground text-center mb-4">
               {searchTerm 
                 ? 'Tidak ada paket yang sesuai dengan pencarian Anda.'
-                : 'Tambahkan paket baru untuk memulai.'
+                : 'Silakan tambahkan paket baru untuk memulai.'
               }
             </p>
+            {!searchTerm && (
+              <Button 
+                onClick={() => setShowAddDialog(true)}
+                className="bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Tambah Paket Baru
+              </Button>
+            )}
           </CardContent>
         </Card>
       )}

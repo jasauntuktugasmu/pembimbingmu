@@ -52,6 +52,11 @@ All colors MUST be HSL.
     --pembimbingmu-green: 149 29% 61%;
     --pembimbingmu-green-hover: 149 29% 55%;
     --pembimbingmu-green-light: 149 29% 95%;
+    
+    /* Admin CRUD green button - #81b59a */
+    --admin-green: 158 26% 60%;
+    --admin-green-hover: 158 26% 54%;
+    --admin-green-foreground: 0 0% 100%;
   }
 
   .dark {
