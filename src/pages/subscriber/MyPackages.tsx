@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Package, Calendar, Clock, BookOpen, DollarSign } from 'lucide-react';
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
+import { Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface MySubscription {
@@ -20,6 +16,7 @@ interface MySubscription {
     deskripsi: string;
     harga: number;
     durasi_hari: number;
+    thumbnail_url: string | null;
   } | null;
 }
 
@@ -46,10 +43,13 @@ export const MyPackages = () => {
             nama_paket,
             deskripsi,
             harga,
-            durasi_hari
+            durasi_hari,
+            thumbnail_url
           )
         `)
         .eq('user_id', user?.id)
+        .eq('status', 'active')
+        .gte('durasi_akhir', new Date().toISOString())
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -65,29 +65,8 @@ export const MyPackages = () => {
     }
   };
 
-  const getStatusBadge = (status: string, endDate: string) => {
-    const now = new Date();
-    const end = new Date(endDate);
-    
-    if (status === 'active' && end > now) {
-      return <Badge className="bg-green-500">Aktif</Badge>;
-    } else if (end <= now) {
-      return <Badge variant="destructive">Expired</Badge>;
-    } else {
-      return <Badge variant="secondary">{status}</Badge>;
-    }
-  };
-
-  const getDaysRemaining = (endDate: string) => {
-    const now = new Date();
-    const end = new Date(endDate);
-    const diffTime = end.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 0;
-  };
-
-  const isPackageActive = (status: string, endDate: string) => {
-    return status === 'active' && new Date(endDate) > new Date();
+  const handleViewClasses = (packageId: string) => {
+    navigate(`/subscriber/learning?package=${packageId}`);
   };
 
   if (loading) {
@@ -103,157 +82,81 @@ export const MyPackages = () => {
       <div>
         <h1 className="text-3xl font-bold text-foreground">Paket Saya</h1>
         <p className="text-muted-foreground">
-          Detail paket pembelajaran yang Anda miliki
+          Paket pembelajaran yang Anda miliki
         </p>
       </div>
 
       {subscriptions.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Package className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Belum Ada Paket</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Anda belum memiliki paket pembelajaran yang aktif.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Hubungi admin untuk mendapatkan akses paket pembelajaran.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="relative overflow-hidden rounded-3xl shadow-lg group cursor-pointer bg-gradient-to-br from-gray-400 to-gray-600 h-80">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="relative h-full flex flex-col justify-between p-6">
+              <div className="flex justify-center items-center flex-1">
+                <Package className="h-16 w-16 text-white/60" />
+              </div>
+              
+              <div className="space-y-3">
+                <div className="inline-block">
+                  <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+                    Status
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-white">
+                  Belum ada paket aktif
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subscriptions.map((subscription) => {
-            // Handle null paket_pembelajaran
             if (!subscription.paket_pembelajaran) {
-              return (
-                <Card key={subscription.id} className="hover:shadow-md transition-shadow border-destructive/50">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl text-destructive">
-                        Paket Tidak Ditemukan
-                      </CardTitle>
-                      <Badge variant="destructive">Error</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Data paket pembelajaran tidak dapat ditemukan. Hubungi admin untuk bantuan.
-                    </p>
-                  </CardContent>
-                </Card>
-              );
+              return null;
             }
 
+            const paket = subscription.paket_pembelajaran;
+            const backgroundImage = paket.thumbnail_url 
+              ? `url(${paket.thumbnail_url})`
+              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
             return (
-              <Card key={subscription.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">
-                      {subscription.paket_pembelajaran.nama_paket}
-                    </CardTitle>
-                    {getStatusBadge(subscription.status, subscription.durasi_akhir)}
+              <div
+                key={subscription.id}
+                className="relative overflow-hidden rounded-3xl shadow-lg group cursor-pointer h-80 transition-all duration-300 hover:shadow-xl hover:scale-105"
+                style={{
+                  backgroundImage: backgroundImage,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                
+                <div className="relative h-full flex flex-col justify-between p-6">
+                  {/* Center Button */}
+                  <div className="flex justify-center items-center flex-1">
+                    <Button
+                      onClick={() => handleViewClasses(paket.id)}
+                      variant="outline"
+                      className="bg-transparent border-2 border-white text-white font-medium px-8 py-3 rounded-lg hover:bg-[#81b59a] hover:border-[#81b59a] transition-all duration-300 backdrop-blur-sm"
+                    >
+                      Lihat Kelas
+                    </Button>
                   </div>
-                </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Package Info */}
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Deskripsi Paket</h4>
-                      <p className="text-muted-foreground">
-                        {subscription.paket_pembelajaran.deskripsi || 'Tidak ada deskripsi'}
-                      </p>
+                  
+                  {/* Bottom Content */}
+                  <div className="space-y-3">
+                    <div className="inline-block">
+                      <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+                        Kategori
+                      </span>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex items-center space-x-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Harga</p>
-                          <p className="font-medium">
-                            Rp {subscription.paket_pembelajaran.harga?.toLocaleString('id-ID') || '0'}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Package className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Durasi Paket</p>
-                          <p className="font-medium">
-                            {subscription.paket_pembelajaran.durasi_hari} hari
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Subscription Info */}
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Status Subscription</h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">Tanggal Mulai</p>
-                            <p className="font-medium">
-                              {format(new Date(subscription.durasi_mulai), 'dd MMMM yyyy', { locale: id })}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">Tanggal Berakhir</p>
-                            <p className="font-medium">
-                              {format(new Date(subscription.durasi_akhir), 'dd MMMM yyyy', { locale: id })}
-                            </p>
-                          </div>
-                        </div>
-
-                        {isPackageActive(subscription.status, subscription.durasi_akhir) && (
-                          <div className="flex items-center space-x-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              <p className="text-sm text-muted-foreground">Sisa Waktu</p>
-                              <p className="font-medium text-primary">
-                                {getDaysRemaining(subscription.durasi_akhir)} hari lagi
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    {isPackageActive(subscription.status, subscription.durasi_akhir) && (
-                      <div className="pt-4">
-                        <Button 
-                          onClick={() => navigate('/subscriber/learning')}
-                          className="w-full"
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          Akses Pembelajaran
-                        </Button>
-                      </div>
-                    )}
-
-                    {/* Expired Notice */}
-                    {!isPackageActive(subscription.status, subscription.durasi_akhir) && (
-                      <div className="pt-4">
-                        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                          <p className="text-sm text-destructive">
-                            Paket ini sudah tidak aktif. Hubungi admin untuk perpanjangan.
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                    <h3 className="text-2xl font-bold text-white">
+                      {paket.nama_paket}
+                    </h3>
                   </div>
                 </div>
-              </CardContent>
-              </Card>
+              </div>
             );
           })}
         </div>
