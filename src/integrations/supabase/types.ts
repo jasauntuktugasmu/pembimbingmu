@@ -194,30 +194,51 @@ export type Database = {
       }
       paket_pembelajaran: {
         Row: {
+          background_color: string | null
+          button_text: string | null
+          category_link: string | null
           created_at: string
           deskripsi: string | null
           durasi_hari: number
+          gradient_from: string | null
+          gradient_to: string | null
           harga: number | null
+          icon_url: string | null
           id: string
           nama_paket: string
+          thumbnail_url: string | null
           updated_at: string
         }
         Insert: {
+          background_color?: string | null
+          button_text?: string | null
+          category_link?: string | null
           created_at?: string
           deskripsi?: string | null
           durasi_hari?: number
+          gradient_from?: string | null
+          gradient_to?: string | null
           harga?: number | null
+          icon_url?: string | null
           id?: string
           nama_paket: string
+          thumbnail_url?: string | null
           updated_at?: string
         }
         Update: {
+          background_color?: string | null
+          button_text?: string | null
+          category_link?: string | null
           created_at?: string
           deskripsi?: string | null
           durasi_hari?: number
+          gradient_from?: string | null
+          gradient_to?: string | null
           harga?: number | null
+          icon_url?: string | null
           id?: string
           nama_paket?: string
+          thumbnail_url?: string | null
           updated_at?: string
         }
         Relationships: []
