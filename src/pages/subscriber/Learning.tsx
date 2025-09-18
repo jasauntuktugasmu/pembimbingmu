@@ -1,277 +1,389 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { BookOpen, Clock, Lock, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { ChevronLeft, CheckCircle, Clock, Play, BookOpen, HelpCircle } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import PreTest from '@/components/learning/PreTest';
+import VideoPlayer from '@/components/learning/VideoPlayer';
+import PostTest from '@/components/learning/PostTest';
+import SEO from '@/components/SEO';
 
-interface LearningContent {
+interface Materi {
+  id: string;
+  kelas_id: string;
+  type: 'pretest' | 'video' | 'posttest';
+  judul: string;
+  link_video?: string;
+  thumbnail?: string;
+  order: number;
+}
+
+interface Progress {
+  id: string;
+  user_id: string;
+  materi_id: string;
+  status: 'incomplete' | 'complete';
+  skor?: number;
+}
+
+interface Class {
   id: string;
   judul: string;
-  konten: string;
-  urutan: number;
-  paket_id: string;
-  paket_pembelajaran: {
-    nama_paket: string;
-  };
+  deskripsi?: string;
 }
 
-interface ActivePackage {
-  id: string;
-  nama_paket: string;
-  deskripsi: string;
-}
-
-export const Learning = () => {
-  const { user } = useAuth();
-  const [contents, setContents] = useState<LearningContent[]>([]);
-  const [activePackages, setActivePackages] = useState<ActivePackage[]>([]);
-  const [selectedContent, setSelectedContent] = useState<LearningContent | null>(null);
+export default function Learning() {
+  const { classId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { profile } = useAuth();
+  const { toast } = useToast();
+  
+  const [classData, setClassData] = useState<Class | null>(null);
+  const [materis, setMateris] = useState<Materi[]>([]);
+  const [progress, setProgress] = useState<Progress[]>([]);
+  const [currentMateri, setCurrentMateri] = useState<Materi | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchLearningData();
+    if (classId && profile) {
+      fetchData();
     }
-  }, [user]);
+  }, [classId, profile]);
 
-  const fetchLearningData = async () => {
+  useEffect(() => {
+    // Get current materi from URL params
+    const urlParams = new URLSearchParams(location.search);
+    const materiId = urlParams.get('materi');
+    if (materiId && materis.length > 0) {
+      const materi = materis.find(m => m.id === materiId);
+      if (materi) {
+        setCurrentMateri(materi);
+      }
+    } else if (materis.length > 0) {
+      // Default to first incomplete materi
+      const firstIncomplete = materis.find(m => !isMateriComplete(m.id));
+      setCurrentMateri(firstIncomplete || materis[0]);
+    }
+  }, [location.search, materis, progress]);
+
+  const fetchData = async () => {
     try {
-      // Get active subscriptions
-      const { data: subscriptions, error: subsError } = await supabase
-        .from('subscribers')
-        .select(`
-          paket_pembelajaran (
-            id,
-            nama_paket,
-            deskripsi
-          )
-        `)
-        .eq('user_id', user?.id)
-        .eq('status', 'active')
-        .gt('durasi_akhir', new Date().toISOString());
+      setLoading(true);
 
-      if (subsError) {
-        console.error('Error fetching subscriptions:', subsError);
-        return;
-      }
+      // Fetch class data
+      const { data: classInfo, error: classError } = await supabase
+        .from('kelas')
+        .select('id, judul, deskripsi')
+        .eq('id', classId)
+        .single();
 
-      const packages = subscriptions?.map(s => s.paket_pembelajaran).filter(Boolean) || [];
-      setActivePackages(packages);
+      if (classError) throw classError;
+      setClassData(classInfo);
 
-      if (packages.length === 0) {
-        setLoading(false);
-        return;
-      }
+      // Fetch materis for this class
+      const { data: materiData, error: materiError } = await supabase
+        .from('materi')
+        .select('*')
+        .eq('kelas_id', classId)
+        .order('order', { ascending: true });
 
-      // Get content for active packages
-      const packageIds = packages.map(p => p.id);
-      const { data: contentData, error: contentError } = await supabase
-        .from('paket_content')
-        .select(`
-          *,
-          paket_pembelajaran (
-            nama_paket
-          )
-        `)
-        .in('paket_id', packageIds)
-        .order('paket_id')
-        .order('urutan');
+      if (materiError) throw materiError;
+      setMateris((materiData as Materi[]) || []);
 
-      if (contentError) {
-        console.error('Error fetching content:', contentError);
-        return;
-      }
+      // Fetch user progress
+      const { data: progressData, error: progressError } = await supabase
+        .from('progress')
+        .select('*')
+        .eq('user_id', profile?.id)
+        .in('materi_id', (materiData || []).map(m => m.id));
 
-      setContents(contentData || []);
-      
-      // Set first content as selected if available
-      if (contentData && contentData.length > 0) {
-        setSelectedContent(contentData[0]);
-      }
+      if (progressError) throw progressError;
+      setProgress((progressData as Progress[]) || []);
 
-      // Log access
-      if (packageIds.length > 0) {
-        await supabase.from('akses_log').insert({
-          user_id: user?.id,
-          paket_id: packageIds[0],
-          halaman: 'learning'
-        });
-      }
     } catch (error) {
       console.error('Error fetching learning data:', error);
+      toast({
+        title: "Error",
+        description: "Gagal memuat data pembelajaran",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const groupedContents = contents.reduce((acc, content) => {
-    const packageName = content.paket_pembelajaran.nama_paket;
-    if (!acc[packageName]) {
-      acc[packageName] = [];
+  const isMateriComplete = (materiId: string): boolean => {
+    return progress.some(p => p.materi_id === materiId && p.status === 'complete');
+  };
+
+  const canAccessMateri = (materi: Materi): boolean => {
+    const materiIndex = materis.findIndex(m => m.id === materi.id);
+    if (materiIndex === 0) return true; // First materi is always accessible
+    
+    // Check if previous materi is complete
+    const previousMateri = materis[materiIndex - 1];
+    return previousMateri ? isMateriComplete(previousMateri.id) : false;
+  };
+
+  const handleMateriClick = (materi: Materi) => {
+    if (!canAccessMateri(materi)) {
+      toast({
+        title: "Akses Dibatasi",
+        description: "Selesaikan step sebelumnya untuk membuka materi ini",
+        variant: "destructive"
+      });
+      return;
     }
-    acc[packageName].push(content);
-    return acc;
-  }, {} as Record<string, LearningContent[]>);
+    
+    setCurrentMateri(materi);
+    // Update URL with materi parameter
+    const newUrl = `${location.pathname}?materi=${materi.id}`;
+    window.history.pushState({}, '', newUrl);
+  };
+
+  const markMateriComplete = async (materiId: string, skor?: number) => {
+    if (!profile) return;
+
+    try {
+      const { error } = await supabase
+        .from('progress')
+        .upsert({
+          user_id: profile.id,
+          materi_id: materiId,
+          status: 'complete',
+          skor: skor,
+          completed_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      // Refresh progress data
+      await fetchData();
+      
+      toast({
+        title: "Berhasil!",
+        description: "Materi telah ditandai selesai",
+      });
+    } catch (error) {
+      console.error('Error marking materi complete:', error);
+      toast({
+        title: "Error",
+        description: "Gagal menandai materi selesai",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getMateriIcon = (type: string) => {
+    switch (type) {
+      case 'pretest':
+        return <HelpCircle className="h-4 w-4" />;
+      case 'video':
+        return <Play className="h-4 w-4" />;
+      case 'posttest':
+        return <BookOpen className="h-4 w-4" />;
+      default:
+        return <BookOpen className="h-4 w-4" />;
+    }
+  };
+
+  const getMateriTypeLabel = (type: string) => {
+    switch (type) {
+      case 'pretest':
+        return 'Pre Test';
+      case 'video':
+        return 'Video Materi';
+      case 'posttest':
+        return 'Post Test';
+      default:
+        return type;
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-muted-foreground">Memuat pembelajaran...</div>
       </div>
     );
   }
 
-  if (activePackages.length === 0) {
+  if (!classData) {
     return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Pembelajaran</h1>
-          <p className="text-muted-foreground">
-            Akses materi pembelajaran sesuai paket Anda
-          </p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Kelas Tidak Ditemukan</h2>
+          <Button onClick={() => navigate('/subscriber/classes')}>
+            Kembali ke Daftar Kelas
+          </Button>
         </div>
-
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Lock className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Tidak Ada Akses Pembelajaran</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Anda tidak memiliki paket pembelajaran yang aktif saat ini.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Hubungi admin untuk mendapatkan akses paket pembelajaran.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Pembelajaran</h1>
-        <p className="text-muted-foreground">
-          Materi pembelajaran dari paket yang Anda miliki
-        </p>
-      </div>
+    <>
+      <SEO 
+        title={`${classData.judul} - Pembelajaran | Pembimbingmu`}
+        description={`Pembelajaran interaktif untuk kelas ${classData.judul} dengan Pre Test, Video Materi, dan Post Test`}
+        canonical={`https://pembimbingmu.lovable.app/subscriber/learning/${classId}`}
+      />
+      
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className="w-80 bg-muted/30 border-r overflow-y-auto">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <h2 className="font-semibold text-sm uppercase tracking-wider">Lesson List</h2>
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Content Navigation */}
-        <div className="lg:col-span-1">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="text-lg">Daftar Materi</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {Object.entries(groupedContents).map(([packageName, packageContents]) => (
-                <div key={packageName} className="space-y-2">
-                  <div className="font-medium text-sm text-primary">
-                    {packageName}
+            <div className="space-y-4">
+              {/* Assets/Prerequisites */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">ASSETS</h3>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span>Assets Materi Awal</span>
                   </div>
-                  <div className="space-y-1">
-                    {packageContents.map((content) => (
-                      <Button
-                        key={content.id}
-                        variant={selectedContent?.id === content.id ? "default" : "ghost"}
-                        className="w-full justify-start text-left h-auto p-3"
-                        onClick={() => setSelectedContent(content)}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 rounded-full border-2 border-current flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs">{content.urutan}</span>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span>Assets Update Materi</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Learning Materials */}
+              {materis.map((materi, index) => {
+                const isComplete = isMateriComplete(materi.id);
+                const canAccess = canAccessMateri(materi);
+                const isActive = currentMateri?.id === materi.id;
+                
+                return (
+                  <div key={materi.id}>
+                    <Accordion type="single" collapsible defaultValue={isActive ? materi.id : undefined}>
+                      <AccordionItem value={materi.id} className="border-none">
+                        <AccordionTrigger className="hover:no-underline p-0">
+                          <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                            <span className="text-xs">MATERI {index + 1} - {materi.judul.toUpperCase()}</span>
                           </div>
-                          <span className="truncate">{content.judul}</span>
-                        </div>
-                      </Button>
-                    ))}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-0">
+                          <div 
+                            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                              isActive 
+                                ? 'bg-primary/10 border-l-4 border-l-primary' 
+                                : canAccess
+                                ? 'hover:bg-muted/50'
+                                : 'opacity-50 cursor-not-allowed'
+                            }`}
+                            onClick={() => handleMateriClick(materi)}
+                          >
+                            <div className="flex items-center gap-2">
+                              {getMateriIcon(materi.type)}
+                              {isComplete ? (
+                                <CheckCircle className="h-4 w-4 text-green-500" />
+                              ) : canAccess ? (
+                                <Clock className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <div className="h-4 w-4 rounded-full border-2 border-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">{materi.judul}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {getMateriTypeLabel(materi.type)}
+                                {materi.type === 'video' && ' • 8:16'}
+                              </div>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
-                  <Separator className="my-3" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        {/* Content Display */}
-        <div className="lg:col-span-3">
-          {selectedContent ? (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl">{selectedContent.judul}</CardTitle>
-                  <Badge variant="outline">
-                    {selectedContent.paket_pembelajaran.nama_paket}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="prose max-w-none">
-                  {selectedContent.konten ? (
-                    <div className="whitespace-pre-wrap text-foreground leading-relaxed">
-                      {selectedContent.konten}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12">
-                      <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground">
-                        Konten untuk materi ini sedang dalam pengembangan.
-                      </p>
-                    </div>
-                  )}
-                </div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-white hover:bg-white/10"
+                  onClick={() => navigate('/subscriber/classes')}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Go to Course Home
+                </Button>
+                <div className="h-6 w-px bg-white/20" />
+                <h1 className="font-semibold">
+                  {currentMateri ? currentMateri.judul : classData.judul}
+                </h1>
+              </div>
+              {currentMateri && canAccessMateri(currentMateri) && (
+                <Button 
+                  variant="ghost"
+                  size="sm" 
+                  className="bg-white/10 hover:bg-white/20 text-white"
+                  onClick={() => markMateriComplete(currentMateri.id)}
+                >
+                  COMPLETE LESSON
+                </Button>
+              )}
+            </div>
+          </div>
 
-                {/* Navigation */}
-                <div className="flex justify-between items-center mt-8 pt-6 border-t">
-                  <div className="text-sm text-muted-foreground">
-                    Materi {selectedContent.urutan} dari {contents.filter(c => c.paket_id === selectedContent.paket_id).length}
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    {/* Previous Button */}
-                    {contents.findIndex(c => c.id === selectedContent.id) > 0 && (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          const currentIndex = contents.findIndex(c => c.id === selectedContent.id);
-                          setSelectedContent(contents[currentIndex - 1]);
-                        }}
-                      >
-                        Sebelumnya
-                      </Button>
-                    )}
-                    
-                    {/* Next Button */}
-                    {contents.findIndex(c => c.id === selectedContent.id) < contents.length - 1 && (
-                      <Button
-                        onClick={() => {
-                          const currentIndex = contents.findIndex(c => c.id === selectedContent.id);
-                          setSelectedContent(contents[currentIndex + 1]);
-                        }}
-                      >
-                        Selanjutnya
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Pilih Materi</h3>
-                <p className="text-muted-foreground text-center">
-                  Pilih materi dari daftar di samping untuk mulai belajar.
+          {/* Content Area */}
+          <div className="flex-1 p-6">
+            {currentMateri ? (
+              <div className="h-full">
+                {currentMateri.type === 'pretest' && (
+                  <PreTest 
+                    materiId={currentMateri.id}
+                    onComplete={(skor) => markMateriComplete(currentMateri.id, skor)}
+                  />
+                )}
+                {currentMateri.type === 'video' && (
+                  <VideoPlayer 
+                    materi={currentMateri}
+                    onComplete={() => markMateriComplete(currentMateri.id)}
+                  />
+                )}
+                {currentMateri.type === 'posttest' && (
+                  <PostTest 
+                    materiId={currentMateri.id}
+                    onComplete={(skor) => markMateriComplete(currentMateri.id, skor)}
+                  />
+                )}
+              </div>
+            ) : (
+              <Card className="p-8 text-center">
+                <h3 className="text-lg font-semibold mb-2">Selamat Datang di {classData.judul}</h3>
+                <p className="text-muted-foreground mb-4">
+                  {classData.deskripsi || 'Pilih materi dari sidebar untuk memulai pembelajaran'}
                 </p>
-              </CardContent>
-            </Card>
-          )}
+                <Badge variant="outline" className="bg-[#81b59a]/10 text-[#81b59a] border-[#81b59a]/20">
+                  Siap untuk Belajar
+                </Badge>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
-};
+}

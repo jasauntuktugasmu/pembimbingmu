@@ -126,11 +126,8 @@ export default function ClassDetail() {
   };
 
   const handleStartLearning = () => {
-    // Here you would navigate to the actual video/content page
-    toast({
-      title: "Memulai Pembelajaran",
-      description: "Fitur video pembelajaran akan segera tersedia",
-    });
+    // Navigate to learning page for this class
+    navigate(`/subscriber/learning/${classId}`);
   };
 
   if (loading) {

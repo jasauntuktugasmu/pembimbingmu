@@ -169,6 +169,42 @@ export type Database = {
           },
         ]
       }
+      materi: {
+        Row: {
+          created_at: string
+          id: string
+          judul: string
+          kelas_id: string
+          link_video: string | null
+          order: number
+          thumbnail: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          judul: string
+          kelas_id: string
+          link_video?: string | null
+          order?: number
+          thumbnail?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          judul?: string
+          kelas_id?: string
+          link_video?: string | null
+          order?: number
+          thumbnail?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       paket_content: {
         Row: {
           created_at: string
@@ -282,6 +318,78 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
+        }
+        Relationships: []
+      }
+      progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          materi_id: string
+          skor: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          materi_id: string
+          skor?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          materi_id?: string
+          skor?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      soal: {
+        Row: {
+          created_at: string
+          id: string
+          jawaban_benar: string
+          materi_id: string
+          pertanyaan: string
+          pilihan_a: string
+          pilihan_b: string
+          pilihan_c: string
+          pilihan_d: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          jawaban_benar: string
+          materi_id: string
+          pertanyaan: string
+          pilihan_a: string
+          pilihan_b: string
+          pilihan_c: string
+          pilihan_d: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          jawaban_benar?: string
+          materi_id?: string
+          pertanyaan?: string
+          pilihan_a?: string
+          pilihan_b?: string
+          pilihan_c?: string
+          pilihan_d?: string
+          updated_at?: string
         }
         Relationships: []
       }

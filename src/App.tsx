@@ -24,7 +24,7 @@ import { ManageSubscribers } from "./pages/admin/ManageSubscribers";
 import { ManagePackages } from "./pages/admin/ManagePackages";
 import { SubscriberDashboard } from "./pages/subscriber/SubscriberDashboard";
 import { MyPackages } from "./pages/subscriber/MyPackages";
-import { Learning } from "./pages/subscriber/Learning";
+import Learning from "./pages/subscriber/Learning";
 import ClassList from "./pages/subscriber/ClassList";
 import ClassDetail from "./pages/subscriber/ClassDetail";
 
@@ -64,7 +64,7 @@ const App = () => (
               <Route path="my-packages" element={<MyPackages />} />
               <Route path="classes" element={<ClassList />} />
               <Route path="class/:classId" element={<ClassDetail />} />
-              <Route path="learning" element={<Learning />} />
+              <Route path="learning/:classId" element={<Learning />} />
             </Route>
 
             {/* Legacy Dashboard Routes */}
