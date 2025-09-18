@@ -17,11 +17,13 @@ import SEO from '@/components/SEO';
 interface Materi {
   id: string;
   kelas_id: string;
-  type: 'pretest' | 'video' | 'posttest';
+  type: 'pretest' | 'video' | 'posttest' | 'chapter' | 'lesson';
   judul: string;
   link_video?: string;
   thumbnail?: string;
   order: number;
+  parent_id?: string;
+  deskripsi?: string;
 }
 
 interface Progress {
@@ -237,6 +239,83 @@ export default function Learning() {
       default:
         return type;
     }
+  };
+
+  const renderMaterials = () => {
+    // Separate materials by type and structure
+    const chapters = materis.filter(m => m.type === 'chapter').sort((a, b) => a.order - b.order);
+    const lessons = materis.filter(m => m.type === 'lesson');
+    const pretest = materis.find(m => m.type === 'pretest');
+    const videos = materis.filter(m => m.type === 'video').sort((a, b) => a.order - b.order);
+    const posttest = materis.find(m => m.type === 'posttest');
+
+    const renderMaterialItem = (materi: Materi) => {
+      const isComplete = isMateriComplete(materi.id);
+      const canAccess = canAccessMateri(materi);
+      
+      return (
+        <div
+          key={materi.id}
+          className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+            currentMateri?.id === materi.id
+              ? 'bg-primary/10 border-primary'
+              : canAccess
+              ? 'hover:bg-muted/50'
+              : 'opacity-50'
+          }`}
+          onClick={() => canAccess && handleMateriClick(materi)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {getMateriIcon(materi.type)}
+              <div>
+                <p className="font-medium text-sm">{materi.judul}</p>
+                <p className="text-xs text-muted-foreground">
+                  {getMateriTypeLabel(materi.type)}
+                </p>
+                {materi.deskripsi && (
+                  <p className="text-xs text-muted-foreground mt-1">{materi.deskripsi}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {isComplete && <CheckCircle className="h-4 w-4 text-green-500" />}
+              {!canAccess && <Clock className="h-4 w-4 text-muted-foreground" />}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <>
+        {/* Pre Test */}
+        {pretest && renderMaterialItem(pretest)}
+        
+        {/* Chapters with Lessons */}
+        {chapters.map(chapter => {
+          const chapterLessons = lessons
+            .filter(l => l.parent_id === chapter.id)
+            .sort((a, b) => a.order - b.order);
+          
+          return (
+            <div key={chapter.id} className="space-y-2">
+              {renderMaterialItem(chapter)}
+              {/* Lessons under this chapter */}
+              <div className="ml-6 space-y-2">
+                {chapterLessons.map(lesson => renderMaterialItem(lesson))}
+              </div>
+            </div>
+          );
+        })}
+        
+        {/* Standalone Videos (legacy) */}
+        {videos.map(video => renderMaterialItem(video))}
+        
+        {/* Post Test */}
+        {posttest && renderMaterialItem(posttest)}
+      </>
+    );
   };
 
   if (loading) {

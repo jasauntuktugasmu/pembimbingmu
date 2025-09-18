@@ -172,38 +172,52 @@ export type Database = {
       materi: {
         Row: {
           created_at: string
+          deskripsi: string | null
           id: string
           judul: string
           kelas_id: string
           link_video: string | null
           order: number
+          parent_id: string | null
           thumbnail: string | null
           type: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          deskripsi?: string | null
           id?: string
           judul: string
           kelas_id: string
           link_video?: string | null
           order?: number
+          parent_id?: string | null
           thumbnail?: string | null
           type: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          deskripsi?: string | null
           id?: string
           judul?: string
           kelas_id?: string
           link_video?: string | null
           order?: number
+          parent_id?: string | null
           thumbnail?: string | null
           type?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "materi_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "materi"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       paket_content: {
         Row: {

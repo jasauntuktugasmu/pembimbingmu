@@ -16,15 +16,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, HelpCircle, Play, BookOpen, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ChapterManager } from './ChapterManager';
 
 interface Materi {
   id: string;
   kelas_id: string;
-  type: 'pretest' | 'video' | 'posttest';
+  type: 'pretest' | 'video' | 'posttest' | 'chapter' | 'lesson';
   judul: string;
   link_video?: string;
   thumbnail?: string;
   order: number;
+  parent_id?: string;
+  deskripsi?: string;
 }
 
 interface VideoLink {
@@ -65,6 +68,8 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
   const [videoLinks, setVideoLinks] = useState<Record<string, VideoLink[]>>({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pretest');
+  const [editingChapter, setEditingChapter] = useState<Materi | null>(null);
+  const [showChapterForm, setShowChapterForm] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -209,10 +214,14 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="pretest" className="flex items-center gap-2">
                 <HelpCircle className="h-4 w-4" />
                 Pre Test
+              </TabsTrigger>
+              <TabsTrigger value="chapters" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Sub Bab
               </TabsTrigger>
               <TabsTrigger value="video" className="flex items-center gap-2">
                 <Play className="h-4 w-4" />
@@ -223,6 +232,16 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
                 Post Test
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="chapters">
+              <ChapterManager 
+                classId={classData.id}
+                chapters={materis.filter(m => m.type === 'chapter')}
+                lessons={materis.filter(m => m.type === 'lesson')}
+                videoLinks={videoLinks}
+                onRefresh={fetchClassContent}
+              />
+            </TabsContent>
 
             <TabsContent value="pretest">
               <PreTestManager 
