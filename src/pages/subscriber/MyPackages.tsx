@@ -20,7 +20,7 @@ interface MySubscription {
     deskripsi: string;
     harga: number;
     durasi_hari: number;
-  };
+  } | null;
 }
 
 export const MyPackages = () => {
@@ -122,16 +122,38 @@ export const MyPackages = () => {
         </Card>
       ) : (
         <div className="space-y-6">
-          {subscriptions.map((subscription) => (
-            <Card key={subscription.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl">
-                    {subscription.paket_pembelajaran.nama_paket}
-                  </CardTitle>
-                  {getStatusBadge(subscription.status, subscription.durasi_akhir)}
-                </div>
-              </CardHeader>
+          {subscriptions.map((subscription) => {
+            // Handle null paket_pembelajaran
+            if (!subscription.paket_pembelajaran) {
+              return (
+                <Card key={subscription.id} className="hover:shadow-md transition-shadow border-destructive/50">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl text-destructive">
+                        Paket Tidak Ditemukan
+                      </CardTitle>
+                      <Badge variant="destructive">Error</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Data paket pembelajaran tidak dapat ditemukan. Hubungi admin untuk bantuan.
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            }
+
+            return (
+              <Card key={subscription.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl">
+                      {subscription.paket_pembelajaran.nama_paket}
+                    </CardTitle>
+                    {getStatusBadge(subscription.status, subscription.durasi_akhir)}
+                  </div>
+                </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Package Info */}
@@ -231,8 +253,9 @@ export const MyPackages = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
