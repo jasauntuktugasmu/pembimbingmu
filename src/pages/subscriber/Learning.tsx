@@ -159,7 +159,11 @@ export default function Learning() {
           materi_id: materiId,
           status: 'complete',
           skor: skor,
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,materi_id',
+          ignoreDuplicates: false
         });
 
       if (error) throw error;
