@@ -223,6 +223,10 @@ export default function Learning() {
         return <Play className="h-4 w-4" />;
       case 'posttest':
         return <BookOpen className="h-4 w-4" />;
+      case 'chapter':
+        return <BookOpen className="h-4 w-4" />;
+      case 'lesson':
+        return <Play className="h-4 w-4" />;
       default:
         return <BookOpen className="h-4 w-4" />;
     }
@@ -236,6 +240,10 @@ export default function Learning() {
         return 'Video Materi';
       case 'posttest':
         return 'Post Test';
+      case 'chapter':
+        return 'Bab';
+      case 'lesson':
+        return 'Pelajaran';
       default:
         return type;
     }
@@ -373,55 +381,10 @@ export default function Learning() {
               </div>
 
               {/* Learning Materials */}
-              {materis.map((materi, index) => {
-                const isComplete = isMateriComplete(materi.id);
-                const canAccess = canAccessMateri(materi);
-                const isActive = currentMateri?.id === materi.id;
-                
-                return (
-                  <div key={materi.id}>
-                    <Accordion type="single" collapsible defaultValue={isActive ? materi.id : undefined}>
-                      <AccordionItem value={materi.id} className="border-none">
-                        <AccordionTrigger className="hover:no-underline p-0">
-                          <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                            <span className="text-xs">MATERI {index + 1} - {materi.judul.toUpperCase()}</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-0">
-                          <div 
-                            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
-                              isActive 
-                                ? 'bg-primary/10 border-l-4 border-l-primary' 
-                                : canAccess
-                                ? 'hover:bg-muted/50'
-                                : 'opacity-50 cursor-not-allowed'
-                            }`}
-                            onClick={() => handleMateriClick(materi)}
-                          >
-                            <div className="flex items-center gap-2">
-                              {getMateriIcon(materi.type)}
-                              {isComplete ? (
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                              ) : canAccess ? (
-                                <Clock className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <div className="h-4 w-4 rounded-full border-2 border-muted-foreground" />
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <div className="text-sm font-medium">{materi.judul}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {getMateriTypeLabel(materi.type)}
-                                {materi.type === 'video' && ' • 8:16'}
-                              </div>
-                            </div>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </div>
-                );
-              })}
+              <div className="space-y-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">MATERI PEMBELAJARAN</h3>
+                {renderMaterials()}
+              </div>
             </div>
           </div>
         </div>
@@ -469,12 +432,24 @@ export default function Learning() {
                     onComplete={(skor) => markMateriComplete(currentMateri.id, skor)}
                   />
                 )}
-                {currentMateri.type === 'video' && (
+                {(currentMateri.type === 'video' || currentMateri.type === 'lesson') && (
                   <VideoPlayer 
                     materi={currentMateri}
                     videoLinks={videoLinks[currentMateri.id] || []}
                     onComplete={() => markMateriComplete(currentMateri.id)}
                   />
+                )}
+                {currentMateri.type === 'chapter' && (
+                  <div className="text-center py-12">
+                    <BookOpen className="h-20 w-20 mx-auto mb-6 text-muted-foreground" />
+                    <h3 className="text-2xl font-semibold mb-4">{currentMateri.judul}</h3>
+                    {currentMateri.deskripsi && (
+                      <p className="text-muted-foreground mb-6 max-w-md mx-auto">{currentMateri.deskripsi}</p>
+                    )}
+                    <p className="text-sm text-muted-foreground">
+                      Pilih pelajaran dari sidebar untuk memulai belajar
+                    </p>
+                  </div>
                 )}
                 {currentMateri.type === 'posttest' && (
                   <PostTest 
