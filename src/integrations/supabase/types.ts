@@ -103,10 +103,15 @@ export type Database = {
           created_at: string
           deskripsi: string | null
           durasi_menit: number | null
+          durasi_text: string | null
+          harga_asli: number | null
+          harga_diskon: number | null
           id: string
           is_active: boolean | null
           judul: string
           jumlah_review: number | null
+          jumlah_user: number | null
+          level: string | null
           paket_id: string
           pengajar: string
           rating: number | null
@@ -118,10 +123,15 @@ export type Database = {
           created_at?: string
           deskripsi?: string | null
           durasi_menit?: number | null
+          durasi_text?: string | null
+          harga_asli?: number | null
+          harga_diskon?: number | null
           id?: string
           is_active?: boolean | null
           judul: string
           jumlah_review?: number | null
+          jumlah_user?: number | null
+          level?: string | null
           paket_id: string
           pengajar: string
           rating?: number | null
@@ -133,10 +143,15 @@ export type Database = {
           created_at?: string
           deskripsi?: string | null
           durasi_menit?: number | null
+          durasi_text?: string | null
+          harga_asli?: number | null
+          harga_diskon?: number | null
           id?: string
           is_active?: boolean | null
           judul?: string
           jumlah_review?: number | null
+          jumlah_user?: number | null
+          level?: string | null
           paket_id?: string
           pengajar?: string
           rating?: number | null

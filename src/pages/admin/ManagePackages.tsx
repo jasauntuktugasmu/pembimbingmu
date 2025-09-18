@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, BookOpen, Eye, ImageIcon } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, BookOpen, Eye, ImageIcon, GraduationCap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
 import { AddPackageForm } from '@/components/admin/AddPackageForm';
 import { EditPackageForm } from '@/components/admin/EditPackageForm';
 import { ManageContentDialog } from '@/components/admin/ManageContentDialog';
+import { ManageClassesDialog } from '@/components/admin/ManageClassesDialog';
 
 interface Package {
   id: string;
@@ -34,6 +35,7 @@ export const ManagePackages = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
   const [managingContentPackage, setManagingContentPackage] = useState<Package | null>(null);
+  const [managingClassesPackage, setManagingClassesPackage] = useState<Package | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -222,12 +224,22 @@ export const ManagePackages = () => {
                   <div className="flex space-x-2">
                     <Button
                       size="sm"
+                      onClick={() => setManagingClassesPackage(pkg)}
+                      className="flex-1 bg-[#81b59a] hover:bg-[#6da085] text-white"
+                    >
+                      <GraduationCap className="h-4 w-4 mr-1" />
+                      Classes
+                    </Button>
+                    <Button
+                      size="sm"
                       onClick={() => setManagingContentPackage(pkg)}
                       className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
                     >
                       <Eye className="h-4 w-4 mr-1" />
-                      View
+                      Content
                     </Button>
+                  </div>
+                  <div className="flex space-x-2">
                     <Button
                       size="sm"
                       onClick={() => setEditingPackage(pkg)}
@@ -309,6 +321,15 @@ export const ManagePackages = () => {
           package={managingContentPackage}
           open={!!managingContentPackage}
           onClose={() => setManagingContentPackage(null)}
+        />
+      )}
+
+      {/* Manage Classes Dialog */}
+      {managingClassesPackage && (
+        <ManageClassesDialog
+          package={managingClassesPackage}
+          open={!!managingClassesPackage}
+          onClose={() => setManagingClassesPackage(null)}
         />
       )}
     </div>
