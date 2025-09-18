@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Play, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface Materi {
@@ -10,22 +11,42 @@ interface Materi {
   thumbnail?: string;
 }
 
+interface VideoLink {
+  id: string;
+  materi_id: string;
+  judul: string;
+  link_youtube: string;
+  thumbnail?: string;
+  urutan: number;
+}
+
 interface VideoPlayerProps {
   materi: Materi;
+  videoLinks?: VideoLink[];
   onComplete: () => void;
 }
 
-export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
+export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPlayerProps) {
+  const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
   const [videoId, setVideoId] = useState<string>('');
   const [videoTitle, setVideoTitle] = useState<string>('');
   const [thumbnail, setThumbnail] = useState<string>('');
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    if (materi.link_video) {
+    // If we have video links from the new system, use them
+    if (videoLinks && videoLinks.length > 0) {
+      const currentVideo = videoLinks[currentVideoIndex];
+      if (currentVideo) {
+        extractVideoInfo(currentVideo.link_youtube);
+        setVideoTitle(currentVideo.judul);
+      }
+    } else if (materi.link_video) {
+      // Fallback to old system
       extractVideoInfo(materi.link_video);
+      setVideoTitle(materi.judul);
     }
-  }, [materi.link_video]);
+  }, [materi.link_video, videoLinks, currentVideoIndex]);
 
   const extractVideoInfo = (url: string) => {
     // Extract YouTube video ID from URL
@@ -36,10 +57,6 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
       const extractedVideoId = match[7];
       setVideoId(extractedVideoId);
       setThumbnail(`https://img.youtube.com/vi/${extractedVideoId}/maxresdefault.jpg`);
-      
-      // Try to fetch video title (this would require YouTube API key in production)
-      // For now, we'll use the materi title
-      setVideoTitle(materi.judul);
     }
   };
 
@@ -50,7 +67,21 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
     }, 1500);
   };
 
-  if (!materi.link_video) {
+  const goToNextVideo = () => {
+    if (videoLinks && currentVideoIndex < videoLinks.length - 1) {
+      setCurrentVideoIndex(currentVideoIndex + 1);
+    }
+  };
+
+  const goToPreviousVideo = () => {
+    if (currentVideoIndex > 0) {
+      setCurrentVideoIndex(currentVideoIndex - 1);
+    }
+  };
+
+  const hasVideos = (videoLinks && videoLinks.length > 0) || materi.link_video;
+
+  if (!hasVideos) {
     return (
       <Card className="max-w-4xl mx-auto">
         <CardContent className="p-8 text-center">
@@ -89,6 +120,11 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
           <CardTitle className="flex items-center gap-2">
             <Play className="h-5 w-5 text-primary" />
             Video Materi: {materi.judul}
+            {videoLinks && videoLinks.length > 1 && (
+              <Badge variant="outline" className="ml-2">
+                {currentVideoIndex + 1} dari {videoLinks.length}
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
       </Card>
@@ -116,6 +152,51 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
         </div>
       </Card>
 
+      {/* Video Navigation for Multiple Videos */}
+      {videoLinks && videoLinks.length > 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Daftar Video</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3">
+              {videoLinks.map((video, index) => (
+                <div 
+                  key={video.id}
+                  className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                    index === currentVideoIndex 
+                      ? 'bg-primary/10 border-primary' 
+                      : 'hover:bg-muted/50'
+                  }`}
+                  onClick={() => setCurrentVideoIndex(index)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-16 h-10 bg-black rounded overflow-hidden flex-shrink-0">
+                      <img 
+                        src={`https://img.youtube.com/vi/${(() => {
+                          const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                          const match = video.link_youtube.match(regExp);
+                          return match && match[7].length === 11 ? match[7] : '';
+                        })()}/mqdefault.jpg`}
+                        alt={video.judul}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{video.judul}</p>
+                      <p className="text-xs text-muted-foreground">Video {index + 1}</p>
+                    </div>
+                    {index === currentVideoIndex && (
+                      <Badge variant="default" size="sm">Sedang Diputar</Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Video Info and Actions */}
       <Card>
         <CardContent className="p-6">
@@ -123,10 +204,21 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
             <div className="flex-1">
               <h3 className="text-xl font-semibold mb-2">{videoTitle || materi.judul}</h3>
               <p className="text-muted-foreground mb-4">
-                Tonton video pembelajaran ini sampai selesai, kemudian klik "Complete Lesson" untuk melanjutkan ke materi berikutnya.
+                Tonton video pembelajaran ini sampai selesai, kemudian klik tombol di bawah untuk melanjutkan.
               </p>
               
-              {materi.link_video && (
+              {/* Show current video link */}
+              {videoLinks && videoLinks.length > 0 && videoLinks[currentVideoIndex] ? (
+                <a 
+                  href={videoLinks[currentVideoIndex].link_youtube} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Buka di YouTube
+                </a>
+              ) : materi.link_video ? (
                 <a 
                   href={materi.link_video} 
                   target="_blank" 
@@ -136,7 +228,7 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
                   <ExternalLink className="h-4 w-4" />
                   Buka di YouTube
                 </a>
-              )}
+              ) : null}
             </div>
             
             <div className="ml-6">
@@ -147,29 +239,6 @@ export default function VideoPlayer({ materi, onComplete }: VideoPlayerProps) {
               >
                 Complete Lesson
               </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Additional Resources */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Catatan Pembelajaran</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-start gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-              <p>Tonton video dengan seksama dan catat poin-poin penting</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-              <p>Jika ada yang kurang jelas, Anda bisa memutar ulang video</p>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-              <p>Setelah selesai menonton, klik "Complete Lesson" untuk melanjutkan</p>
             </div>
           </div>
         </CardContent>

@@ -441,6 +441,47 @@ export type Database = {
           },
         ]
       }
+      video_links: {
+        Row: {
+          created_at: string
+          id: string
+          judul: string
+          link_youtube: string
+          materi_id: string
+          thumbnail: string | null
+          updated_at: string
+          urutan: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          judul: string
+          link_youtube: string
+          materi_id: string
+          thumbnail?: string | null
+          updated_at?: string
+          urutan?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          judul?: string
+          link_youtube?: string
+          materi_id?: string
+          thumbnail?: string | null
+          updated_at?: string
+          urutan?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_links_materi_id_fkey"
+            columns: ["materi_id"]
+            isOneToOne: false
+            referencedRelation: "materi"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

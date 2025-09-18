@@ -32,6 +32,15 @@ interface Progress {
   skor?: number;
 }
 
+interface VideoLink {
+  id: string;
+  materi_id: string;
+  judul: string;
+  link_youtube: string;
+  thumbnail?: string;
+  urutan: number;
+}
+
 interface Class {
   id: string;
   judul: string;
@@ -48,6 +57,7 @@ export default function Learning() {
   const [classData, setClassData] = useState<Class | null>(null);
   const [materis, setMateris] = useState<Materi[]>([]);
   const [progress, setProgress] = useState<Progress[]>([]);
+  const [videoLinks, setVideoLinks] = useState<Record<string, VideoLink[]>>({});
   const [currentMateri, setCurrentMateri] = useState<Materi | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -97,15 +107,33 @@ export default function Learning() {
       if (materiError) throw materiError;
       setMateris((materiData as Materi[]) || []);
 
-      // Fetch user progress
-      const { data: progressData, error: progressError } = await supabase
-        .from('progress')
-        .select('*')
-        .eq('user_id', profile?.id)
-        .in('materi_id', (materiData || []).map(m => m.id));
+      // Fetch user progress and video links
+      const [progressData, videoData] = await Promise.all([
+        supabase
+          .from('progress')
+          .select('*')
+          .eq('user_id', profile?.id)
+          .in('materi_id', (materiData || []).map(m => m.id)),
+        
+        supabase
+          .from('video_links')
+          .select('*')
+          .in('materi_id', (materiData || []).filter(m => m.type === 'video').map(m => m.id))
+          .order('urutan')
+      ]);
 
-      if (progressError) throw progressError;
-      setProgress((progressData as Progress[]) || []);
+      if (progressData.error) throw progressData.error;
+      if (videoData.error) throw videoData.error;
+
+      setProgress((progressData.data as Progress[]) || []);
+      
+      // Organize video links by materi_id
+      const videoMap = (videoData.data || []).reduce((acc, video) => {
+        if (!acc[video.materi_id]) acc[video.materi_id] = [];
+        acc[video.materi_id].push(video);
+        return acc;
+      }, {} as Record<string, VideoLink[]>);
+      setVideoLinks(videoMap);
 
     } catch (error) {
       console.error('Error fetching learning data:', error);
@@ -365,6 +393,7 @@ export default function Learning() {
                 {currentMateri.type === 'video' && (
                   <VideoPlayer 
                     materi={currentMateri}
+                    videoLinks={videoLinks[currentMateri.id] || []}
                     onComplete={() => markMateriComplete(currentMateri.id)}
                   />
                 )}

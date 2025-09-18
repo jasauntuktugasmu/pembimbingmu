@@ -27,6 +27,15 @@ interface Materi {
   order: number;
 }
 
+interface VideoLink {
+  id: string;
+  materi_id: string;
+  judul: string;
+  link_youtube: string;
+  thumbnail?: string;
+  urutan: number;
+}
+
 interface Soal {
   id: string;
   materi_id: string;
@@ -53,6 +62,7 @@ interface ManageClassContentDialogProps {
 export function ManageClassContentDialog({ classData, open, onClose }: ManageClassContentDialogProps) {
   const [materis, setMateris] = useState<Materi[]>([]);
   const [soals, setSoals] = useState<Record<string, Soal[]>>({});
+  const [videoLinks, setVideoLinks] = useState<Record<string, VideoLink[]>>({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pretest');
   const { toast } = useToast();
@@ -77,7 +87,7 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
       if (materiError) throw materiError;
       setMateris((materiData as Materi[]) || []);
 
-      // Fetch soals for each materi
+      // Fetch soals and video links for each materi
       const soalPromises = (materiData || []).map(async (materi) => {
         if (materi.type === 'pretest' || materi.type === 'posttest') {
           const { data: soalData, error: soalError } = await supabase
@@ -92,13 +102,37 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
         return { materiId: materi.id, soals: [] };
       });
 
-      const soalResults = await Promise.all(soalPromises);
+      const videoPromises = (materiData || []).map(async (materi) => {
+        if (materi.type === 'video') {
+          const { data: videoData, error: videoError } = await supabase
+            .from('video_links')
+            .select('*')
+            .eq('materi_id', materi.id)
+            .order('urutan');
+
+          if (videoError) throw videoError;
+          return { materiId: materi.id, videos: videoData || [] };
+        }
+        return { materiId: materi.id, videos: [] };
+      });
+
+      const [soalResults, videoResults] = await Promise.all([
+        Promise.all(soalPromises),
+        Promise.all(videoPromises)
+      ]);
+      
       const soalMap = soalResults.reduce((acc, { materiId, soals }) => {
         acc[materiId] = soals;
         return acc;
       }, {} as Record<string, Soal[]>);
 
+      const videoMap = videoResults.reduce((acc, { materiId, videos }) => {
+        acc[materiId] = videos;
+        return acc;
+      }, {} as Record<string, VideoLink[]>);
+
       setSoals(soalMap);
+      setVideoLinks(videoMap);
     } catch (error) {
       console.error('Error fetching class content:', error);
       toast({
@@ -204,6 +238,7 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
               <VideoManager 
                 classData={classData}
                 materi={getMateriByType('video')}
+                videoLinks={videoLinks[getMateriByType('video')?.id || ''] || []}
                 onCreateMateri={() => createMateri('video')}
                 onRefresh={fetchClassContent}
               />
@@ -329,27 +364,25 @@ function PreTestManager({
 function VideoManager({ 
   classData, 
   materi, 
+  videoLinks,
   onCreateMateri, 
   onRefresh 
 }: { 
   classData: Class; 
   materi?: Materi; 
+  videoLinks: VideoLink[];
   onCreateMateri: () => void;
   onRefresh: () => void;
 }) {
-  const [linkVideo, setLinkVideo] = useState(materi?.link_video || '');
-  const [judul, setJudul] = useState(materi?.judul || '');
-  const [thumbnail, setThumbnail] = useState(materi?.thumbnail || '');
+  const [newVideo, setNewVideo] = useState({
+    judul: '',
+    link_youtube: '',
+    thumbnail: ''
+  });
+  const [editingVideo, setEditingVideo] = useState<VideoLink | null>(null);
+  const [showAddVideo, setShowAddVideo] = useState(false);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (materi) {
-      setLinkVideo(materi.link_video || '');
-      setJudul(materi.judul || '');
-      setThumbnail(materi.thumbnail || '');
-    }
-  }, [materi]);
 
   const extractVideoId = (url: string): string | null => {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -357,46 +390,126 @@ function VideoManager({
     return match && match[7].length === 11 ? match[7] : null;
   };
 
-  const handleVideoLinkChange = (url: string) => {
-    setLinkVideo(url);
+  const handleNewVideoLinkChange = (url: string) => {
+    setNewVideo(prev => ({ ...prev, link_youtube: url }));
     
     if (url) {
       const videoId = extractVideoId(url);
       if (videoId) {
-        // Auto-generate thumbnail from YouTube
         const autoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-        setThumbnail(autoThumbnail);
+        setNewVideo(prev => ({ ...prev, thumbnail: autoThumbnail }));
       }
     }
   };
 
-  const saveVideoMateri = async () => {
-    if (!materi) return;
+  const handleEditVideoLinkChange = (url: string) => {
+    if (!editingVideo) return;
+    setEditingVideo(prev => prev ? { ...prev, link_youtube: url } : null);
+    
+    if (url) {
+      const videoId = extractVideoId(url);
+      if (videoId) {
+        const autoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        setEditingVideo(prev => prev ? { ...prev, thumbnail: autoThumbnail } : null);
+      }
+    }
+  };
+
+  const addVideoLink = async () => {
+    if (!materi || !newVideo.judul.trim() || !newVideo.link_youtube.trim()) return;
+
+    setSaving(true);
+    try {
+      const nextUrutan = Math.max(...videoLinks.map(v => v.urutan), 0) + 1;
+      
+      const { error } = await supabase
+        .from('video_links')
+        .insert({
+          materi_id: materi.id,
+          judul: newVideo.judul.trim(),
+          link_youtube: newVideo.link_youtube.trim(),
+          thumbnail: newVideo.thumbnail.trim(),
+          urutan: nextUrutan
+        });
+
+      if (error) throw error;
+
+      setNewVideo({ judul: '', link_youtube: '', thumbnail: '' });
+      setShowAddVideo(false);
+      toast({
+        title: "Berhasil",
+        description: "Video berhasil ditambahkan",
+      });
+      
+      onRefresh();
+    } catch (error) {
+      console.error('Error adding video:', error);
+      toast({
+        title: "Error",
+        description: "Gagal menambahkan video",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateVideoLink = async () => {
+    if (!editingVideo) return;
 
     setSaving(true);
     try {
       const { error } = await supabase
-        .from('materi')
+        .from('video_links')
         .update({
-          judul: judul.trim(),
-          link_video: linkVideo.trim(),
-          thumbnail: thumbnail.trim()
+          judul: editingVideo.judul.trim(),
+          link_youtube: editingVideo.link_youtube.trim(),
+          thumbnail: editingVideo.thumbnail.trim()
         })
-        .eq('id', materi.id);
+        .eq('id', editingVideo.id);
+
+      if (error) throw error;
+
+      setEditingVideo(null);
+      toast({
+        title: "Berhasil",
+        description: "Video berhasil diperbarui",
+      });
+      
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating video:', error);
+      toast({
+        title: "Error",
+        description: "Gagal memperbarui video",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteVideoLink = async (videoId: string) => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('video_links')
+        .delete()
+        .eq('id', videoId);
 
       if (error) throw error;
 
       toast({
         title: "Berhasil",
-        description: "Video materi berhasil disimpan",
+        description: "Video berhasil dihapus",
       });
       
       onRefresh();
     } catch (error) {
-      console.error('Error saving video materi:', error);
+      console.error('Error deleting video:', error);
       toast({
         title: "Error",
-        description: "Gagal menyimpan video materi",
+        description: "Gagal menghapus video",
         variant: "destructive"
       });
     } finally {
@@ -426,86 +539,275 @@ function VideoManager({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Play className="h-5 w-5 text-green-600" />
-            Video Materi - {classData.judul}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Play className="h-5 w-5 text-green-600" />
+              Video Materi - {classData.judul}
+            </CardTitle>
+            <Button 
+              onClick={() => setShowAddVideo(true)}
+              className="bg-[#81b59a] hover:bg-[#6da085]"
+              size="sm"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Tambah Video
+            </Button>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="judul">Judul Video</Label>
-            <Input
-              id="judul"
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Masukkan judul video..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="link_video">Link YouTube</Label>
-            <Input
-              id="link_video"
-              value={linkVideo}
-              onChange={(e) => handleVideoLinkChange(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="thumbnail">Thumbnail URL (otomatis dari YouTube)</Label>
-            <Input
-              id="thumbnail"
-              value={thumbnail}
-              onChange={(e) => setThumbnail(e.target.value)}
-              placeholder="URL thumbnail..."
-            />
-          </div>
-
-          {/* Video Preview */}
-          {linkVideo && (
-            <div className="space-y-2">
-              <Label>Preview Video</Label>
-              <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                {(() => {
-                  const videoId = extractVideoId(linkVideo);
-                  return videoId ? (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoId}`}
-                      title="Video Preview"
-                      className="w-full h-full"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      <p>URL YouTube tidak valid</p>
-                    </div>
-                  );
-                })()}
-              </div>
+        <CardContent>
+          {videoLinks.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-muted-foreground mb-4">Belum ada video yang ditambahkan</p>
+              <Button 
+                onClick={() => setShowAddVideo(true)}
+                variant="outline"
+              >
+                Tambah Video Pertama
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {videoLinks.map((video, index) => (
+                <VideoCard 
+                  key={video.id}
+                  video={video}
+                  index={index}
+                  onEdit={() => setEditingVideo(video)}
+                  onDelete={() => deleteVideoLink(video.id)}
+                  extractVideoId={extractVideoId}
+                />
+              ))}
             </div>
           )}
-
-          <Button 
-            onClick={saveVideoMateri}
-            disabled={saving || !judul.trim() || !linkVideo.trim()}
-            className="bg-[#81b59a] hover:bg-[#6da085]"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                Menyimpan...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Simpan Video
-              </>
-            )}
-          </Button>
         </CardContent>
       </Card>
+
+      {/* Add Video Form */}
+      {showAddVideo && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Tambah Video Baru</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setShowAddVideo(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-judul">Judul Video</Label>
+              <Input
+                id="new-judul"
+                value={newVideo.judul}
+                onChange={(e) => setNewVideo(prev => ({ ...prev, judul: e.target.value }))}
+                placeholder="Masukkan judul video..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="new-link">Link YouTube</Label>
+              <Input
+                id="new-link"
+                value={newVideo.link_youtube}
+                onChange={(e) => handleNewVideoLinkChange(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+
+            {newVideo.link_youtube && (
+              <div className="space-y-2">
+                <Label>Preview Video</Label>
+                <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                  {(() => {
+                    const videoId = extractVideoId(newVideo.link_youtube);
+                    return videoId ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title="Video Preview"
+                        className="w-full h-full"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <p>URL YouTube tidak valid</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button 
+                onClick={addVideoLink}
+                disabled={saving || !newVideo.judul.trim() || !newVideo.link_youtube.trim()}
+                className="bg-[#81b59a] hover:bg-[#6da085]"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Simpan Video
+                  </>
+                )}
+              </Button>
+              <Button variant="outline" onClick={() => setShowAddVideo(false)}>
+                Batal
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Edit Video Form */}
+      {editingVideo && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Edit Video</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setEditingVideo(null)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-judul">Judul Video</Label>
+              <Input
+                id="edit-judul"
+                value={editingVideo.judul}
+                onChange={(e) => setEditingVideo(prev => prev ? { ...prev, judul: e.target.value } : null)}
+                placeholder="Masukkan judul video..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-link">Link YouTube</Label>
+              <Input
+                id="edit-link"
+                value={editingVideo.link_youtube}
+                onChange={(e) => handleEditVideoLinkChange(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+
+            {editingVideo.link_youtube && (
+              <div className="space-y-2">
+                <Label>Preview Video</Label>
+                <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                  {(() => {
+                    const videoId = extractVideoId(editingVideo.link_youtube);
+                    return videoId ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        title="Video Preview"
+                        className="w-full h-full"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <p>URL YouTube tidak valid</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button 
+                onClick={updateVideoLink}
+                disabled={saving || !editingVideo.judul.trim() || !editingVideo.link_youtube.trim()}
+                className="bg-[#81b59a] hover:bg-[#6da085]"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Simpan Perubahan
+                  </>
+                )}
+              </Button>
+              <Button variant="outline" onClick={() => setEditingVideo(null)}>
+                Batal
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
+  );
+}
+// VideoCard Component
+function VideoCard({ 
+  video, 
+  index, 
+  onEdit, 
+  onDelete,
+  extractVideoId 
+}: { 
+  video: VideoLink; 
+  index: number; 
+  onEdit: () => void; 
+  onDelete: () => void;
+  extractVideoId: (url: string) => string | null;
+}) {
+  const videoId = extractVideoId(video.link_youtube);
+  
+  return (
+    <Card className="p-4">
+      <div className="flex gap-4">
+        <div className="flex-shrink-0">
+          <div className="w-32 h-20 bg-black rounded overflow-hidden">
+            {videoId ? (
+              <img 
+                src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+                alt={video.judul}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Play className="h-6 w-6 text-white" />
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex-1">
+          <div className="flex items-start justify-between">
+            <div>
+              <h4 className="font-medium text-sm mb-1">{video.judul}</h4>
+              <p className="text-xs text-muted-foreground mb-2">Video {index + 1}</p>
+              <a 
+                href={video.link_youtube} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Lihat di YouTube
+              </a>
+            </div>
+            
+            <div className="flex gap-1">
+              <Button size="sm" variant="ghost" onClick={onEdit}>
+                <Edit className="h-3 w-3" />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onDelete}>
+                <Trash2 className="h-3 w-3 text-red-500" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 }
 
