@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageCircle, Mic, FileText } from "lucide-react";
+import { MessageCircle, Mic, FileText, BookOpen } from "lucide-react";
 import SEO from "@/components/SEO";
 
 export default function DashboardHome() {
@@ -22,6 +22,13 @@ export default function DashboardHome() {
   };
 
   const productCards = [
+    {
+      title: "LMS Packages",
+      description: "Akses paket pembelajaran lengkap untuk metodologi penelitian dan analisis data.",
+      buttonText: "Lihat Paket",
+      icon: BookOpen,
+      href: "/lms/packages", // external route
+    },
     {
       title: "Chatbot Konsultasi Skripsi",
       description: "Dapatkan jawaban dan bimbingan instan untuk skripsi Anda kapan saja.",

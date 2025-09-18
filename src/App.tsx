@@ -13,6 +13,7 @@ import SimulasiSidang from "./pages/SimulasiSidang";
 import NotFound from "./pages/NotFound";
 import LMSDashboard from "./pages/LMSDashboard";
 import LMSLesson from "./pages/LMSLesson";
+import LMSPackages from "./pages/LMSPackages";
 import DashboardHome from "./pages/DashboardHome";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -71,6 +72,13 @@ const App = () => (
             </Route>
             <Route path="/dashboard/lms" element={<LMSDashboard />} />
             <Route path="/dashboard/lms/:moduleId" element={<LMSLesson />} />
+            
+            {/* LMS Package Routes - accessible by authenticated users */}
+            <Route path="/lms/packages" element={
+              <ProtectedRoute>
+                <LMSPackages />
+              </ProtectedRoute>
+            } />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
