@@ -187,7 +187,7 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
                       <p className="text-xs text-muted-foreground">Video {index + 1}</p>
                     </div>
                     {index === currentVideoIndex && (
-                      <Badge variant="default" size="sm">Sedang Diputar</Badge>
+                      <Badge variant="default">Sedang Diputar</Badge>
                     )}
                   </div>
                 </div>
