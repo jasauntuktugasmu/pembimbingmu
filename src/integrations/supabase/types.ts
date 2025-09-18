@@ -98,6 +98,62 @@ export type Database = {
         }
         Relationships: []
       }
+      kelas: {
+        Row: {
+          created_at: string
+          deskripsi: string | null
+          durasi_menit: number | null
+          id: string
+          is_active: boolean | null
+          judul: string
+          jumlah_review: number | null
+          paket_id: string
+          pengajar: string
+          rating: number | null
+          thumbnail_url: string | null
+          updated_at: string
+          urutan: number | null
+        }
+        Insert: {
+          created_at?: string
+          deskripsi?: string | null
+          durasi_menit?: number | null
+          id?: string
+          is_active?: boolean | null
+          judul: string
+          jumlah_review?: number | null
+          paket_id: string
+          pengajar: string
+          rating?: number | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          urutan?: number | null
+        }
+        Update: {
+          created_at?: string
+          deskripsi?: string | null
+          durasi_menit?: number | null
+          id?: string
+          is_active?: boolean | null
+          judul?: string
+          jumlah_review?: number | null
+          paket_id?: string
+          pengajar?: string
+          rating?: number | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          urutan?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kelas_paket_id_fkey"
+            columns: ["paket_id"]
+            isOneToOne: false
+            referencedRelation: "paket_pembelajaran"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       paket_content: {
         Row: {
           created_at: string
