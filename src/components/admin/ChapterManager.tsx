@@ -59,63 +59,89 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
   const { toast } = useToast();
 
   const createChapter = async () => {
-    const maxOrder = Math.max(0, ...chapters.map(c => c.order));
-    
-    const { error } = await supabase
-      .from('materi')
-      .insert({
-        kelas_id: classId,
-        type: 'chapter',
-        judul: 'Bab Baru',
-        order: maxOrder + 1,
-        deskripsi: 'Deskripsi bab'
-      });
+    try {
+      const maxOrder = Math.max(0, ...chapters.map(c => c.order));
+      
+      const { data, error } = await supabase
+        .from('materi')
+        .insert({
+          kelas_id: classId,
+          type: 'chapter',
+          judul: 'Bab Baru',
+          order: maxOrder + 1,
+          deskripsi: 'Deskripsi bab'
+        })
+        .select()
+        .single();
 
-    if (error) {
+      if (error) {
+        console.error('Error creating chapter:', error);
+        toast({
+          title: "Error",
+          description: `Gagal membuat bab baru: ${error.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Chapter created successfully:', data);
+      toast({
+        title: "Sukses",
+        description: "Bab baru berhasil dibuat",
+      });
+      onRefresh();
+    } catch (err) {
+      console.error('Unexpected error:', err);
       toast({
         title: "Error",
-        description: "Gagal membuat bab baru",
+        description: "Terjadi kesalahan tidak terduga",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Sukses",
-      description: "Bab baru berhasil dibuat",
-    });
-    onRefresh();
   };
 
   const createLesson = async (chapterId: string) => {
-    const chapterLessons = lessons.filter(l => l.parent_id === chapterId);
-    const maxOrder = Math.max(0, ...chapterLessons.map(l => l.order));
-    
-    const { error } = await supabase
-      .from('materi')
-      .insert({
-        kelas_id: classId,
-        type: 'lesson',
-        judul: 'Pelajaran Baru',
-        parent_id: chapterId,
-        order: maxOrder + 1,
-        deskripsi: 'Deskripsi pelajaran'
-      });
+    try {
+      const chapterLessons = lessons.filter(l => l.parent_id === chapterId);
+      const maxOrder = Math.max(0, ...chapterLessons.map(l => l.order));
+      
+      const { data, error } = await supabase
+        .from('materi')
+        .insert({
+          kelas_id: classId,
+          type: 'lesson',
+          judul: 'Pelajaran Baru',
+          parent_id: chapterId,
+          order: maxOrder + 1,
+          deskripsi: 'Deskripsi pelajaran'
+        })
+        .select()
+        .single();
 
-    if (error) {
+      if (error) {
+        console.error('Error creating lesson:', error);
+        toast({
+          title: "Error",
+          description: `Gagal membuat pelajaran baru: ${error.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Lesson created successfully:', data);
+      toast({
+        title: "Sukses",
+        description: "Pelajaran baru berhasil dibuat",
+      });
+      onRefresh();
+    } catch (err) {
+      console.error('Unexpected error:', err);
       toast({
         title: "Error",
-        description: "Gagal membuat pelajaran baru",
+        description: "Terjadi kesalahan tidak terduga",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Sukses",
-      description: "Pelajaran baru berhasil dibuat",
-    });
-    onRefresh();
   };
 
   const deleteChapter = async (chapterId: string) => {
@@ -392,56 +418,56 @@ function ChapterForm({ open, onClose, chapter, classId, onSuccess }: ChapterForm
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{chapter ? 'Edit Bab' : 'Tambah Bab'}</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="judul">Judul Bab</Label>
-            <Input
-              id="judul"
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Masukkan judul bab"
-              required
-            />
-          </div>
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{chapter ? 'Edit Bab' : 'Tambah Bab'}</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="judul">Judul Bab</Label>
+              <Input
+                id="judul"
+                value={judul}
+                onChange={(e) => setJudul(e.target.value)}
+                placeholder="Masukkan judul bab"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="deskripsi">Deskripsi</Label>
-            <Textarea
-              id="deskripsi"
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              placeholder="Masukkan deskripsi bab"
-              rows={3}
-            />
-          </div>
+            <div>
+              <Label htmlFor="deskripsi">Deskripsi</Label>
+              <Textarea
+                id="deskripsi"
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Masukkan deskripsi bab"
+                rows={3}
+              />
+            </div>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Batal
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-                  Menyimpan...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Simpan
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Batal
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Simpan
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
   );
 }
 
@@ -502,55 +528,55 @@ function LessonForm({ open, onClose, lesson, classId, onSuccess }: LessonFormPro
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{lesson ? 'Edit Pelajaran' : 'Tambah Pelajaran'}</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="judul">Judul Pelajaran</Label>
-            <Input
-              id="judul"
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Masukkan judul pelajaran"
-              required
-            />
-          </div>
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{lesson ? 'Edit Pelajaran' : 'Tambah Pelajaran'}</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="judul">Judul Pelajaran</Label>
+              <Input
+                id="judul"
+                value={judul}
+                onChange={(e) => setJudul(e.target.value)}
+                placeholder="Masukkan judul pelajaran"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="deskripsi">Deskripsi</Label>
-            <Textarea
-              id="deskripsi"
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              placeholder="Masukkan deskripsi pelajaran"
-              rows={3}
-            />
-          </div>
+            <div>
+              <Label htmlFor="deskripsi">Deskripsi</Label>
+              <Textarea
+                id="deskripsi"
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Masukkan deskripsi pelajaran"
+                rows={3}
+              />
+            </div>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Batal
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-                  Menyimpan...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Simpan
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Batal
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Simpan
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
   );
 }
