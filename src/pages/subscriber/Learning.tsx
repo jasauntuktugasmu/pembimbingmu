@@ -536,9 +536,6 @@ export default function Learning() {
                           <Play className="h-5 w-5 text-primary" />
                           {currentMateri.judul}
                         </CardTitle>
-                        {currentMateri.deskripsi && (
-                          <p className="text-muted-foreground">{currentMateri.deskripsi}</p>
-                        )}
                       </CardHeader>
                       <CardContent>
                         {videoLinks[currentMateri.id]?.length > 0 ? (
