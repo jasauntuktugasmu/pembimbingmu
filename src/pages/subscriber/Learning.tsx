@@ -230,7 +230,6 @@ export default function Learning() {
     setCurrentVideo(null);
     setShowVideoList(true);
   };
-  };
 
   const markMateriComplete = async (materiId: string, skor?: number) => {
     if (!profile) return;
