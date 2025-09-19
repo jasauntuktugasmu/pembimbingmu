@@ -16,7 +16,6 @@ import {
 import { 
   LayoutDashboard, 
   Package, 
-  BookOpen, 
   LogOut,
   GraduationCap,
   ArrowLeft
@@ -27,7 +26,6 @@ const menuItems = [
   { title: 'Dashboard', url: '/subscriber', icon: LayoutDashboard },
   { title: 'Paket Saya', url: '/subscriber/my-packages', icon: Package },
   { title: 'Daftar Kelas', url: '/subscriber/classes', icon: GraduationCap },
-  { title: 'Pembelajaran', url: '/subscriber/learning', icon: BookOpen },
 ];
 
 export const SubscriberSidebar = () => {
