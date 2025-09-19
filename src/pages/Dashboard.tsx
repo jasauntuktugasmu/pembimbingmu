@@ -204,48 +204,56 @@ export default function Dashboard() {
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-4">
-            <div className="flex items-center justify-between space-x-4">
-              <SidebarTrigger />
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <div className="flex items-center space-x-2">
-                    <Coins className="h-4 w-4 text-[#81b59a]" />
-                    <span>Kredit Chat: {profile?.credits || 0}</span>
+          <header className="bg-white shadow-sm border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+            <div className="flex items-center justify-between space-x-2 sm:space-x-4">
+              <SidebarTrigger className="touch-target" />
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className="hidden sm:flex items-center space-x-4 text-sm text-gray-600">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <Coins className="h-3 w-3 sm:h-4 sm:w-4 text-[#81b59a]" />
+                    <span className="text-xs sm:text-sm">Kredit Chat: {profile?.credits || 0}</span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
                     <AvatarImage src="/placeholder.svg" />
                     <AvatarFallback className="bg-[#81b59a] text-white">
-                      <User className="h-4 w-4" />
+                      <User className="h-3 w-3 sm:h-4 sm:w-4" />
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[100px] sm:max-w-none">
                     {profile?.full_name || user?.email || 'Loading...'}
                   </span>
                 </div>
               </div>
             </div>
+            
+            {/* Mobile Credits Display */}
+            <div className="sm:hidden mt-2 flex items-center justify-center">
+              <div className="flex items-center space-x-2 text-xs text-gray-600 bg-gray-50 px-3 py-1 rounded-full">
+                <Coins className="h-3 w-3 text-[#81b59a]" />
+                <span>Kredit Chat: {profile?.credits || 0}</span>
+              </div>
+            </div>
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-3 sm:p-4 md:p-6">
             <div key={location.pathname} className="animate-fade-in">
               <Outlet />
             </div>
           </main>
 
           {/* Footer */}
-          <footer className="bg-white border-t border-gray-200 py-6 px-6">
+          <footer className="bg-white border-t border-gray-200 py-4 sm:py-6 px-3 sm:px-6">
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-600">
-                <span>© 2025 Pembimbingmu. All Rights Reserved.</span>
-                <div className="flex space-x-4">
-                  <a href="#" className="hover:text-[#81b59a] transition-colors">
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-xs sm:text-sm text-gray-600">
+                <span className="text-center">© 2025 Pembimbingmu. All Rights Reserved.</span>
+                <div className="flex space-x-3 sm:space-x-4">
+                  <a href="#" className="hover:text-[#81b59a] transition-colors touch-target">
                     Syarat & Ketentuan
                   </a>
-                  <a href="#" className="hover:text-[#81b59a] transition-colors">
+                  <a href="#" className="hover:text-[#81b59a] transition-colors touch-target">
                     Kebijakan Privasi
                   </a>
                 </div>

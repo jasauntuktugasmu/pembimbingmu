@@ -62,32 +62,32 @@ export default function DashboardHome() {
         canonical="https://pembimbingmu.lovable.app/dashboard"
         jsonLd={structuredData}
       />
-      <div className="max-w-6xl mx-auto animate-fade-in">
+      <div className="max-w-4xl sm:max-w-5xl md:max-w-6xl mx-auto animate-fade-in px-2 sm:px-0">
       {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
           Halo kak {profile?.full_name || 'Pengguna'}, siap belajar lagi?
         </h1>
       </div>
 
       {/* Product Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {productCards.map((product, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="p-2 bg-[#81b59a] rounded-lg">
-                  <product.icon className="h-6 w-6 text-white" />
+            <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-3">
+                <div className="p-1.5 sm:p-2 bg-[#81b59a] rounded-lg">
+                  <product.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-lg font-semibold text-gray-900">{product.title}</CardTitle>
+              <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">{product.title}</CardTitle>
               <CardDescription className="text-sm text-gray-600 leading-relaxed">
                 {product.description}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6 pt-0">
               <Button
-                className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-medium"
+                className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-medium text-sm sm:text-base py-2 sm:py-2.5 touch-target"
                 onClick={() => navigate(product.href)}
               >
                 {product.buttonText}

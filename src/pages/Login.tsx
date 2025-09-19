@@ -102,8 +102,8 @@ export default function Login() {
         canonical="https://pembimbingmu.lovable.app/login"
         jsonLd={structuredData}
       />
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md space-y-6 animate-fade-in">
           {/* Header Section */}
           <div className="text-center space-y-2">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -111,19 +111,19 @@ export default function Login() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Selamat Datang Kembali</h1>
-            <p className="text-muted-foreground">Masuk ke akun Anda untuk melanjutkan</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Selamat Datang Kembali</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Masuk ke akun Anda untuk melanjutkan</p>
           </div>
 
           {/* Registration Callout Box */}
           <Card className="border-primary/20 bg-primary/5">
-            <CardContent className="p-6 text-center space-y-3">
+            <CardContent className="p-4 sm:p-6 text-center space-y-3">
               <p className="text-sm text-foreground font-medium">
                 Baru membeli akses? Daftarkan password Anda sekarang
               </p>
               <Button 
                 asChild 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground touch-target"
               >
                 <Link to="/register">Daftar Sekarang</Link>
               </Button>
@@ -132,15 +132,15 @@ export default function Login() {
 
           {/* Login Form */}
           <Card>
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-xl">Masuk ke Akun</CardTitle>
+            <CardHeader className="space-y-1 text-center p-4 sm:p-6">
+              <CardTitle className="text-lg sm:text-xl">Masuk ke Akun</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
               {/* Google Login */}
               <Button
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground touch-target"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -160,7 +160,7 @@ export default function Login() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Masuk dengan Google
+                <span className="text-sm sm:text-base">Masuk dengan Google</span>
               </Button>
 
               <div className="relative">
@@ -179,6 +179,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 sm:h-12 text-base touch-target"
                   />
                 </div>
                 <div>
@@ -188,22 +189,23 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="h-11 sm:h-12 text-base touch-target"
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground touch-target"
                 >
-                  {isLoading ? 'Loading...' : 'Masuk'}
+                  <span className="text-sm sm:text-base">{isLoading ? 'Loading...' : 'Masuk'}</span>
                 </Button>
               </form>
 
               {/* Footer Links */}
-              <div className="text-center space-y-2">
+              <div className="text-center space-y-3">
                 <button
                   onClick={handleForgotPassword}
-                  className="text-sm text-primary hover:text-primary/80 underline"
+                  className="text-sm text-primary hover:text-primary/80 underline touch-target block w-full py-2"
                 >
                   Lupa password?
                 </button>

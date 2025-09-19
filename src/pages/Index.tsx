@@ -452,77 +452,77 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white py-20">
+      <section className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white py-12 sm:py-16 md:py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
             Bimbingan Skripsi #1 di Indonesia
           </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
             Wujudkan impian lulus tepat waktu dengan bimbingan profesional dari mentor berpengalaman
           </p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-none mx-auto">
             <Button 
               onClick={handleWhatsAppClick}
               size="lg" 
-              className="bg-white text-[#81b59a] hover:bg-gray-100 font-semibold px-8 py-4"
+              className="w-full sm:w-auto bg-white text-[#81b59a] hover:bg-gray-100 font-semibold px-6 sm:px-8 py-3 sm:py-4 touch-target"
             >
-              <Phone className="mr-2 h-5 w-5" />
-              Konsultasi Gratis Sekarang
+              <Phone className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-sm sm:text-base">Konsultasi Gratis Sekarang</span>
             </Button>
             <Button 
               size="lg" 
-              className="bg-[#81b59a] border-2 border-white text-white hover:bg-white hover:text-[#81b59a] font-semibold px-8 py-4 transition-all duration-300"
+              className="w-full sm:w-auto bg-[#81b59a] border-2 border-white text-white hover:bg-white hover:text-[#81b59a] font-semibold px-6 sm:px-8 py-3 sm:py-4 transition-all duration-300 touch-target"
               onClick={() => document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              Lihat Paket Bimbingan
+              <span className="text-sm sm:text-base">Lihat Paket Bimbingan</span>
             </Button>
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tentang Pembimbingmu</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Tentang Pembimbingmu</h2>
+            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-2">
               Pembimbingmu adalah platform bimbingan skripsi profesional yang telah membantu ribuan mahasiswa 
               menyelesaikan skripsi dengan sukses. Kami berkomitmen memberikan layanan terbaik dengan mentor 
               berpengalaman dan metode pembelajaran yang terbukti efektif.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-[#81b59a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="text-center mobile-card-padding">
+              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Users className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">1000+ Mahasiswa</h3>
-              <p className="text-gray-600">Telah berhasil lulus dengan bimbingan kami</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">1000+ Mahasiswa</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Telah berhasil lulus dengan bimbingan kami</p>
             </div>
-            <div className="text-center">
-              <div className="bg-[#81b59a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8" />
+            <div className="text-center mobile-card-padding">
+              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Award className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Mentor Profesional</h3>
-              <p className="text-gray-600">Tim mentor berpengalaman dan tersertifikasi</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Mentor Profesional</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Tim mentor berpengalaman dan tersertifikasi</p>
             </div>
-            <div className="text-center">
-              <div className="bg-[#81b59a] text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8" />
+            <div className="text-center mobile-card-padding sm:col-span-2 md:col-span-1">
+              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Garansi ACC</h3>
-              <p className="text-gray-600">Jaminan ACC untuk paket premium</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Garansi ACC</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Jaminan ACC untuk paket premium</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* AI Assistant Section */}
-      <section className="py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Asisten AI Pembimbingmu</h2>
-            <p className="text-lg text-gray-600 mb-8">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Asisten AI Pembimbingmu</h2>
+            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-2">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
             
             <Button 
               onClick={() => {
@@ -537,19 +537,19 @@ const Index = () => {
                 }
               }}
               size="lg"
-              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-8 py-4 rounded-lg"
+              className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-lg touch-target"
             >
-              {showChatbot ? 'Tutup Assistant' : 'Coba Sekarang'}
+              <span className="text-sm sm:text-base">{showChatbot ? 'Tutup Assistant' : 'Coba Sekarang'}</span>
             </Button>
           </div>
           
           {/* Chatbot Interface - Only show when toggled */}
           {showChatbot && (
-            <div id="chatbot-section" className="w-full max-w-md mx-auto">
+            <div id="chatbot-section" className="w-full max-w-lg mx-auto px-2 sm:px-0">
               {/* Show credit exhaustion message when both credits are zero */}
               {ruangCeriteCredits <= 0 && assistantCredits <= 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center mb-4">
-                  <h3 className="text-lg font-semibold text-red-800 mb-2">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-6 text-center mb-4">
+                  <h3 className="text-base sm:text-lg font-semibold text-red-800 mb-2">
                     Kredit uji coba kamu habis, yah
                   </h3>
                   <p className="text-red-700 mb-4 text-sm">
@@ -557,7 +557,7 @@ const Index = () => {
                   </p>
                   <Button 
                     onClick={() => window.open('http://lynk.id/pembimbingmu/xwek5peo1noy', '_blank')}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm"
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm touch-target"
                   >
                     <Phone className="mr-2 h-3 w-3" />
                     Dapatkan Akses Disini
@@ -568,29 +568,31 @@ const Index = () => {
               {/* Show chatbot interface only when there are credits */}
               {(ruangCeriteCredits > 0 || assistantCredits > 0) && (
                 <>
-                  {/* Mode Tabs - Minimal */}
+                  {/* Mode Tabs - Mobile Optimized */}
                   <div className="bg-white rounded-xl p-1 mb-4 shadow-sm flex">
                     <button
                       onClick={() => handleModeChange('ruang_cerita')}
                       disabled={ruangCeriteCredits <= 0}
-                      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                      className={`flex-1 py-2 sm:py-3 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-all touch-target ${
                         currentMode === 'ruang_cerita'
                           ? 'bg-green-100 text-green-700'
                           : 'text-gray-600 hover:text-gray-900'
                       } ${ruangCeriteCredits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      Ruang Cerita ({ruangCeriteCredits})
+                      <span className="hidden sm:inline">Ruang Cerita ({ruangCeriteCredits})</span>
+                      <span className="sm:hidden">Cerita ({ruangCeriteCredits})</span>
                     </button>
                     <button
                       onClick={() => handleModeChange('asisten_akademik')}
                       disabled={assistantCredits <= 0}
-                      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                      className={`flex-1 py-2 sm:py-3 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-all touch-target ${
                         currentMode === 'asisten_akademik'
                           ? 'bg-green-100 text-green-700'
                           : 'text-gray-600 hover:text-gray-900'
                       } ${assistantCredits <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      Asisten Akademik ({assistantCredits})
+                      <span className="hidden sm:inline">Asisten Akademik ({assistantCredits})</span>
+                      <span className="sm:hidden">Akademik ({assistantCredits})</span>
                     </button>
                   </div>
 
@@ -853,13 +855,13 @@ const Index = () => {
       </section>
 
       {/* Learning Packages Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 sm:py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Paket Pembelajaran</h2>
-            <p className="text-lg text-gray-600">Pilih paket pembelajaran yang sesuai dengan kebutuhan Anda</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Paket Pembelajaran</h2>
+            <p className="text-base sm:text-lg text-gray-600 px-2">Pilih paket pembelajaran yang sesuai dengan kebutuhan Anda</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {dbPackages.map((pkg) => (
               <Card key={pkg.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border-0 group">
                 {/* Course Thumbnail */}
@@ -868,86 +870,86 @@ const Index = () => {
                     <img 
                       src={pkg.thumbnail_url} 
                       alt={pkg.nama_paket}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <div 
-                      className="w-full h-48 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-40 sm:h-48 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-300"
                       style={{
                         background: `linear-gradient(135deg, ${pkg.gradient_from || '#f97316'}, ${pkg.gradient_to || '#fb923c'})`
                       }}
                     >
-                      <BookOpen className="h-16 w-16 text-white opacity-80" />
+                      <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 text-white opacity-80" />
                       {/* Level Badge */}
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                        <span className="bg-white/20 backdrop-blur-sm text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                           All Levels
                         </span>
                       </div>
                       {/* Instructor Avatar */}
-                      <div className="absolute top-4 right-4">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                          <Users className="w-6 h-6 text-white" />
+                      <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <CardContent className="p-5">
+                <CardContent className="p-4 sm:p-5 mobile-spacing">
                   {/* Rating */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <svg 
                           key={i} 
-                          className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                          className={`w-3 h-3 sm:w-4 sm:h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
                           viewBox="0 0 20 20"
                         >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
                       ))}
                     </div>
-                    <span className="text-sm font-medium text-gray-700">4.84</span>
-                    <span className="text-sm text-gray-500">(63)</span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-700">4.84</span>
+                    <span className="text-xs sm:text-sm text-gray-500">(63)</span>
                   </div>
 
                   {/* Course Title */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight min-h-[3.5rem]">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight min-h-[2.5rem] sm:min-h-[3.5rem]">
                     {pkg.nama_paket}
                   </h3>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center gap-1.5">
-                      <Users className="w-4 h-4" />
+                  <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <Users className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="font-medium">353</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="font-medium">05h 35m</span>
                     </div>
                   </div>
 
                   {/* Price Section */}
-                  <div className="mb-4">
+                  <div className="mb-3 sm:mb-4">
                     {pkg.harga && pkg.harga > 0 ? (
                       <div className="flex items-baseline gap-2">
-                        <span className="text-gray-400 line-through text-sm">
+                        <span className="text-gray-400 line-through text-xs sm:text-sm">
                           Rp{(pkg.harga * 3).toLocaleString('id-ID')}
                         </span>
-                        <span className="text-xl font-bold text-orange-600">
+                        <span className="text-lg sm:text-xl font-bold text-orange-600">
                           Rp{pkg.harga.toLocaleString('id-ID')}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-xl font-bold text-green-600">Gratis</span>
+                      <span className="text-lg sm:text-xl font-bold text-green-600">Gratis</span>
                     )}
                   </div>
 
                   {/* Action Button */}
                   <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base touch-target"
                     onClick={() => {
                       const pricingSection = document.getElementById('pricing-section');
                       pricingSection?.scrollIntoView({ behavior: 'smooth' });
