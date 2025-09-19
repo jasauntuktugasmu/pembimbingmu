@@ -25,6 +25,9 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingPackages, setLoadingPackages] = useState(true);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
+  const [emailExistsMessage, setEmailExistsMessage] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -51,6 +54,50 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
     }
   };
 
+  const checkEmailExists = async (emailToCheck: string) => {
+    if (!emailToCheck || emailToCheck.length < 3) {
+      setEmailExists(false);
+      setEmailExistsMessage('');
+      return;
+    }
+
+    setCheckingEmail(true);
+    try {
+      // Check if email exists in profiles table
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('email, full_name')
+        .ilike('email', emailToCheck)
+        .limit(1);
+
+      if (error) {
+        console.error('Error checking email:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setEmailExists(true);
+        setEmailExistsMessage(`Email sudah digunakan oleh: ${data[0].full_name || 'User'}`);
+      } else {
+        setEmailExists(false);
+        setEmailExistsMessage('');
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
+
+  // Debounced email check
+  useEffect(() => {
+    const delayedCheck = setTimeout(() => {
+      checkEmailExists(email);
+    }, 500);
+
+    return () => clearTimeout(delayedCheck);
+  }, [email]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -58,6 +105,15 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
       toast({
         title: 'Error',
         description: 'Email, nama lengkap, dan paket harus diisi',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (emailExists) {
+      toast({
+        title: 'Error',
+        description: 'Email sudah terdaftar. Silakan gunakan email lain atau update subscriber yang sudah ada.',
         variant: 'destructive',
       });
       return;
@@ -89,9 +145,16 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
 
       if (data.error) {
         console.error('Error from create-subscriber function:', data.error);
+        let errorMessage = 'Gagal membuat subscriber: ' + data.error;
+        
+        // Handle specific error cases
+        if (data.errorCode === 'EMAIL_EXISTS') {
+          errorMessage = data.details || 'Email sudah terdaftar';
+        }
+        
         toast({
           title: 'Error',
-          description: 'Gagal membuat subscriber: ' + data.error,
+          description: errorMessage,
           variant: 'destructive',
         });
         return;
@@ -149,7 +212,23 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
           onChange={(e) => setEmail(e.target.value)}
           placeholder="subscriber@example.com"
           required
+          className={emailExists ? 'border-destructive' : ''}
         />
+        {checkingEmail && (
+          <p className="text-sm text-muted-foreground mt-1">
+            Mengecek ketersediaan email...
+          </p>
+        )}
+        {emailExists && (
+          <p className="text-sm text-destructive mt-1">
+            ⚠️ {emailExistsMessage}
+          </p>
+        )}
+        {!checkingEmail && !emailExists && email && (
+          <p className="text-sm text-green-600 mt-1">
+            ✓ Email tersedia
+          </p>
+        )}
       </div>
 
       <div>
@@ -198,7 +277,7 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
       </div>
 
       <div className="flex justify-end space-x-2">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || emailExists || checkingEmail}>
           {loading ? 'Loading...' : 'Tambah Subscriber'}
         </Button>
       </div>

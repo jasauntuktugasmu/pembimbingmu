@@ -75,6 +75,22 @@ Deno.serve(async (req) => {
 
     if (createUserError) {
       console.error('Error creating user:', createUserError)
+      
+      // Handle specific error cases
+      if (createUserError.message.includes('A user with this email address has already been registered')) {
+        return new Response(
+          JSON.stringify({
+            error: 'Email sudah terdaftar',
+            details: 'Email ini sudah digunakan oleh user lain. Silakan gunakan email berbeda atau update subscriber yang sudah ada.',
+            errorCode: 'EMAIL_EXISTS'
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 409
+          }
+        )
+      }
+      
       throw new Error(`Failed to create user: ${createUserError.message}`)
     }
 
