@@ -148,14 +148,14 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
-          <DialogHeader className="pr-8">
-            <DialogTitle className="flex items-center justify-between">
-              <span>Kelola Kelas - {pkg.nama_paket}</span>
+        <DialogContent className="max-w-[95vw] md:max-w-6xl max-h-[90vh] overflow-y-auto p-3 md:p-6">
+          <DialogHeader className="pr-2 md:pr-8 mb-4">
+            <DialogTitle className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+              <span className="text-lg md:text-xl">Kelola Kelas - {pkg.nama_paket}</span>
               {isSuperAdmin && (
                 <Button
                   onClick={() => setShowAddForm(true)}
-                  className="bg-[#81b59a] hover:bg-[#6da085] text-white"
+                  className="bg-[#81b59a] hover:bg-[#6da085] text-white w-full md:w-auto touch-target"
                   size="sm"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -199,9 +199,10 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                   {classes.map((classItem) => (
                     <Card key={classItem.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl">
                       <CardContent className="p-0">
-                        <div className="flex">
+                        {/* Mobile Layout - Stack vertically */}
+                        <div className="md:flex">
                           {/* Thumbnail */}
-                          <div className="w-48 h-32 bg-muted flex-shrink-0 relative">
+                          <div className="w-full md:w-48 h-48 md:h-32 bg-muted md:flex-shrink-0 relative">
                             {classItem.thumbnail_url ? (
                               <img
                                 src={classItem.thumbnail_url}
@@ -229,7 +230,7 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                   variant="outline"
                                   size="sm"
                                   onClick={() => setEditingClass(classItem)}
-                                  className="h-8 w-8 p-0 bg-[#81b59a] hover:bg-[#6da085] text-white border-0 shadow-md hover:shadow-lg transition-all duration-200"
+                                  className="h-8 w-8 md:h-8 md:w-8 p-0 bg-[#81b59a] hover:bg-[#6da085] text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 touch-target"
                                   title="Edit Kelas"
                                 >
                                   <Edit className="h-4 w-4" />
@@ -238,7 +239,7 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => handleDeleteClass(classItem.id)}
-                                  className="h-8 w-8 p-0 shadow-md hover:shadow-lg transition-all duration-200"
+                                  className="h-8 w-8 md:h-8 md:w-8 p-0 shadow-md hover:shadow-lg transition-all duration-200 touch-target"
                                   title="Hapus Kelas"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -246,11 +247,11 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                               </div>
                             )}
 
-                            <div className="pr-20">
+                            <div className="pr-4 md:pr-20">
                               <Badge className={`${getLevelColor(classItem.level)} mb-3 font-medium`}>
                                 {classItem.level}
                               </Badge>
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 leading-tight">
+                              <h3 className="font-bold text-base md:text-lg mb-2 text-gray-900 leading-tight">
                                 {classItem.judul}
                               </h3>
                               
@@ -267,11 +268,11 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                 </span>
                               </div>
 
-                              {/* Stats */}
-                              <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
+                              {/* Stats - Stack on mobile */}
+                              <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-6 text-sm text-gray-600 mb-4">
                                 <div className="flex items-center gap-1">
                                   <Users className="h-4 w-4 text-gray-400" />
-                                  <span className="font-medium">{classItem.jumlah_user}</span>
+                                  <span className="font-medium">{classItem.jumlah_user} siswa</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-4 w-4 text-gray-400" />
@@ -287,7 +288,7 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
                                   </span>
                                 )}
                                 {classItem.harga_diskon && (
-                                  <span className="text-xl font-bold text-orange-600">
+                                  <span className="text-lg md:text-xl font-bold text-orange-600">
                                     Rp{classItem.harga_diskon.toLocaleString('id-ID')}
                                   </span>
                                 )}
@@ -295,7 +296,7 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
 
                               {/* Manage Content Button */}
                               <Button
-                                className="bg-[#81b59a] hover:bg-[#6da085] text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                                className="bg-[#81b59a] hover:bg-[#6da085] text-white font-semibold px-4 md:px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 w-full md:w-auto touch-target"
                                 size="sm"
                                 onClick={() => handleManageContent(classItem)}
                               >
@@ -337,9 +338,9 @@ export function ManageClassesDialog({ package: pkg, open, onClose }: ManageClass
           }
         }}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
+        <DialogContent className="max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl p-3 md:p-6">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-lg md:text-xl font-bold">
               {editingClass ? 'Edit Kelas' : 'Tambah Kelas Baru'}
             </DialogTitle>
           </DialogHeader>

@@ -128,23 +128,24 @@ export const ManagePackages = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 md:space-y-6 p-2 md:p-0">
+      {/* Header - Stack on mobile */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 mobile-card-padding">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Manage Packages</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Manage Packages</h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Kelola paket pembelajaran dan konten
           </p>
         </div>
         
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
-            <Button className="bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground">
+            <Button className="bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground w-full md:w-auto touch-target">
               <Plus className="mr-2 h-4 w-4" />
               Add Package
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[95vw] md:max-w-lg">
             <DialogHeader>
               <DialogTitle>Tambah Paket Baru</DialogTitle>
             </DialogHeader>
@@ -158,21 +159,23 @@ export const ManagePackages = () => {
         </Dialog>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
+      {/* Search - Full width on mobile */}
+      <div className="flex items-center space-x-2 mobile-card-padding">
+        <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         <Input
           placeholder="Cari berdasarkan nama atau deskripsi paket..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
+          className="w-full md:max-w-sm"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Package Grid - Better mobile spacing */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredPackages.map((pkg) => (
-          <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md">
+          <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 md:transform md:hover:-translate-y-1 border-0 shadow-md mobile-card-padding">
             {/* Thumbnail Image */}
-            <div className="relative h-48 bg-muted overflow-hidden">
+            <div className="relative h-40 md:h-48 bg-muted overflow-hidden">
               {pkg.thumbnail_url ? (
                 <img 
                   src={pkg.thumbnail_url} 
@@ -182,32 +185,32 @@ export const ManagePackages = () => {
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-muted">
                   <div className="text-center">
-                    <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <span className="text-sm text-muted-foreground">No Image</span>
+                    <ImageIcon className="h-10 md:h-12 w-10 md:w-12 text-muted-foreground mx-auto mb-2" />
+                    <span className="text-xs md:text-sm text-muted-foreground">No Image</span>
                   </div>
                 </div>
               )}
             </div>
 
-            <CardContent className="p-4">
-              <div className="space-y-3">
+            <CardContent className="p-3 md:p-4">
+              <div className="space-y-3 md:space-y-4">
                 {/* Title & Price */}
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
                     {pkg.nama_paket}
                   </h3>
-                  <p className="text-xl font-bold text-admin-green">
+                  <p className="text-lg md:text-xl font-bold text-admin-green">
                     Rp {pkg.harga?.toLocaleString('id-ID') || '0'}
                   </p>
                 </div>
 
                 {/* Description */}
-                <p className="text-muted-foreground text-sm line-clamp-2">
+                <p className="text-muted-foreground text-xs md:text-sm line-clamp-2">
                   {pkg.deskripsi || 'Tidak ada deskripsi'}
                 </p>
                 
                 {/* Package Info */}
-                <div className="space-y-1 text-sm">
+                <div className="space-y-1 text-xs md:text-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Jumlah Kelas:</span>
                     <span className="font-medium">{pkg.courseCount || 0} kelas</span>
@@ -219,44 +222,43 @@ export const ManagePackages = () => {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col space-y-2 pt-3">
+                {/* Action Buttons - Mobile optimized */}
+                <div className="flex flex-col space-y-2 md:space-y-3 pt-2 md:pt-3">
                   <div className="flex space-x-2">
                     <Button
                       size="sm"
                       onClick={() => setManagingClassesPackage(pkg)}
-                      className="flex-1 bg-[#81b59a] hover:bg-[#6da085] text-white"
+                      className="flex-1 bg-[#81b59a] hover:bg-[#6da085] text-white touch-target text-xs md:text-sm"
                     >
-                      <GraduationCap className="h-4 w-4 mr-1" />
+                      <GraduationCap className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                       Classes
                     </Button>
                     <Button
                       size="sm"
                       onClick={() => setManagingContentPackage(pkg)}
-                      className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
+                      className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground touch-target text-xs md:text-sm"
                     >
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                       Content
                     </Button>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      onClick={() => setEditingPackage(pkg)}
-                      className="flex-1 bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground"
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                  </div>
+                  
+                  <Button
+                    size="sm"
+                    onClick={() => setEditingPackage(pkg)}
+                    className="w-full bg-admin-green hover:bg-admin-green-hover text-admin-green-foreground touch-target text-xs md:text-sm"
+                  >
+                    <Edit className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                    Edit Package
+                  </Button>
                   
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDeletePackage(pkg.id)}
-                    className="w-full"
+                    className="w-full touch-target text-xs md:text-sm"
                   >
-                    <Trash2 className="h-4 w-4 mr-1" />
+                    <Trash2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                     Delete
                   </Button>
                 </div>
@@ -299,7 +301,7 @@ export const ManagePackages = () => {
         open={!!editingPackage} 
         onOpenChange={(open) => !open && setEditingPackage(null)}
       >
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] md:max-w-lg">
           <DialogHeader>
             <DialogTitle>Edit Paket</DialogTitle>
           </DialogHeader>
