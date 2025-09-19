@@ -333,10 +333,10 @@ export default function Learning() {
                 <p className="font-medium text-sm">{materi.judul}</p>
                 <p className="text-xs text-muted-foreground">
                   {getMateriTypeLabel(materi.type)}
-                </p>
-                {materi.deskripsi && (
-                  <p className="text-xs text-muted-foreground mt-1">{materi.deskripsi}</p>
-                )}
+                 </p>
+                 {materi.deskripsi && materi.type !== 'chapter' && (
+                   <p className="text-xs text-muted-foreground mt-1">{materi.deskripsi}</p>
+                 )}
               </div>
             </div>
             <div className="flex items-center gap-2">
