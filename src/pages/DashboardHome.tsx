@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Mic, FileText, BookOpen } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import SEO from "@/components/SEO";
 
 export default function DashboardHome() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -64,7 +66,7 @@ export default function DashboardHome() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-          Selamat datang Nama Pengguna, silahkan coba fitur kami di bawah ini.
+          Halo kak {profile?.full_name || 'Pengguna'}, siap belajar lagi?
         </h1>
       </div>
 
