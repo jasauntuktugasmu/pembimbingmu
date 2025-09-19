@@ -453,21 +453,6 @@ export default function Learning() {
             </div>
 
             <div className="space-y-4">
-              {/* Assets/Prerequisites */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">ASSETS</h3>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span>Assets Materi Awal</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span>Assets Update Materi</span>
-                  </div>
-                </div>
-              </div>
-
               {/* Learning Materials */}
               <div className="space-y-2">
                 <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">MATERI PEMBELAJARAN</h3>
