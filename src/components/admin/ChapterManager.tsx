@@ -114,8 +114,7 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
           type: 'lesson',
           judul: 'Pelajaran Baru',
           parent_id: chapterId,
-          order: maxOrder + 1,
-          deskripsi: 'Deskripsi pelajaran'
+          order: maxOrder + 1
         })
         .select()
         .single();
@@ -322,9 +321,6 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
                                 </Button>
                               </div>
                             </div>
-                            {lesson.deskripsi && (
-                              <p className="text-sm text-muted-foreground mt-2">{lesson.deskripsi}</p>
-                            )}
                           </CardContent>
                         </Card>
                       ))}
@@ -823,17 +819,14 @@ interface LessonFormProps {
 
 function LessonForm({ open, onClose, lesson, classId, onSuccess }: LessonFormProps) {
   const [judul, setJudul] = useState('');
-  const [deskripsi, setDeskripsi] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     if (lesson) {
       setJudul(lesson.judul);
-      setDeskripsi(lesson.deskripsi || '');
     } else {
       setJudul('');
-      setDeskripsi('');
     }
   }, [lesson]);
 
@@ -846,7 +839,7 @@ function LessonForm({ open, onClose, lesson, classId, onSuccess }: LessonFormPro
         // Update
         const { error } = await supabase
           .from('materi')
-          .update({ judul, deskripsi })
+          .update({ judul })
           .eq('id', lesson.id);
 
         if (error) throw error;
@@ -885,17 +878,6 @@ function LessonForm({ open, onClose, lesson, classId, onSuccess }: LessonFormPro
                 onChange={(e) => setJudul(e.target.value)}
                 placeholder="Masukkan judul pelajaran"
                 required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="deskripsi">Deskripsi</Label>
-              <Textarea
-                id="deskripsi"
-                value={deskripsi}
-                onChange={(e) => setDeskripsi(e.target.value)}
-                placeholder="Masukkan deskripsi pelajaran"
-                rows={3}
               />
             </div>
 
