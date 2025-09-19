@@ -359,15 +359,12 @@ export default function Learning() {
               ) : (
                 getMateriIcon(materi.type)
               )}
-              <div>
-                <p className="font-medium text-sm">{materi.judul}</p>
-                <p className="text-xs text-muted-foreground">
-                  {getMateriTypeLabel(materi.type)}
-                 </p>
-                 {materi.deskripsi && materi.type !== 'chapter' && (
-                   <p className="text-xs text-muted-foreground mt-1">{materi.deskripsi}</p>
-                 )}
-              </div>
+               <div>
+                 <p className="font-medium text-sm">{materi.judul}</p>
+                 <p className="text-xs text-muted-foreground">
+                   {getMateriTypeLabel(materi.type)}
+                  </p>
+               </div>
             </div>
             <div className="flex items-center gap-2">
               {isComplete && <CheckCircle className="h-4 w-4 text-green-500" />}
