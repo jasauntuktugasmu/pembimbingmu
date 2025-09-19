@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ interface MySubscription {
 
 export const SubscriberDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState<MySubscription[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -178,10 +180,10 @@ export const SubscriberDashboard = () => {
                 {subscription.status === 'active' && new Date(subscription.durasi_akhir) > new Date() && (
                   <div className="mt-4">
                     <button 
-                      onClick={() => window.location.href = '/subscriber/learning'}
+                      onClick={() => navigate('/subscriber/classes')}
                       className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2 px-4 rounded-md transition-colors"
                     >
-                      Mulai Belajar
+                      Lihat Kelas
                     </button>
                   </div>
                 )}
@@ -200,7 +202,7 @@ export const SubscriberDashboard = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-2">
               <button 
-                onClick={() => window.location.href = '/subscriber/my-packages'}
+                onClick={() => navigate('/subscriber/my-packages')}
                 className="w-full text-left p-3 rounded-lg border hover:bg-muted/50 transition-colors"
               >
                 <div className="font-medium">Paket Saya</div>
@@ -209,12 +211,12 @@ export const SubscriberDashboard = () => {
                 </div>
               </button>
               <button 
-                onClick={() => window.location.href = '/subscriber/learning'}
+                onClick={() => navigate('/subscriber/classes')}
                 className="w-full text-left p-3 rounded-lg border hover:bg-muted/50 transition-colors"
               >
-                <div className="font-medium">Pembelajaran</div>
+                <div className="font-medium">Daftar Kelas</div>
                 <div className="text-sm text-muted-foreground">
-                  Akses materi pembelajaran
+                  Lihat kelas yang tersedia
                 </div>
               </button>
             </div>
