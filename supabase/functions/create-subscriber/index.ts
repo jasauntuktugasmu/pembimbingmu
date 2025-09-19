@@ -53,14 +53,14 @@ Deno.serve(async (req) => {
     }
 
     // Get request body
-    const { email, paket_id, custom_duration } = await req.json()
+    const { email, paket_id, custom_duration, full_name, custom_password } = await req.json()
 
-    if (!email || !paket_id) {
-      throw new Error('Email and paket_id are required')
+    if (!email || !paket_id || !full_name) {
+      throw new Error('Email, paket_id, and full_name are required')
     }
 
-    // Generate random password
-    const password = Math.random().toString(36).slice(-8)
+    // Generate password if custom_password is not provided
+    const password = custom_password || Math.random().toString(36).slice(-8)
 
     // Create user account
     const { data: authData, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
@@ -68,7 +68,8 @@ Deno.serve(async (req) => {
       password,
       email_confirm: true,
       user_metadata: {
-        role: 'subscriber'
+        role: 'subscriber',
+        full_name: full_name
       }
     })
 
@@ -120,7 +121,8 @@ Deno.serve(async (req) => {
         success: true,
         user: {
           id: authData.user.id,
-          email: authData.user.email
+          email: authData.user.email,
+          full_name: full_name
         },
         password,
         message: 'Subscriber created successfully'

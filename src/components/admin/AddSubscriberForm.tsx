@@ -18,6 +18,8 @@ interface AddSubscriberFormProps {
 
 export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [customPassword, setCustomPassword] = useState('');
   const [selectedPackage, setSelectedPackage] = useState('');
   const [customDuration, setCustomDuration] = useState('');
   const [packages, setPackages] = useState<Package[]>([]);
@@ -52,10 +54,10 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !selectedPackage) {
+    if (!email || !selectedPackage || !fullName) {
       toast({
         title: 'Error',
-        description: 'Email dan paket harus diisi',
+        description: 'Email, nama lengkap, dan paket harus diisi',
         variant: 'destructive',
       });
       return;
@@ -68,8 +70,10 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
       const { data, error } = await supabase.functions.invoke('create-subscriber', {
         body: {
           email,
+          full_name: fullName,
           paket_id: selectedPackage,
-          custom_duration: customDuration
+          custom_duration: customDuration,
+          custom_password: customPassword || undefined
         }
       });
 
@@ -95,11 +99,13 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
 
       toast({
         title: 'Success',
-        description: `Subscriber berhasil ditambahkan dengan password: ${data.password}`,
+        description: `Subscriber ${data.user.full_name} berhasil ditambahkan dengan password: ${data.password}`,
       });
 
       // Reset form
       setEmail('');
+      setFullName('');
+      setCustomPassword('');
       setSelectedPackage('');
       setCustomDuration('');
       
@@ -123,6 +129,18 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
+        <Label htmlFor="fullName">Nama Lengkap</Label>
+        <Input
+          id="fullName"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Nama lengkap subscriber"
+          required
+        />
+      </div>
+
+      <div>
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -132,6 +150,20 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
           placeholder="subscriber@example.com"
           required
         />
+      </div>
+
+      <div>
+        <Label htmlFor="customPassword">Password Custom (opsional)</Label>
+        <Input
+          id="customPassword"
+          type="password"
+          value={customPassword}
+          onChange={(e) => setCustomPassword(e.target.value)}
+          placeholder="Kosongkan untuk generate password otomatis"
+        />
+        <p className="text-sm text-muted-foreground mt-1">
+          Jika kosong, sistem akan generate password secara otomatis
+        </p>
       </div>
 
       <div>

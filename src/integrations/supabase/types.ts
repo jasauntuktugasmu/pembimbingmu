@@ -313,6 +313,7 @@ export type Database = {
           credits: number
           cv_credits: number | null
           email: string | null
+          full_name: string | null
           id: string
           role: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits: number | null
@@ -321,6 +322,7 @@ export type Database = {
           credits?: number
           cv_credits?: number | null
           email?: string | null
+          full_name?: string | null
           id: string
           role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
@@ -329,6 +331,7 @@ export type Database = {
           credits?: number
           cv_credits?: number | null
           email?: string | null
+          full_name?: string | null
           id?: string
           role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
