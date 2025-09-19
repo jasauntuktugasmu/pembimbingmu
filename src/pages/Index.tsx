@@ -94,13 +94,25 @@ const Index = () => {
       try {
         const { data, error } = await supabase
           .from('paket_pembelajaran')
-          .select('*')
-          .order('created_at', { ascending: true });
+          .select('*');
         
         if (error) {
           console.error('Error fetching packages:', error);
         } else {
-          setDbPackages(data || []);
+          // Custom ordering: Basic, Pro, Premium
+          const orderedPackages = (data || []).sort((a, b) => {
+            const order = ['basic', 'pro', 'premium'];
+            const aIndex = order.findIndex(type => a.nama_paket.toLowerCase().includes(type));
+            const bIndex = order.findIndex(type => b.nama_paket.toLowerCase().includes(type));
+            
+            if (aIndex === -1 && bIndex === -1) return 0;
+            if (aIndex === -1) return 1;
+            if (bIndex === -1) return -1;
+            
+            return aIndex - bIndex;
+          });
+          
+          setDbPackages(orderedPackages);
         }
       } catch (error) {
         console.error('Error fetching packages:', error);
