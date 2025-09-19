@@ -56,6 +56,8 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
   const [showLessonForm, setShowLessonForm] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Materi | null>(null);
   const [selectedChapterId, setSelectedChapterId] = useState<string>('');
+  const [showVideoManager, setShowVideoManager] = useState(false);
+  const [selectedLessonForVideo, setSelectedLessonForVideo] = useState<Materi | null>(null);
   const { toast } = useToast();
 
   const createChapter = async () => {
@@ -282,7 +284,7 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
                         <Card key={lesson.id} className="bg-muted/30">
                           <CardContent className="p-3">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
+                               <div className="flex items-center gap-2">
                                 <Play className="h-4 w-4" />
                                 <span className="font-medium">{lesson.judul}</span>
                                 <Badge variant="secondary" className="text-xs">
@@ -294,9 +296,21 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => {
+                                    setSelectedLessonForVideo(lesson);
+                                    setShowVideoManager(true);
+                                  }}
+                                  title="Kelola Video"
+                                >
+                                  <Play className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
                                     setEditingLesson(lesson);
                                     setShowLessonForm(true);
                                   }}
+                                  title="Edit Lesson"
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Button>
@@ -304,6 +318,7 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteLesson(lesson.id)}
+                                  title="Hapus Lesson"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -355,7 +370,327 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
           onRefresh();
         }}
       />
+
+      {/* Video Manager Dialog */}
+      <LessonVideoManager
+        open={showVideoManager}
+        onClose={() => {
+          setShowVideoManager(false);
+          setSelectedLessonForVideo(null);
+        }}
+        lesson={selectedLessonForVideo}
+        videoLinks={selectedLessonForVideo ? videoLinks[selectedLessonForVideo.id] || [] : []}
+        onRefresh={() => {
+          setShowVideoManager(false);
+          setSelectedLessonForVideo(null);
+          onRefresh();
+        }}
+      />
     </div>
+  );
+}
+
+interface LessonVideoManagerProps {
+  open: boolean;
+  onClose: () => void;
+  lesson: Materi | null;
+  videoLinks: VideoLink[];
+  onRefresh: () => void;
+}
+
+function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: LessonVideoManagerProps) {
+  const [newVideo, setNewVideo] = useState({
+    judul: '',
+    link_youtube: '',
+    thumbnail: ''
+  });
+  const [editingVideo, setEditingVideo] = useState<VideoLink | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const extractVideoId = (url: string): string | null => {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[7].length === 11 ? match[7] : null;
+  };
+
+  const handleNewVideoLinkChange = (url: string) => {
+    setNewVideo(prev => ({ ...prev, link_youtube: url }));
+    
+    if (url) {
+      const videoId = extractVideoId(url);
+      if (videoId) {
+        const autoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        setNewVideo(prev => ({ ...prev, thumbnail: autoThumbnail }));
+      }
+    }
+  };
+
+  const handleEditVideoLinkChange = (url: string) => {
+    if (!editingVideo) return;
+    setEditingVideo(prev => prev ? { ...prev, link_youtube: url } : null);
+    
+    if (url) {
+      const videoId = extractVideoId(url);
+      if (videoId) {
+        const autoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        setEditingVideo(prev => prev ? { ...prev, thumbnail: autoThumbnail } : null);
+      }
+    }
+  };
+
+  const addVideo = async () => {
+    if (!lesson || !newVideo.judul.trim() || !newVideo.link_youtube.trim()) return;
+
+    setLoading(true);
+    try {
+      const nextUrutan = Math.max(...videoLinks.map(v => v.urutan), 0) + 1;
+      
+      const { error } = await supabase
+        .from('video_links')
+        .insert({
+          materi_id: lesson.id,
+          judul: newVideo.judul.trim(),
+          link_youtube: newVideo.link_youtube.trim(),
+          thumbnail: newVideo.thumbnail.trim(),
+          urutan: nextUrutan
+        });
+
+      if (error) throw error;
+
+      setNewVideo({ judul: '', link_youtube: '', thumbnail: '' });
+      setShowAddForm(false);
+      toast({
+        title: "Berhasil",
+        description: "Video berhasil ditambahkan",
+      });
+      
+      onRefresh();
+    } catch (error) {
+      console.error('Error adding video:', error);
+      toast({
+        title: "Error",
+        description: "Gagal menambahkan video",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateVideo = async () => {
+    if (!editingVideo) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('video_links')
+        .update({
+          judul: editingVideo.judul.trim(),
+          link_youtube: editingVideo.link_youtube.trim(),
+          thumbnail: editingVideo.thumbnail.trim()
+        })
+        .eq('id', editingVideo.id);
+
+      if (error) throw error;
+
+      setEditingVideo(null);
+      toast({
+        title: "Berhasil",
+        description: "Video berhasil diperbarui",
+      });
+      
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating video:', error);
+      toast({
+        title: "Error",
+        description: "Gagal memperbarui video",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteVideo = async (videoId: string) => {
+    if (!confirm('Yakin ingin menghapus video ini?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('video_links')
+        .delete()
+        .eq('id', videoId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Berhasil",
+        description: "Video berhasil dihapus",
+      });
+      
+      onRefresh();
+    } catch (error) {
+      console.error('Error deleting video:', error);
+      toast({
+        title: "Error",
+        description: "Gagal menghapus video",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (!lesson) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Play className="h-5 w-5" />
+            Kelola Video - {lesson.judul}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Add Video Button */}
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-muted-foreground">
+              Mengelola video untuk lesson "{lesson.judul}"
+            </p>
+            <Button 
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Tambah Video
+            </Button>
+          </div>
+
+          {/* Add Video Form */}
+          {showAddForm && (
+            <Card className="p-4 border-dashed">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="new-judul">Judul Video</Label>
+                  <Input
+                    id="new-judul"
+                    value={newVideo.judul}
+                    onChange={(e) => setNewVideo(prev => ({ ...prev, judul: e.target.value }))}
+                    placeholder="Masukkan judul video"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-link">Link YouTube</Label>
+                  <Input
+                    id="new-link"
+                    value={newVideo.link_youtube}
+                    onChange={(e) => handleNewVideoLinkChange(e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => {
+                    setShowAddForm(false);
+                    setNewVideo({ judul: '', link_youtube: '', thumbnail: '' });
+                  }}>
+                    Batal
+                  </Button>
+                  <Button onClick={addVideo} disabled={loading}>
+                    {loading ? "Menyimpan..." : "Simpan Video"}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Video List */}
+          {videoLinks.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed border-muted rounded-lg">
+              <Play className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">Belum ada video untuk lesson ini</p>
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => setShowAddForm(true)}
+              >
+                Tambah Video Pertama
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {videoLinks.sort((a, b) => a.urutan - b.urutan).map(video => (
+                <Card key={video.id} className="p-4">
+                  {editingVideo?.id === video.id ? (
+                    // Edit Form
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="edit-judul">Judul Video</Label>
+                        <Input
+                          id="edit-judul"
+                          value={editingVideo.judul}
+                          onChange={(e) => setEditingVideo(prev => prev ? { ...prev, judul: e.target.value } : null)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-link">Link YouTube</Label>
+                        <Input
+                          id="edit-link"
+                          value={editingVideo.link_youtube}
+                          onChange={(e) => handleEditVideoLinkChange(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setEditingVideo(null)}>
+                          Batal
+                        </Button>
+                        <Button onClick={updateVideo} disabled={loading}>
+                          {loading ? "Menyimpan..." : "Simpan"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    // Display Mode
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {video.thumbnail && (
+                          <img 
+                            src={video.thumbnail} 
+                            alt={video.judul}
+                            className="w-16 h-12 object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <h4 className="font-medium">{video.judul}</h4>
+                          <p className="text-sm text-muted-foreground">Video {video.urutan}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingVideo(video)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteVideo(video.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

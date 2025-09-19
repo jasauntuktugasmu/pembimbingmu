@@ -214,18 +214,14 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="pretest" className="flex items-center gap-2">
                 <HelpCircle className="h-4 w-4" />
                 Pre Test
               </TabsTrigger>
               <TabsTrigger value="chapters" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
-                Sub Bab
-              </TabsTrigger>
-              <TabsTrigger value="video" className="flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Video Materi
+                Sub Bab & Video
               </TabsTrigger>
               <TabsTrigger value="posttest" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
@@ -253,15 +249,6 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
               />
             </TabsContent>
 
-            <TabsContent value="video">
-              <VideoManager 
-                classData={classData}
-                materi={getMateriByType('video')}
-                videoLinks={videoLinks[getMateriByType('video')?.id || ''] || []}
-                onCreateMateri={() => createMateri('video')}
-                onRefresh={fetchClassContent}
-              />
-            </TabsContent>
 
             <TabsContent value="posttest">
               <PostTestManager 

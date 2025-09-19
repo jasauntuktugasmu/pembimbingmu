@@ -120,7 +120,7 @@ export default function Learning() {
         supabase
           .from('video_links')
           .select('*')
-          .in('materi_id', (materiData || []).filter(m => m.type === 'video').map(m => m.id))
+          .in('materi_id', (materiData || []).filter(m => m.type === 'video' || m.type === 'lesson').map(m => m.id))
           .order('urutan')
       ]);
 
