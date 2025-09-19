@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckCircle, Clock, Play, BookOpen, HelpCircle } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { ChevronLeft, CheckCircle, Clock, Play, BookOpen, HelpCircle, ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,7 @@ interface VideoLink {
   link_youtube: string;
   thumbnail?: string;
   urutan: number;
+  deskripsi?: string;
 }
 
 interface Class {
@@ -61,6 +62,8 @@ export default function Learning() {
   const [progress, setProgress] = useState<Progress[]>([]);
   const [videoLinks, setVideoLinks] = useState<Record<string, VideoLink[]>>({});
   const [currentMateri, setCurrentMateri] = useState<Materi | null>(null);
+  const [currentVideo, setCurrentVideo] = useState<VideoLink | null>(null);
+  const [showVideoList, setShowVideoList] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Create ordered list of materials for proper sequential access
@@ -201,10 +204,32 @@ export default function Learning() {
       return;
     }
     
-    setCurrentMateri(materi);
+    if (materi.type === 'lesson') {
+      // For lessons, show video list first
+      setCurrentMateri(materi);
+      setCurrentVideo(null);
+      setShowVideoList(true);
+    } else {
+      // For other types, go directly to the material
+      setCurrentMateri(materi);
+      setCurrentVideo(null);
+      setShowVideoList(false);
+    }
+    
     // Update URL with materi parameter
     const newUrl = `${location.pathname}?materi=${materi.id}`;
     window.history.pushState({}, '', newUrl);
+  };
+
+  const handleVideoClick = (video: VideoLink) => {
+    setCurrentVideo(video);
+    setShowVideoList(false);
+  };
+
+  const handleBackToVideoList = () => {
+    setCurrentVideo(null);
+    setShowVideoList(true);
+  };
   };
 
   const markMateriComplete = async (materiId: string, skor?: number) => {
@@ -461,7 +486,107 @@ export default function Learning() {
                     onComplete={(skor) => markMateriComplete(currentMateri.id, skor)}
                   />
                 )}
-                {(currentMateri.type === 'video' || currentMateri.type === 'lesson') && (
+                {/* Video Player for old video type */}
+                {currentMateri.type === 'video' && (
+                  <VideoPlayer 
+                    materi={currentMateri}
+                    videoLinks={videoLinks[currentMateri.id] || []}
+                    onComplete={() => markMateriComplete(currentMateri.id)}
+                  />
+                )}
+                
+                {/* Video List View for Lessons */}
+                {currentMateri.type === 'lesson' && showVideoList && (
+                  <div className="max-w-4xl mx-auto">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Play className="h-5 w-5 text-primary" />
+                          {currentMateri.judul}
+                        </CardTitle>
+                        {currentMateri.deskripsi && (
+                          <p className="text-muted-foreground">{currentMateri.deskripsi}</p>
+                        )}
+                      </CardHeader>
+                      <CardContent>
+                        {videoLinks[currentMateri.id]?.length > 0 ? (
+                          <div className="space-y-3">
+                            <h4 className="font-medium mb-4">Pilih Video untuk Ditonton:</h4>
+                            {videoLinks[currentMateri.id]
+                              .sort((a, b) => a.urutan - b.urutan)
+                              .map((video, index) => (
+                                <Card 
+                                  key={video.id}
+                                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                                  onClick={() => handleVideoClick(video)}
+                                >
+                                  <CardContent className="p-4">
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-20 h-12 bg-black rounded overflow-hidden flex-shrink-0">
+                                        <img 
+                                          src={`https://img.youtube.com/vi/${(() => {
+                                            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                                            const match = video.link_youtube.match(regExp);
+                                            return match && match[7].length === 11 ? match[7] : '';
+                                          })()}/mqdefault.jpg`}
+                                          alt={video.judul}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                      <div className="flex-1">
+                                        <h5 className="font-medium mb-1">{video.judul}</h5>
+                                        <p className="text-sm text-muted-foreground mb-2">Video {index + 1}</p>
+                                        {video.deskripsi && (
+                                          <p className="text-sm text-muted-foreground line-clamp-2">
+                                            {video.deskripsi}
+                                          </p>
+                                        )}
+                                      </div>
+                                      <Play className="h-6 w-6 text-primary" />
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <Play className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                            <p className="text-muted-foreground">Belum ada video untuk pelajaran ini</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+                
+                {/* Video Player for Individual Videos in Lessons */}
+                {currentMateri.type === 'lesson' && currentVideo && !showVideoList && (
+                  <div className="max-w-6xl mx-auto">
+                    <div className="mb-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={handleBackToVideoList}
+                        className="flex items-center gap-2"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Kembali ke Daftar Video
+                      </Button>
+                    </div>
+                    <VideoPlayer 
+                      materi={{
+                        ...currentMateri,
+                        judul: currentVideo.judul,
+                        link_video: currentVideo.link_youtube,
+                        thumbnail: currentVideo.thumbnail
+                      }}
+                      videoLinks={[currentVideo]}
+                      onComplete={() => markMateriComplete(currentMateri.id)}
+                    />
+                  </div>
+                )}
+                
+                {/* Fallback for lessons without video list view */}
+                {currentMateri.type === 'lesson' && !showVideoList && !currentVideo && (
                   <VideoPlayer 
                     materi={currentMateri}
                     videoLinks={videoLinks[currentMateri.id] || []}

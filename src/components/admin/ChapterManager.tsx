@@ -40,6 +40,7 @@ interface VideoLink {
   link_youtube: string;
   thumbnail?: string;
   urutan: number;
+  deskripsi?: string;
 }
 
 interface ChapterManagerProps {
@@ -402,7 +403,8 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
   const [newVideo, setNewVideo] = useState({
     judul: '',
     link_youtube: '',
-    thumbnail: ''
+    thumbnail: '',
+    deskripsi: ''
   });
   const [editingVideo, setEditingVideo] = useState<VideoLink | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -454,12 +456,13 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
           judul: newVideo.judul.trim(),
           link_youtube: newVideo.link_youtube.trim(),
           thumbnail: newVideo.thumbnail.trim(),
+          deskripsi: newVideo.deskripsi.trim(),
           urutan: nextUrutan
         });
 
       if (error) throw error;
 
-      setNewVideo({ judul: '', link_youtube: '', thumbnail: '' });
+      setNewVideo({ judul: '', link_youtube: '', thumbnail: '', deskripsi: '' });
       setShowAddForm(false);
       toast({
         title: "Berhasil",
@@ -489,7 +492,8 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
         .update({
           judul: editingVideo.judul.trim(),
           link_youtube: editingVideo.link_youtube.trim(),
-          thumbnail: editingVideo.thumbnail.trim()
+          thumbnail: editingVideo.thumbnail.trim(),
+          deskripsi: editingVideo.deskripsi?.trim()
         })
         .eq('id', editingVideo.id);
 
@@ -573,7 +577,7 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
             <Card className="p-4 border-dashed">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="new-judul">Judul Video</Label>
+                  <Label htmlFor="new-judul">Judul Video *</Label>
                   <Input
                     id="new-judul"
                     value={newVideo.judul}
@@ -582,7 +586,17 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
                   />
                 </div>
                 <div>
-                  <Label htmlFor="new-link">Link YouTube</Label>
+                  <Label htmlFor="new-deskripsi">Deskripsi Pembelajaran</Label>
+                  <Textarea
+                    id="new-deskripsi"
+                    value={newVideo.deskripsi}
+                    onChange={(e) => setNewVideo(prev => ({ ...prev, deskripsi: e.target.value }))}
+                    placeholder="Masukkan penjelasan lengkap tentang materi yang akan dipelajari dalam video ini..."
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-link">Link YouTube *</Label>
                   <Input
                     id="new-link"
                     value={newVideo.link_youtube}
@@ -593,7 +607,7 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
                 <div className="flex justify-end gap-2">
                   <Button variant="outline" onClick={() => {
                     setShowAddForm(false);
-                    setNewVideo({ judul: '', link_youtube: '', thumbnail: '' });
+                    setNewVideo({ judul: '', link_youtube: '', thumbnail: '', deskripsi: '' });
                   }}>
                     Batal
                   </Button>
@@ -624,23 +638,33 @@ function LessonVideoManager({ open, onClose, lesson, videoLinks, onRefresh }: Le
                 <Card key={video.id} className="p-4">
                   {editingVideo?.id === video.id ? (
                     // Edit Form
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="edit-judul">Judul Video</Label>
-                        <Input
-                          id="edit-judul"
-                          value={editingVideo.judul}
-                          onChange={(e) => setEditingVideo(prev => prev ? { ...prev, judul: e.target.value } : null)}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-link">Link YouTube</Label>
-                        <Input
-                          id="edit-link"
-                          value={editingVideo.link_youtube}
-                          onChange={(e) => handleEditVideoLinkChange(e.target.value)}
-                        />
-                      </div>
+                     <div className="space-y-4">
+                       <div>
+                         <Label htmlFor="edit-judul">Judul Video</Label>
+                         <Input
+                           id="edit-judul"
+                           value={editingVideo.judul}
+                           onChange={(e) => setEditingVideo(prev => prev ? { ...prev, judul: e.target.value } : null)}
+                         />
+                       </div>
+                       <div>
+                         <Label htmlFor="edit-deskripsi">Deskripsi Pembelajaran</Label>
+                         <Textarea
+                           id="edit-deskripsi"
+                           value={editingVideo.deskripsi || ''}
+                           onChange={(e) => setEditingVideo(prev => prev ? { ...prev, deskripsi: e.target.value } : null)}
+                           placeholder="Masukkan penjelasan lengkap tentang materi yang akan dipelajari dalam video ini..."
+                           rows={4}
+                         />
+                       </div>
+                       <div>
+                         <Label htmlFor="edit-link">Link YouTube</Label>
+                         <Input
+                           id="edit-link"
+                           value={editingVideo.link_youtube}
+                           onChange={(e) => handleEditVideoLinkChange(e.target.value)}
+                         />
+                       </div>
                       <div className="flex justify-end gap-2">
                         <Button variant="outline" onClick={() => setEditingVideo(null)}>
                           Batal
@@ -772,12 +796,12 @@ function ChapterForm({ open, onClose, chapter, classId, onSuccess }: ChapterForm
             </div>
 
             <div>
-              <Label htmlFor="deskripsi">Deskripsi</Label>
+              <Label htmlFor="deskripsi">Deskripsi (opsional)</Label>
               <Textarea
                 id="deskripsi"
                 value={deskripsi}
                 onChange={(e) => setDeskripsi(e.target.value)}
-                placeholder="Masukkan deskripsi bab"
+                placeholder="Masukkan deskripsi bab (opsional)"
                 rows={3}
               />
             </div>

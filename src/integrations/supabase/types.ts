@@ -458,6 +458,7 @@ export type Database = {
       video_links: {
         Row: {
           created_at: string
+          deskripsi: string | null
           id: string
           judul: string
           link_youtube: string
@@ -468,6 +469,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deskripsi?: string | null
           id?: string
           judul: string
           link_youtube: string
@@ -478,6 +480,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deskripsi?: string | null
           id?: string
           judul?: string
           link_youtube?: string

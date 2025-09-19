@@ -18,6 +18,7 @@ interface VideoLink {
   link_youtube: string;
   thumbnail?: string;
   urutan: number;
+  deskripsi?: string;
 }
 
 interface VideoPlayerProps {
@@ -30,6 +31,7 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
   const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
   const [videoId, setVideoId] = useState<string>('');
   const [videoTitle, setVideoTitle] = useState<string>('');
+  const [videoDescription, setVideoDescription] = useState<string>('');
   const [thumbnail, setThumbnail] = useState<string>('');
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -40,11 +42,13 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
       if (currentVideo) {
         extractVideoInfo(currentVideo.link_youtube);
         setVideoTitle(currentVideo.judul);
+        setVideoDescription(currentVideo.deskripsi || '');
       }
     } else if (materi.link_video) {
       // Fallback to old system
       extractVideoInfo(materi.link_video);
       setVideoTitle(materi.judul);
+      setVideoDescription('');
     }
   }, [materi.link_video, videoLinks, currentVideoIndex]);
 
@@ -202,9 +206,22 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
         <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h3 className="text-xl font-semibold mb-2">{videoTitle || materi.judul}</h3>
+              <h1 className="text-2xl font-bold mb-3">{videoTitle || materi.judul}</h1>
+              
+              {videoDescription && (
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold mb-2">Tentang Video Ini</h3>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                    {videoDescription}
+                  </p>
+                </div>
+              )}
+              
               <p className="text-muted-foreground mb-4">
-                Tonton video pembelajaran ini sampai selesai, kemudian klik tombol di bawah untuk melanjutkan.
+                {videoDescription ? 
+                  "Tonton video pembelajaran di atas sampai selesai, kemudian klik tombol di bawah untuk melanjutkan." :
+                  "Tonton video pembelajaran ini sampai selesai, kemudian klik tombol di bawah untuk melanjutkan."
+                }
               </p>
               
               {/* Show current video link */}
