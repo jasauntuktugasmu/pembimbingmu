@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -45,6 +46,9 @@ const Index = () => {
   const [ruangCeriteCredits, setRuangCeriteCredits] = useState(5);
   const [assistantCredits, setAssistantCredits] = useState(1);
   const [inputMessage, setInputMessage] = useState('');
+  
+  // Database packages state
+  const [dbPackages, setDbPackages] = useState<any[]>([]);
   const whatsappNumber = "6289525035845";
   const whatsappMessage = "Halo! Saya tertarik dengan layanan bimbingan skripsi Pembimbingmu";
   
@@ -83,6 +87,28 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem('assistantCredits', assistantCredits.toString());
   }, [assistantCredits]);
+
+  // Fetch packages from database
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('paket_pembelajaran')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (error) {
+          console.error('Error fetching packages:', error);
+        } else {
+          setDbPackages(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching packages:', error);
+      }
+    };
+
+    fetchPackages();
+  }, []);
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
@@ -810,6 +836,57 @@ const Index = () => {
                 <p className="text-gray-600">Layanan review mendalam dan konsultasi untuk perbaikan skripsi</p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Learning Packages Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Paket Pembelajaran</h2>
+            <p className="text-lg text-muted-foreground">Pilih paket pembelajaran yang sesuai dengan kebutuhan Anda</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {dbPackages.map((pkg) => (
+              <Card key={pkg.id} className="hover:shadow-xl transition-all duration-300 group border-0 shadow-lg">
+                <div 
+                  className="h-32 rounded-t-lg relative overflow-hidden"
+                  style={{
+                    background: `linear-gradient(135deg, ${pkg.gradient_from || '#f97316'}, ${pkg.gradient_to || '#fb923c'})`
+                  }}
+                >
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300" />
+                  <div className="absolute bottom-4 left-6">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <BookOpen className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {pkg.nama_paket}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                    {pkg.deskripsi || 'Paket pembelajaran berkualitas'}
+                  </p>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl font-bold text-primary">
+                      {pkg.harga ? `Rp ${pkg.harga.toLocaleString('id-ID')}` : 'Gratis'}
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      {pkg.durasi_hari} hari
+                    </Badge>
+                  </div>
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => navigate('/login')}
+                  >
+                    {pkg.button_text || 'Mulai Belajar'}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
