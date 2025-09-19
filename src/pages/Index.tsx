@@ -841,48 +841,95 @@ const Index = () => {
       </section>
 
       {/* Learning Packages Section */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Paket Pembelajaran</h2>
-            <p className="text-lg text-muted-foreground">Pilih paket pembelajaran yang sesuai dengan kebutuhan Anda</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Paket Pembelajaran</h2>
+            <p className="text-lg text-gray-600">Pilih paket pembelajaran yang sesuai dengan kebutuhan Anda</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {dbPackages.map((pkg) => (
-              <Card key={pkg.id} className="hover:shadow-xl transition-all duration-300 group border-0 shadow-lg">
-                <div 
-                  className="h-32 rounded-t-lg relative overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, ${pkg.gradient_from || '#f97316'}, ${pkg.gradient_to || '#fb923c'})`
-                  }}
-                >
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300" />
-                  <div className="absolute bottom-4 left-6">
-                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                      <BookOpen className="h-6 w-6 text-white" />
+              <Card key={pkg.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden border-0">
+                {/* Course Image/Thumbnail */}
+                <div className="relative h-48 overflow-hidden">
+                  {pkg.thumbnail_url ? (
+                    <img 
+                      src={pkg.thumbnail_url} 
+                      alt={pkg.nama_paket}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div 
+                      className="w-full h-full flex items-center justify-center relative"
+                      style={{
+                        background: `linear-gradient(135deg, ${pkg.gradient_from || '#f97316'}, ${pkg.gradient_to || '#fb923c'})`
+                      }}
+                    >
+                      <BookOpen className="h-16 w-16 text-white opacity-80" />
+                      <div className="absolute top-4 left-4 bg-black/20 text-white px-2 py-1 rounded text-xs font-medium">
+                        All Levels
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
+
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <svg 
+                          key={i} 
+                          className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">4.84</span>
+                    <span className="text-sm text-gray-500">(63)</span>
+                  </div>
+
+                  {/* Course Title */}
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">
                     {pkg.nama_paket}
                   </h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                    {pkg.deskripsi || 'Paket pembelajaran berkualitas'}
-                  </p>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-primary">
-                      {pkg.harga ? `Rp ${pkg.harga.toLocaleString('id-ID')}` : 'Gratis'}
-                    </span>
-                    <Badge variant="secondary" className="text-xs">
-                      {pkg.durasi_hari} hari
-                    </Badge>
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      <span>353</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{pkg.durasi_hari}h 35m</span>
+                    </div>
                   </div>
+
+                  {/* Price */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      {pkg.harga && pkg.harga > 0 ? (
+                        <>
+                          <span className="text-sm text-gray-400 line-through">Rp280,000</span>
+                          <span className="text-lg font-bold text-orange-600">
+                            Rp{pkg.harga.toLocaleString('id-ID')}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold text-green-600">Gratis</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
                   <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="w-full bg-indigo-900 hover:bg-indigo-800 text-white font-medium py-2.5 rounded-lg transition-colors"
                     onClick={() => navigate('/login')}
                   >
-                    {pkg.button_text || 'Mulai Belajar'}
+                    Daftar Kelas
                   </Button>
                 </CardContent>
               </Card>
