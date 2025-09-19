@@ -17,7 +17,6 @@ import {
   LayoutDashboard, 
   Users, 
   Package, 
-  Settings, 
   LogOut,
   GraduationCap,
   ArrowLeft
@@ -28,7 +27,6 @@ const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Manage Subscribers', url: '/admin/subscribers', icon: Users },
   { title: 'Manage Packages', url: '/admin/packages', icon: Package },
-  { title: 'Settings', url: '/admin/settings', icon: Settings },
 ];
 
 export const AdminSidebar = () => {
