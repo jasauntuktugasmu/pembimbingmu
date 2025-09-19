@@ -7,6 +7,7 @@ type UserRole = 'superadmin' | 'subscriber';
 interface Profile {
   id: string;
   email: string | null;
+  full_name: string | null;
   role: UserRole;
   credits: number;
   cv_credits: number | null;

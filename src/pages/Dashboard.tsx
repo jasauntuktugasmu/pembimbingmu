@@ -222,7 +222,7 @@ export default function Dashboard() {
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm font-medium text-gray-700">
-                    {user?.email || 'Loading...'}
+                    {profile?.full_name || user?.email || 'Loading...'}
                   </span>
                 </div>
               </div>
