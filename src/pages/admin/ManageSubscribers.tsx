@@ -27,6 +27,7 @@ interface Subscriber {
   profiles: {
     id: string;
     email: string;
+    full_name: string;
   };
   paket_pembelajaran: {
     id: string;
@@ -54,7 +55,8 @@ export const ManageSubscribers = () => {
           *,
           profiles (
             id,
-            email
+            email,
+            full_name
           ),
           paket_pembelajaran (
             id,
@@ -128,6 +130,7 @@ export const ManageSubscribers = () => {
 
   const filteredSubscribers = subscribers.filter(subscriber =>
     (subscriber.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+    (subscriber.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
     (subscriber.paket_pembelajaran?.nama_paket?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
   );
 
@@ -173,7 +176,7 @@ export const ManageSubscribers = () => {
       <div className="flex items-center space-x-2">
         <Search className="h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Cari berdasarkan email atau paket..."
+          placeholder="Cari berdasarkan nama, email atau paket..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
@@ -188,10 +191,15 @@ export const ManageSubscribers = () => {
           <Card key={subscriber.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center">
-                  <Mail className="h-4 w-4 mr-2" />
-                  {subscriber.profiles?.email || 'No email'}
-                </CardTitle>
+                <div className="flex-1">
+                  <CardTitle className="text-lg flex items-center mb-1">
+                    <Mail className="h-4 w-4 mr-2" />
+                    {subscriber.profiles?.full_name || 'No name'}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {subscriber.profiles?.email || 'No email'}
+                  </p>
+                </div>
                 {getStatusBadge(subscriber.status, subscriber.durasi_akhir)}
               </div>
             </CardHeader>
