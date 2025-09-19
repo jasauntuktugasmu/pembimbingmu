@@ -935,7 +935,7 @@ const Index = () => {
 
                   {/* Action Button */}
                   <Button 
-                    className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
                     onClick={() => navigate('/login')}
                   >
                     Daftar Kelas
