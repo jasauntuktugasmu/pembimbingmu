@@ -173,7 +173,7 @@ export default function ClassList() {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/subscriber/dashboard')}
+            onClick={() => navigate('/subscriber')}
             className="mb-6 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
