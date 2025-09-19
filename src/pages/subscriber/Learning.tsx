@@ -185,6 +185,12 @@ export default function Learning() {
     return progress.some(p => p.materi_id === materiId && p.status === 'complete');
   };
 
+  const isChapterComplete = (chapterId: string): boolean => {
+    const lessons = materis.filter(m => m.type === 'lesson' && m.parent_id === chapterId);
+    if (lessons.length === 0) return false;
+    return lessons.every(lesson => isMateriComplete(lesson.id));
+  };
+
   const canAccessMateri = (materi: Materi): boolean => {
     const orderedMaterials = getOrderedMaterials();
     const materiIndex = orderedMaterials.findIndex(m => m.id === materi.id);
@@ -324,7 +330,7 @@ export default function Learning() {
     const posttest = materis.find(m => m.type === 'posttest');
 
     const renderMaterialItem = (materi: Materi, isChapter: boolean = false) => {
-      const isComplete = isMateriComplete(materi.id);
+      const isComplete = isChapter ? isChapterComplete(materi.id) : isMateriComplete(materi.id);
       const canAccess = canAccessMateri(materi);
       const isExpanded = expandedChapters.has(materi.id);
       
