@@ -67,7 +67,7 @@ export default function Learning() {
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
-  // Create ordered list of materials for proper sequential access
+  // Create ordered list of materials for proper sequential access (excluding chapters)
   const getOrderedMaterials = () => {
     const pretest = materis.find(m => m.type === 'pretest');
     const chapters = materis.filter(m => m.type === 'chapter').sort((a, b) => a.order - b.order);
@@ -78,8 +78,8 @@ export default function Learning() {
     const orderedList = [];
     if (pretest) orderedList.push(pretest);
     
+    // Only add lessons and videos to sequential order, not chapters
     chapters.forEach(chapter => {
-      orderedList.push(chapter);
       const chapterLessons = lessons
         .filter(l => l.parent_id === chapter.id)
         .sort((a, b) => a.order - b.order);
@@ -185,13 +185,12 @@ export default function Learning() {
     return progress.some(p => p.materi_id === materiId && p.status === 'complete');
   };
 
-  const isChapterComplete = (chapterId: string): boolean => {
-    const lessons = materis.filter(m => m.type === 'lesson' && m.parent_id === chapterId);
-    if (lessons.length === 0) return false;
-    return lessons.every(lesson => isMateriComplete(lesson.id));
-  };
+  // Chapters are no longer tracked for completion - they're just organizational containers
 
   const canAccessMateri = (materi: Materi): boolean => {
+    // Chapters are always accessible (just for dropdown functionality)
+    if (materi.type === 'chapter') return true;
+    
     const orderedMaterials = getOrderedMaterials();
     const materiIndex = orderedMaterials.findIndex(m => m.id === materi.id);
     if (materiIndex === 0) return true; // First materi is always accessible
@@ -214,6 +213,9 @@ export default function Learning() {
   };
 
   const handleMateriClick = (materi: Materi) => {
+    // Chapters are not clickable for content, only for dropdown toggle
+    if (materi.type === 'chapter') return;
+    
     if (!canAccessMateri(materi)) {
       toast({
         title: "Akses Dibatasi",
@@ -330,7 +332,7 @@ export default function Learning() {
     const posttest = materis.find(m => m.type === 'posttest');
 
     const renderMaterialItem = (materi: Materi, isChapter: boolean = false) => {
-      const isComplete = isChapter ? isChapterComplete(materi.id) : isMateriComplete(materi.id);
+      const isComplete = isChapter ? false : isMateriComplete(materi.id); // Chapters never show as complete
       const canAccess = canAccessMateri(materi);
       const isExpanded = expandedChapters.has(materi.id);
       
@@ -338,10 +340,12 @@ export default function Learning() {
         <div
           key={materi.id}
           className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-            currentMateri?.id === materi.id
+            currentMateri?.id === materi.id && !isChapter
               ? 'bg-primary/10 border-primary'
               : canAccess
               ? 'hover:bg-muted/50'
+              : isChapter 
+              ? 'hover:bg-muted/50' // Chapters are always clickable for dropdown
               : 'opacity-50'
           }`}
           onClick={() => {
@@ -367,8 +371,9 @@ export default function Learning() {
                </div>
             </div>
             <div className="flex items-center gap-2">
-              {isComplete && <CheckCircle className="h-4 w-4 text-green-500" />}
-              {!canAccess && <Clock className="h-4 w-4 text-muted-foreground" />}
+              {/* Only show completion status for non-chapter materials */}
+              {!isChapter && isComplete && <CheckCircle className="h-4 w-4 text-green-500" />}
+              {!isChapter && !canAccess && <Clock className="h-4 w-4 text-muted-foreground" />}
             </div>
           </div>
         </div>
