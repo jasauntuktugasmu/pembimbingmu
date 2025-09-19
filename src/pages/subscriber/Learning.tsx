@@ -63,6 +63,33 @@ export default function Learning() {
   const [currentMateri, setCurrentMateri] = useState<Materi | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Create ordered list of materials for proper sequential access
+  const getOrderedMaterials = () => {
+    const pretest = materis.find(m => m.type === 'pretest');
+    const chapters = materis.filter(m => m.type === 'chapter').sort((a, b) => a.order - b.order);
+    const lessons = materis.filter(m => m.type === 'lesson');
+    const videos = materis.filter(m => m.type === 'video').sort((a, b) => a.order - b.order);
+    const posttest = materis.find(m => m.type === 'posttest');
+    
+    const orderedList = [];
+    if (pretest) orderedList.push(pretest);
+    
+    chapters.forEach(chapter => {
+      orderedList.push(chapter);
+      const chapterLessons = lessons
+        .filter(l => l.parent_id === chapter.id)
+        .sort((a, b) => a.order - b.order);
+      orderedList.push(...chapterLessons);
+    });
+    
+    // Add standalone videos (legacy)
+    orderedList.push(...videos);
+    
+    if (posttest) orderedList.push(posttest);
+    
+    return orderedList;
+  };
+
   useEffect(() => {
     if (classId && profile) {
       fetchData();
@@ -79,9 +106,10 @@ export default function Learning() {
         setCurrentMateri(materi);
       }
     } else if (materis.length > 0) {
-      // Default to first incomplete materi
-      const firstIncomplete = materis.find(m => !isMateriComplete(m.id));
-      setCurrentMateri(firstIncomplete || materis[0]);
+      // Default to first incomplete materi in proper order
+      const orderedMaterials = getOrderedMaterials();
+      const firstIncomplete = orderedMaterials.find(m => !isMateriComplete(m.id));
+      setCurrentMateri(firstIncomplete || orderedMaterials[0]);
     }
   }, [location.search, materis, progress]);
 
@@ -154,11 +182,12 @@ export default function Learning() {
   };
 
   const canAccessMateri = (materi: Materi): boolean => {
-    const materiIndex = materis.findIndex(m => m.id === materi.id);
+    const orderedMaterials = getOrderedMaterials();
+    const materiIndex = orderedMaterials.findIndex(m => m.id === materi.id);
     if (materiIndex === 0) return true; // First materi is always accessible
     
     // Check if previous materi is complete
-    const previousMateri = materis[materiIndex - 1];
+    const previousMateri = orderedMaterials[materiIndex - 1];
     return previousMateri ? isMateriComplete(previousMateri.id) : false;
   };
 
