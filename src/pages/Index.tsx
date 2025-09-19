@@ -849,25 +849,34 @@ const Index = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {dbPackages.map((pkg) => (
-              <Card key={pkg.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden border-0">
-                {/* Course Image/Thumbnail */}
-                <div className="relative h-48 overflow-hidden">
+              <Card key={pkg.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border-0 group">
+                {/* Course Thumbnail */}
+                <div className="relative overflow-hidden">
                   {pkg.thumbnail_url ? (
                     <img 
                       src={pkg.thumbnail_url} 
                       alt={pkg.nama_paket}
-                      className="w-full h-full object-cover"
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <div 
-                      className="w-full h-full flex items-center justify-center relative"
+                      className="w-full h-48 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-300"
                       style={{
                         background: `linear-gradient(135deg, ${pkg.gradient_from || '#f97316'}, ${pkg.gradient_to || '#fb923c'})`
                       }}
                     >
                       <BookOpen className="h-16 w-16 text-white opacity-80" />
-                      <div className="absolute top-4 left-4 bg-black/20 text-white px-2 py-1 rounded text-xs font-medium">
-                        All Levels
+                      {/* Level Badge */}
+                      <div className="absolute top-4 left-4">
+                        <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                          All Levels
+                        </span>
+                      </div>
+                      {/* Instructor Avatar */}
+                      <div className="absolute top-4 right-4">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <Users className="w-6 h-6 text-white" />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -875,15 +884,15 @@ const Index = () => {
 
                 <CardContent className="p-6">
                   {/* Rating */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <svg 
                           key={i} 
                           className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
                           viewBox="0 0 20 20"
                         >
-                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
                       ))}
                     </div>
@@ -892,41 +901,41 @@ const Index = () => {
                   </div>
 
                   {/* Course Title */}
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2 min-h-[3.5rem]">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 line-clamp-2 leading-tight">
                     {pkg.nama_paket}
                   </h3>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
+                    <div className="flex items-center gap-2">
                       <Users className="w-4 h-4" />
-                      <span>353</span>
+                      <span className="font-medium">353</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      <span>{pkg.durasi_hari}h 35m</span>
+                      <span className="font-medium">05h 35m</span>
                     </div>
                   </div>
 
-                  {/* Price */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      {pkg.harga && pkg.harga > 0 ? (
-                        <>
-                          <span className="text-sm text-gray-400 line-through">Rp280,000</span>
-                          <span className="text-lg font-bold text-orange-600">
-                            Rp{pkg.harga.toLocaleString('id-ID')}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-lg font-bold text-green-600">Gratis</span>
-                      )}
-                    </div>
+                  {/* Price Section */}
+                  <div className="mb-6">
+                    {pkg.harga && pkg.harga > 0 ? (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-gray-400 line-through text-base">
+                          Rp{(pkg.harga * 3).toLocaleString('id-ID')}
+                        </span>
+                        <span className="text-2xl font-bold text-orange-600">
+                          Rp{pkg.harga.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-2xl font-bold text-green-600">Gratis</span>
+                    )}
                   </div>
 
                   {/* Action Button */}
                   <Button 
-                    className="w-full bg-indigo-900 hover:bg-indigo-800 text-white font-medium py-2.5 rounded-lg transition-colors"
+                    className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
                     onClick={() => navigate('/login')}
                   >
                     Daftar Kelas
