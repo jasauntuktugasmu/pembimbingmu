@@ -8,7 +8,7 @@ import SEO from "@/components/SEO";
 
 export default function DashboardHome() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { profile, isSuperAdmin } = useAuth();
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -27,30 +27,30 @@ export default function DashboardHome() {
     {
       title: "Management LMS",
       description: "Akses paket pembelajaran lengkap untuk metodologi penelitian dan analisis data.",
-      buttonText: "Lihat Paket",
+      buttonText: "Lihat Paket", 
       icon: BookOpen,
-      href: "/lms/packages", // external route
+      href: isSuperAdmin ? "/admin" : "/subscriber/my-packages",
     },
     {
       title: "Chatbot Konsultasi Skripsi",
       description: "Dapatkan jawaban dan bimbingan instan untuk skripsi Anda kapan saja.",
       buttonText: "Mulai Konsultasi",
       icon: MessageCircle,
-      href: "chatbotskripsi", // nested route
+      href: "/dashboard/chatbotskripsi",
     },
     {
       title: "Simulasi Sidang Voicebot",
       description: "Latih mental dan jawaban Anda dengan simulasi sidang yang realistis.",
       buttonText: "Coba Simulasi",
       icon: Mic,
-      href: "/dashboard/simulasi", // external/non‑nested placeholder
+      href: "/dashboard/simulasi-sidang",
     },
     {
       title: "Analisa CV Profesional",
       description: "Upload CV Anda dan dapatkan skor serta masukan untuk perbaikan.",
       buttonText: "Analisa Sekarang",
       icon: FileText,
-      href: "cv", // nested route
+      href: "/dashboard/cv",
     },
   ];
 
