@@ -328,6 +328,32 @@ export default function Learning() {
       const canAccess = canAccessMateri(materi);
       const isExpanded = expandedChapters.has(materi.id);
       
+      if (isChapter) {
+        // Render chapter as simple non-interactive div
+        return (
+          <div
+            key={materi.id}
+            className="p-3 rounded-lg border bg-muted/20"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                <div>
+                  <p className="font-medium text-sm">{materi.judul}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {getMateriTypeLabel(materi.type)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {isComplete && <CheckCircle className="h-4 w-4 text-green-500" />}
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      // Render other materials as clickable items
       return (
         <div
           key={materi.id}
@@ -338,21 +364,11 @@ export default function Learning() {
               ? 'hover:bg-muted/50'
               : 'opacity-50'
           }`}
-          onClick={() => {
-            if (isChapter) {
-              handleChapterToggle(materi.id);
-            } else if (canAccess) {
-              handleMateriClick(materi);
-            }
-          }}
+          onClick={() => canAccess && handleMateriClick(materi)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {isChapter ? (
-                isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
-              ) : (
-                getMateriIcon(materi.type)
-              )}
+              {getMateriIcon(materi.type)}
               <div>
                 <p className="font-medium text-sm">{materi.judul}</p>
                 <p className="text-xs text-muted-foreground">
@@ -382,17 +398,14 @@ export default function Learning() {
           const chapterLessons = lessons
             .filter(l => l.parent_id === chapter.id)
             .sort((a, b) => a.order - b.order);
-          const isExpanded = expandedChapters.has(chapter.id);
           
           return (
             <div key={chapter.id} className="space-y-2">
               {renderMaterialItem(chapter, true)}
-              {/* Lessons under this chapter - show/hide based on expansion */}
-              {isExpanded && (
-                <div className="ml-6 space-y-2">
-                  {chapterLessons.map(lesson => renderMaterialItem(lesson, false))}
-                </div>
-              )}
+              {/* Lessons under this chapter - always visible */}
+              <div className="ml-6 space-y-2">
+                {chapterLessons.map(lesson => renderMaterialItem(lesson, false))}
+              </div>
             </div>
           );
         })}
