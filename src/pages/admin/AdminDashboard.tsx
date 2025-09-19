@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Package, Calendar, Activity } from 'lucide-react';
@@ -11,6 +12,7 @@ interface DashboardStats {
 }
 
 export const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalSubscribers: 0,
     activeSubscribers: 0,
@@ -137,7 +139,7 @@ export const AdminDashboard = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-2">
               <button 
-                onClick={() => window.location.href = '/admin/subscribers'}
+                onClick={() => navigate('/admin/subscribers')}
                 className="w-full text-left p-3 rounded-lg border hover:bg-muted/50 transition-colors"
               >
                 <div className="font-medium">Manage Subscribers</div>
@@ -146,7 +148,7 @@ export const AdminDashboard = () => {
                 </div>
               </button>
               <button 
-                onClick={() => window.location.href = '/admin/packages'}
+                onClick={() => navigate('/admin/packages')}
                 className="w-full text-left p-3 rounded-lg border hover:bg-muted/50 transition-colors"
               >
                 <div className="font-medium">Manage Packages</div>
