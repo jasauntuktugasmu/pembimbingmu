@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, CheckCircle, Clock, Play, BookOpen, HelpCircle, ArrowLeft } from 'lucide-react';
+import { ChevronLeft, CheckCircle, Clock, Play, BookOpen, HelpCircle, ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -64,6 +64,7 @@ export default function Learning() {
   const [currentMateri, setCurrentMateri] = useState<Materi | null>(null);
   const [currentVideo, setCurrentVideo] = useState<VideoLink | null>(null);
   const [showVideoList, setShowVideoList] = useState(false);
+  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
   // Create ordered list of materials for proper sequential access
@@ -194,6 +195,18 @@ export default function Learning() {
     return previousMateri ? isMateriComplete(previousMateri.id) : false;
   };
 
+  const handleChapterToggle = (chapterId: string) => {
+    setExpandedChapters(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(chapterId)) {
+        newSet.delete(chapterId);
+      } else {
+        newSet.add(chapterId);
+      }
+      return newSet;
+    });
+  };
+
   const handleMateriClick = (materi: Materi) => {
     if (!canAccessMateri(materi)) {
       toast({
@@ -310,9 +323,10 @@ export default function Learning() {
     const videos = materis.filter(m => m.type === 'video').sort((a, b) => a.order - b.order);
     const posttest = materis.find(m => m.type === 'posttest');
 
-    const renderMaterialItem = (materi: Materi) => {
+    const renderMaterialItem = (materi: Materi, isChapter: boolean = false) => {
       const isComplete = isMateriComplete(materi.id);
       const canAccess = canAccessMateri(materi);
+      const isExpanded = expandedChapters.has(materi.id);
       
       return (
         <div
@@ -324,11 +338,21 @@ export default function Learning() {
               ? 'hover:bg-muted/50'
               : 'opacity-50'
           }`}
-          onClick={() => canAccess && handleMateriClick(materi)}
+          onClick={() => {
+            if (isChapter) {
+              handleChapterToggle(materi.id);
+            } else if (canAccess) {
+              handleMateriClick(materi);
+            }
+          }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {getMateriIcon(materi.type)}
+              {isChapter ? (
+                isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
+              ) : (
+                getMateriIcon(materi.type)
+              )}
               <div>
                 <p className="font-medium text-sm">{materi.judul}</p>
                 <p className="text-xs text-muted-foreground">
@@ -358,14 +382,17 @@ export default function Learning() {
           const chapterLessons = lessons
             .filter(l => l.parent_id === chapter.id)
             .sort((a, b) => a.order - b.order);
+          const isExpanded = expandedChapters.has(chapter.id);
           
           return (
             <div key={chapter.id} className="space-y-2">
-              {renderMaterialItem(chapter)}
-              {/* Lessons under this chapter */}
-              <div className="ml-6 space-y-2">
-                {chapterLessons.map(lesson => renderMaterialItem(lesson))}
-              </div>
+              {renderMaterialItem(chapter, true)}
+              {/* Lessons under this chapter - show/hide based on expansion */}
+              {isExpanded && (
+                <div className="ml-6 space-y-2">
+                  {chapterLessons.map(lesson => renderMaterialItem(lesson, false))}
+                </div>
+              )}
             </div>
           );
         })}
