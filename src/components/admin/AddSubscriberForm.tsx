@@ -63,21 +63,19 @@ export const AddSubscriberForm: React.FC<AddSubscriberFormProps> = ({ onSuccess 
 
     setCheckingEmail(true);
     try {
-      // Check if email exists in profiles table
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('email, full_name')
-        .ilike('email', emailToCheck)
-        .limit(1);
+      // Use the proper auth check function
+      const { data, error } = await supabase.functions.invoke('check-email-exists', {
+        body: { email: emailToCheck }
+      });
 
       if (error) {
         console.error('Error checking email:', error);
         return;
       }
 
-      if (data && data.length > 0) {
+      if (data.exists) {
         setEmailExists(true);
-        setEmailExistsMessage(`Email sudah digunakan oleh: ${data[0].full_name || 'User'}`);
+        setEmailExistsMessage('Email sudah terdaftar di sistem');
       } else {
         setEmailExists(false);
         setEmailExistsMessage('');

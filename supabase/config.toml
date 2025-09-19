@@ -2,3 +2,6 @@ project_id = "gwxwuplmjzlwnqvutkla"
 
 [functions.create-subscriber]
 verify_jwt = false
+
+[functions.check-email-exists]
+verify_jwt = false

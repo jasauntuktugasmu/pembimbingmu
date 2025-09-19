@@ -59,10 +59,39 @@ Deno.serve(async (req) => {
       throw new Error('Email, paket_id, and full_name are required')
     }
 
+    // First check if email already exists using admin API
+    console.log('Checking if email exists:', email)
+    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers()
+    
+    if (listError) {
+      console.error('Error checking existing users:', listError)
+      throw new Error('Failed to validate email')
+    }
+
+    const emailExists = existingUsers.users.some(user => 
+      user.email?.toLowerCase() === email.toLowerCase()
+    )
+
+    if (emailExists) {
+      console.log('Email already exists:', email)
+      return new Response(
+        JSON.stringify({
+          error: 'Email sudah terdaftar',
+          details: 'Email ini sudah digunakan oleh user lain. Silakan gunakan email berbeda atau update subscriber yang sudah ada.',
+          errorCode: 'EMAIL_EXISTS'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 409
+        }
+      )
+    }
+
     // Generate password if custom_password is not provided
     const password = custom_password || Math.random().toString(36).slice(-8)
 
     // Create user account
+    console.log('Creating user with email:', email)
     const { data: authData, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -75,22 +104,6 @@ Deno.serve(async (req) => {
 
     if (createUserError) {
       console.error('Error creating user:', createUserError)
-      
-      // Handle specific error cases
-      if (createUserError.message.includes('A user with this email address has already been registered')) {
-        return new Response(
-          JSON.stringify({
-            error: 'Email sudah terdaftar',
-            details: 'Email ini sudah digunakan oleh user lain. Silakan gunakan email berbeda atau update subscriber yang sudah ada.',
-            errorCode: 'EMAIL_EXISTS'
-          }),
-          {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 409
-          }
-        )
-      }
-      
       throw new Error(`Failed to create user: ${createUserError.message}`)
     }
 
