@@ -936,7 +936,10 @@ const Index = () => {
                   {/* Action Button */}
                   <Button 
                     className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
-                    onClick={() => navigate('/login')}
+                    onClick={() => {
+                      const pricingSection = document.getElementById('pricing-section');
+                      pricingSection?.scrollIntoView({ behavior: 'smooth' });
+                    }}
                   >
                     Daftar Kelas
                   </Button>
@@ -950,7 +953,7 @@ const Index = () => {
       {/* Pricing Section */}
       <section id="pricing-section" className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12" id="pricing-section">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pricelist Paket Bimbingan Skripsi S1</h2>
             <p className="text-lg text-gray-600 mb-4">Pilih paket yang sesuai dengan kebutuhan Anda</p>
             <div className="bg-[#81b59a] text-white px-4 py-2 rounded-lg inline-block">
