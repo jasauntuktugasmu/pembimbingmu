@@ -71,8 +71,7 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
           kelas_id: classId,
           type: 'chapter',
           judul: 'Bab Baru',
-          order: maxOrder + 1,
-          deskripsi: 'Deskripsi bab'
+          order: maxOrder + 1
         })
         .select()
         .single();
@@ -261,8 +260,6 @@ export function ChapterManager({ classId, chapters, lessons, videoLinks, onRefre
               
               <AccordionContent className="px-4 pb-4">
                 <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground">{chapter.deskripsi}</p>
-                  
                   <div className="flex justify-between items-center">
                     <h4 className="font-medium">Pelajaran</h4>
                     <Button
@@ -728,17 +725,14 @@ interface ChapterFormProps {
 
 function ChapterForm({ open, onClose, chapter, classId, onSuccess }: ChapterFormProps) {
   const [judul, setJudul] = useState('');
-  const [deskripsi, setDeskripsi] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     if (chapter) {
       setJudul(chapter.judul);
-      setDeskripsi(chapter.deskripsi || '');
     } else {
       setJudul('');
-      setDeskripsi('');
     }
   }, [chapter]);
 
@@ -751,7 +745,7 @@ function ChapterForm({ open, onClose, chapter, classId, onSuccess }: ChapterForm
         // Update
         const { error } = await supabase
           .from('materi')
-          .update({ judul, deskripsi })
+          .update({ judul })
           .eq('id', chapter.id);
 
         if (error) throw error;
@@ -792,17 +786,6 @@ function ChapterForm({ open, onClose, chapter, classId, onSuccess }: ChapterForm
                 onChange={(e) => setJudul(e.target.value)}
                 placeholder="Masukkan judul bab"
                 required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="deskripsi">Deskripsi (opsional)</Label>
-              <Textarea
-                id="deskripsi"
-                value={deskripsi}
-                onChange={(e) => setDeskripsi(e.target.value)}
-                placeholder="Masukkan deskripsi bab (opsional)"
-                rows={3}
               />
             </div>
 
