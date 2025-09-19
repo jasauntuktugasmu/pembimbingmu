@@ -25,7 +25,7 @@ export default function DashboardHome() {
 
   const productCards = [
     {
-      title: "LMS Packages",
+      title: "Management LMS",
       description: "Akses paket pembelajaran lengkap untuk metodologi penelitian dan analisis data.",
       buttonText: "Lihat Paket",
       icon: BookOpen,
