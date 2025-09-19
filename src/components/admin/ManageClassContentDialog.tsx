@@ -108,7 +108,7 @@ export function ManageClassContentDialog({ classData, open, onClose }: ManageCla
       });
 
       const videoPromises = (materiData || []).map(async (materi) => {
-        if (materi.type === 'video') {
+        if (materi.type === 'lesson') {
           const { data: videoData, error: videoError } = await supabase
             .from('video_links')
             .select('*')
