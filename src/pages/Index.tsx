@@ -882,9 +882,9 @@ const Index = () => {
                   )}
                 </div>
 
-                <CardContent className="p-6">
+                <CardContent className="p-5">
                   {/* Rating */}
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-3">
                     <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <svg 
@@ -901,41 +901,41 @@ const Index = () => {
                   </div>
 
                   {/* Course Title */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 line-clamp-2 leading-tight">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight min-h-[3.5rem]">
                     {pkg.nama_paket}
                   </h3>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center gap-1.5">
                       <Users className="w-4 h-4" />
                       <span className="font-medium">353</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4" />
                       <span className="font-medium">05h 35m</span>
                     </div>
                   </div>
 
                   {/* Price Section */}
-                  <div className="mb-6">
+                  <div className="mb-4">
                     {pkg.harga && pkg.harga > 0 ? (
                       <div className="flex items-baseline gap-2">
-                        <span className="text-gray-400 line-through text-base">
+                        <span className="text-gray-400 line-through text-sm">
                           Rp{(pkg.harga * 3).toLocaleString('id-ID')}
                         </span>
-                        <span className="text-2xl font-bold text-orange-600">
+                        <span className="text-xl font-bold text-orange-600">
                           Rp{pkg.harga.toLocaleString('id-ID')}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-2xl font-bold text-green-600">Gratis</span>
+                      <span className="text-xl font-bold text-green-600">Gratis</span>
                     )}
                   </div>
 
                   {/* Action Button */}
                   <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg"
                     onClick={() => {
                       const pricingSection = document.getElementById('pricing-section');
                       pricingSection?.scrollIntoView({ behavior: 'smooth' });
