@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Star, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { id } from 'date-fns/locale';
 
 interface Review {
   id: string;
@@ -178,7 +177,6 @@ export default function ReviewDisplay({ limit, showTitle = true }: ReviewDisplay
               <div className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(review.created_at), {
                   addSuffix: true,
-                  locale: id,
                 })}
               </div>
             </CardContent>
