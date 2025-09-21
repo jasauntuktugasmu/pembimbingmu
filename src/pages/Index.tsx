@@ -856,6 +856,88 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Free Materials Section */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Materi Gratis! Pelajari Sekarang!</h2>
+            <p className="text-base sm:text-lg text-gray-600 px-2">Akses video pembelajaran berkualitas untuk membantu perjalanan skripsi Anda</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Video 1 */}
+            <Card className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-0 group cursor-pointer">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://img.youtube.com/vi/6gurhY8DVy4/maxresdefault.jpg"
+                  alt="Mencari Judul Penelitian Auto ACC"
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {/* Play button overlay */}
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/30 transition-colors">
+                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:bg-white group-hover:scale-110 transition-all duration-300">
+                    <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
+                  Mencari Judul Penelitian Auto ACC
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">
+                  Pelajari strategi jitu untuk menemukan judul penelitian yang mudah diterima dosen pembimbing
+                </p>
+                <Button 
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base"
+                  onClick={() => window.open('https://www.youtube.com/watch?v=6gurhY8DVy4', '_blank')}
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Tonton Sekarang
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Video 2 */}
+            <Card className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-0 group cursor-pointer">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://img.youtube.com/vi/E7cBcsrtJGE/maxresdefault.jpg"
+                  alt="Menentukan Metode Penelitian yang Baik dan Benar"
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {/* Play button overlay */}
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/30 transition-colors">
+                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:bg-white group-hover:scale-110 transition-all duration-300">
+                    <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
+                  Menentukan Metode Penelitian yang Baik dan Benar
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">
+                  Pahami cara memilih metodologi penelitian yang tepat untuk skripsi Anda
+                </p>
+                <Button 
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base"
+                  onClick={() => window.open('https://www.youtube.com/watch?v=E7cBcsrtJGE', '_blank')}
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Tonton Sekarang
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Learning Packages Section */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="container mx-auto px-4">
