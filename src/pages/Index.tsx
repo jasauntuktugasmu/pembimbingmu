@@ -11,6 +11,7 @@ import SEO from '@/components/SEO';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
+import TestimonialCarousel from '@/components/TestimonialCarousel';
 import ReviewDisplay from '@/components/learning/ReviewDisplay';
 
 const Index = () => {
@@ -1033,38 +1034,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Apa Kata Klien Kami?</h2>
-            <p className="text-lg text-gray-600">Testimoni dari mahasiswa yang telah berhasil lulus</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <div key={i} className="text-yellow-400 text-lg">★</div>
-                    ))}
-                  </div>
-                  <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
-                  <div className="flex items-center">
-                    <div className="bg-[#81b59a] text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-                      {testimonial.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{testimonial.name}</p>
-                      <p className="text-sm text-gray-600">Mahasiswa S1</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialCarousel limit={9} />
 
       {/* User Reviews Section */}
       <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50">
