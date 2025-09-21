@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, BookOpen, Trophy } from 'lucide-react';
+import { CheckCircle, XCircle, BookOpen, Trophy, Star, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import ReviewForm from './ReviewForm';
 
 interface Soal {
   id: string;
@@ -31,11 +33,18 @@ export default function PostTest({ materiId, onComplete }: PostTestProps) {
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [existingReview, setExistingReview] = useState<any>(null);
+  const [hasReviewed, setHasReviewed] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchSoals();
-  }, [materiId]);
+    if (user) {
+      checkExistingReview();
+    }
+  }, [materiId, user]);
 
   const fetchSoals = async () => {
     try {
@@ -122,6 +131,41 @@ export default function PostTest({ materiId, onComplete }: PostTestProps) {
     return { message: 'Perlu Ditingkatkan', description: 'Silakan review kembali materi sebelumnya.', icon: XCircle };
   };
 
+  const checkExistingReview = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('materi_id', materiId)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error checking existing review:', error);
+        return;
+      }
+
+      if (data) {
+        setExistingReview(data);
+        setHasReviewed(true);
+      }
+    } catch (error) {
+      console.error('Error checking existing review:', error);
+    }
+  };
+
+  const handleReviewSubmit = () => {
+    setShowReviewForm(false);
+    setHasReviewed(true);
+    checkExistingReview(); // Refresh review data
+    toast({
+      title: "Terima kasih!",
+      description: "Review Anda telah disimpan",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -144,6 +188,23 @@ export default function PostTest({ materiId, onComplete }: PostTestProps) {
           </Button>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (showReviewForm) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center">Review Pembelajaran</CardTitle>
+          </CardHeader>
+        </Card>
+        <ReviewForm 
+          materiId={materiId}
+          onSubmit={handleReviewSubmit}
+          existingReview={existingReview}
+        />
+      </div>
     );
   }
 
@@ -193,6 +254,30 @@ export default function PostTest({ materiId, onComplete }: PostTestProps) {
                 : 'Jangan berkecil hati. Terus belajar dan berlatih!'
               }
             </p>
+
+            {/* Review Buttons */}
+            <div className="pt-4 border-t mt-6">
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <Star className="h-4 w-4 text-yellow-500" />
+                Berikan Review Anda
+              </h4>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  onClick={() => setShowReviewForm(true)}
+                  variant={hasReviewed ? "outline" : "default"}
+                  className="flex-1 sm:flex-none"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  {hasReviewed ? 'Edit Review' : 'Tulis Review'}
+                </Button>
+                <Button 
+                  onClick={() => onComplete(score)}
+                  className="flex-1 bg-[#81b59a] hover:bg-[#81b59a]/90"
+                >
+                  {hasReviewed ? 'Selesai' : 'Lewati & Selesai'}
+                </Button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

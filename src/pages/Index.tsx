@@ -11,6 +11,7 @@ import SEO from '@/components/SEO';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
+import ReviewDisplay from '@/components/learning/ReviewDisplay';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -1062,6 +1063,13 @@ const Index = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* User Reviews Section */}
+      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50">
+        <div className="container mx-auto px-4">
+          <ReviewDisplay limit={6} showTitle={true} />
         </div>
       </section>
 
