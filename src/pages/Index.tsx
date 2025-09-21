@@ -1036,12 +1036,6 @@ const Index = () => {
 
       <TestimonialCarousel limit={9} />
 
-      {/* User Reviews Section */}
-      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50">
-        <div className="container mx-auto px-4">
-          <ReviewDisplay limit={6} showTitle={true} />
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <section className="py-16 bg-gray-50">
