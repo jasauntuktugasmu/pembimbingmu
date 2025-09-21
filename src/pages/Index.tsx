@@ -891,7 +891,7 @@ const Index = () => {
                   Pelajari strategi jitu untuk menemukan judul penelitian yang mudah diterima dosen pembimbing
                 </p>
                 <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base touch-target"
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base"
                   onClick={() => window.open('https://www.youtube.com/watch?v=6gurhY8DVy4', '_blank')}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
@@ -926,7 +926,7 @@ const Index = () => {
                   Pahami cara memilih metodologi penelitian yang tepat untuk skripsi Anda
                 </p>
                 <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base touch-target"
+                  className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base"
                   onClick={() => window.open('https://www.youtube.com/watch?v=E7cBcsrtJGE', '_blank')}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
