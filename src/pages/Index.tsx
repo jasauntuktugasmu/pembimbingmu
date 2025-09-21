@@ -885,7 +885,7 @@ const Index = () => {
               
               <CardContent className="p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
-                  Mencari Judul Penelitian Auto ACC
+                  Mencari Judul Penelitian Auto ACC Dosen!
                 </h3>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">
                   Pelajari strategi jitu untuk menemukan judul penelitian yang mudah diterima dosen pembimbing
