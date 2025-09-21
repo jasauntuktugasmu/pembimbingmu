@@ -103,12 +103,6 @@ export default function PostTest({ materiId, onComplete }: PostTestProps) {
     const finalScore = calculateScore();
     setScore(finalScore);
     setShowResults(true);
-
-    // Auto complete after showing results
-    setTimeout(() => {
-      onComplete(finalScore);
-    }, 3000);
-
     setSubmitting(false);
   };
 
