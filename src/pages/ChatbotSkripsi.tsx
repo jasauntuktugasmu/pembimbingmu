@@ -62,8 +62,8 @@ const ChatbotSkripsi = () => {
   };
 
   const webhookUrls = {
-    ruang_cerita: 'https://n8n.srv995808.hstgr.cloud/webhook-test/ruangcerita',
-    asisten_akademik: 'https://n8n.srv995808.hstgr.cloud/webhook-test/botkonsultasiskripsi'
+    ruang_cerita: 'https://n8n.srv995808.hstgr.cloud/webhook/ruangcerita',
+    asisten_akademik: 'https://n8n.srv995808.hstgr.cloud/webhook/botkonsultasiskripsi'
   };
 
   const handleModeChange = (mode: Mode) => {
@@ -88,7 +88,7 @@ const ChatbotSkripsi = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi', {
+      const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook/inputskripsi', {
         method: 'POST',
         body: formData,
       });
