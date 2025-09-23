@@ -59,8 +59,8 @@ const Index = () => {
   const setMessages = currentMode === 'ruang_cerita' ? setRuangCeritaMessages : setAsistenAkademikMessages;
 
   const webhookUrls = {
-    ruang_cerita: 'https://jasauntuktugasmu.app.n8n.cloud/webhook/ruangcerita',
-    asisten_akademik: 'https://jasauntuktugasmu.app.n8n.cloud/webhook/botkonsultasiskripsi'
+    ruang_cerita: 'https://n8n.srv995808.hstgr.cloud/webhook-test/ruangcerita',
+    asisten_akademik: 'https://n8n.srv995808.hstgr.cloud/webhook-test/botkonsultasiskripsi'
   };
 
   const modeDescriptions = {
@@ -158,7 +158,7 @@ const Index = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('https://jasauntuktugasmu.app.n8n.cloud/webhook/inputskripsi', {
+      const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi', {
         method: 'POST',
         body: formData,
       });
