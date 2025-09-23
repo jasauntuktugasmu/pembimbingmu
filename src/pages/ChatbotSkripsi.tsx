@@ -88,10 +88,25 @@ const ChatbotSkripsi = () => {
       const formData = new FormData();
       formData.append('file', file);
 
+      console.log('Uploading file to:', 'https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json',
+        },
       });
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
       const data = await res.json();
       const documentId = data.documentId || data.document_id || data.id || '';
@@ -114,9 +129,33 @@ const ChatbotSkripsi = () => {
       };
       setAsistenAkademikMessages(prev => [...prev, welcomeMessage]);
 
-    } catch (err) {
-      console.error('Upload failed', err);
-      setUploadStatus('Gagal mengunggah dokumen. Silakan coba lagi.');
+      toast({
+        title: "File berhasil diunggah",
+        description: `Dokumen berhasil diproses.`,
+      });
+
+    } catch (err: any) {
+      console.error('Upload failed:', err);
+      
+      let errorMessage = "Gagal mengunggah dokumen. ";
+      if (err.name === 'AbortError') {
+        errorMessage += "Request timeout. Silakan coba lagi.";
+      } else if (err.message?.includes('CORS')) {
+        errorMessage += "Masalah koneksi dengan server. Silakan coba lagi nanti.";
+      } else if (err.message?.includes('Failed to fetch')) {
+        errorMessage += "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+      } else {
+        errorMessage += "Silakan coba lagi.";
+      }
+      
+      setUploadStatus(errorMessage);
+      
+      toast({
+        title: "Gagal mengunggah file",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
       setTimeout(() => {
         setShowUploadStatus(false);
       }, 3000);
@@ -178,13 +217,27 @@ const ChatbotSkripsi = () => {
         };
       }
 
-      const response = await fetch(webhookUrls[currentMode], {
+      const webhookUrl = webhookUrls[currentMode];
+      console.log('Sending message to webhook:', webhookUrl);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
       
@@ -196,14 +249,33 @@ const ChatbotSkripsi = () => {
       };
 
       setMessages(prev => [...prev, botMessage]);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      
+      let errorContent = "Maaf, terjadi kesalahan saat mengirim pesan. ";
+      if (error.name === 'AbortError') {
+        errorContent += "Request timeout. Silakan coba lagi.";
+      } else if (error.message?.includes('CORS')) {
+        errorContent += "Masalah koneksi dengan server. Silakan coba lagi nanti.";
+      } else if (error.message?.includes('Failed to fetch')) {
+        errorContent += "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+      } else {
+        errorContent += "Silakan coba lagi dalam beberapa saat.";
+      }
+
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.',
+        content: errorContent,
         isBot: true,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
+
+      toast({
+        title: "Gagal mengirim pesan",
+        description: errorContent,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
