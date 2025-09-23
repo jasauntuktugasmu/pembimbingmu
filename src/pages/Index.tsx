@@ -59,8 +59,8 @@ const Index = () => {
   const setMessages = currentMode === 'ruang_cerita' ? setRuangCeritaMessages : setAsistenAkademikMessages;
 
   const webhookUrls = {
-    ruang_cerita: 'https://n8n.srv995808.hstgr.cloud/webhook-test/ruangcerita',
-    asisten_akademik: 'https://n8n.srv995808.hstgr.cloud/webhook-test/botkonsultasiskripsi'
+    ruang_cerita: 'https://gwxwuplmjzlwnqvutkla.supabase.co/functions/v1/webhook-proxy',
+    asisten_akademik: 'https://gwxwuplmjzlwnqvutkla.supabase.co/functions/v1/webhook-proxy'
   };
 
   const modeDescriptions = {
@@ -261,18 +261,20 @@ const Index = () => {
       
       if (currentMode === 'ruang_cerita') {
         payload = {
+          webhookType: 'ruang_cerita',
           message: inputMessage,
           sessionId: sessionId
         };
       } else {
         payload = {
+          webhookType: 'asisten_akademik',
           message: inputMessage,
           documentId: sessionDocumentId
         };
       }
 
       const webhookUrl = webhookUrls[currentMode];
-      console.log('Sending message to webhook:', webhookUrl);
+      console.log('Sending message to webhook proxy:', webhookUrl);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
