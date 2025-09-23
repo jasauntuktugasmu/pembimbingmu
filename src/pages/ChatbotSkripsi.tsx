@@ -88,12 +88,12 @@ const ChatbotSkripsi = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      console.log('Uploading file to:', 'https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi');
+      console.log('Uploading file to:', 'https://n8n.srv995808.hstgr.cloud/webhook/inputskripsi');
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-      const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi', {
+      const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook/inputskripsi', {
         method: 'POST',
         body: formData,
         signal: controller.signal,

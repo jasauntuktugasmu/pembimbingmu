@@ -22,15 +22,15 @@ serve(async (req) => {
     // Determine webhook URL and payload based on type
     switch (webhookType) {
       case 'ruang_cerita':
-        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook-test/ruangcerita';
+        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook/ruangcerita';
         payload = { message, sessionId };
         break;
       case 'asisten_akademik':
-        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook-test/botkonsultasiskripsi';
+        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook/botkonsultasiskripsi';
         payload = { message, documentId };
         break;
       case 'input_skripsi':
-        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi';
+        webhookUrl = 'https://n8n.srv995808.hstgr.cloud/webhook/inputskripsi';
         // For file uploads, we'll need to handle differently
         break;
       default:
