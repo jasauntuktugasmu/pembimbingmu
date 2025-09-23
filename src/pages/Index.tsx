@@ -59,8 +59,8 @@ const Index = () => {
   const setMessages = currentMode === 'ruang_cerita' ? setRuangCeritaMessages : setAsistenAkademikMessages;
 
   const webhookUrls = {
-    ruang_cerita: 'https://gwxwuplmjzlwnqvutkla.supabase.co/functions/v1/webhook-proxy',
-    asisten_akademik: 'https://gwxwuplmjzlwnqvutkla.supabase.co/functions/v1/webhook-proxy'
+    ruang_cerita: 'https://n8n.srv995808.hstgr.cloud/webhook-test/ruangcerita',
+    asisten_akademik: 'https://n8n.srv995808.hstgr.cloud/webhook-test/botkonsultasiskripsi'
   };
 
   const modeDescriptions = {
@@ -158,25 +158,10 @@ const Index = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      console.log('Uploading file to:', 'https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi');
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
       const res = await fetch('https://n8n.srv995808.hstgr.cloud/webhook-test/inputskripsi', {
         method: 'POST',
         body: formData,
-        signal: controller.signal,
-        headers: {
-          'Accept': 'application/json',
-        },
       });
-
-      clearTimeout(timeoutId);
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
 
       const data = await res.json();
       const documentId = data.documentId || data.document_id || data.id || '';
@@ -196,33 +181,9 @@ const Index = () => {
       };
       setAsistenAkademikMessages(prev => [...prev, welcomeMessage]);
 
-      toast({
-        title: "File berhasil diunggah",
-        description: `Dokumen berhasil diproses.`,
-      });
-
-    } catch (err: any) {
-      console.error('Upload failed:', err);
-      
-      let errorMessage = "Gagal mengunggah dokumen. ";
-      if (err.name === 'AbortError') {
-        errorMessage += "Request timeout. Silakan coba lagi.";
-      } else if (err.message?.includes('CORS')) {
-        errorMessage += "Masalah koneksi dengan server. Silakan coba lagi nanti.";
-      } else if (err.message?.includes('Failed to fetch')) {
-        errorMessage += "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
-      } else {
-        errorMessage += "Silakan coba lagi.";
-      }
-      
-      setUploadStatus(errorMessage);
-      
-      toast({
-        title: "Gagal mengunggah file",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      
+    } catch (err) {
+      console.error('Upload failed', err);
+      setUploadStatus('Gagal mengunggah dokumen. Silakan coba lagi.');
       setTimeout(() => {
         setShowUploadStatus(false);
       }, 3000);
@@ -261,39 +222,23 @@ const Index = () => {
       
       if (currentMode === 'ruang_cerita') {
         payload = {
-          webhookType: 'ruang_cerita',
           message: inputMessage,
           sessionId: sessionId
         };
       } else {
         payload = {
-          webhookType: 'asisten_akademik',
           message: inputMessage,
           documentId: sessionDocumentId
         };
       }
 
-      const webhookUrl = webhookUrls[currentMode];
-      console.log('Sending message to webhook proxy:', webhookUrl);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-      const response = await fetch(webhookUrl, {
+      const response = await fetch(webhookUrls[currentMode], {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
+        body: JSON.stringify(payload)
       });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
 
       const result = await response.json();
       
@@ -305,40 +250,14 @@ const Index = () => {
       };
 
       setMessages(prev => [...prev, botMessage]);
-    } catch (error: any) {
-      console.error('Error sending message:', error);
-      
-      let errorContent = "Maaf, terjadi kesalahan saat mengirim pesan. ";
-      if (error.name === 'AbortError') {
-        errorContent += "Request timeout. Silakan coba lagi.";
-      } else if (error.message?.includes('CORS')) {
-        errorContent += "Masalah koneksi dengan server. Silakan coba lagi nanti.";
-      } else if (error.message?.includes('Failed to fetch')) {
-        errorContent += "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
-      } else {
-        errorContent += "Silakan coba lagi dalam beberapa saat.";
-      }
-
+    } catch (error) {
       const errorMessage = {
         id: (Date.now() + 1).toString(),
-        content: errorContent,
+        content: 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.',
         isBot: true,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
-      
-      toast({
-        title: "Gagal mengirim pesan",
-        description: errorContent,
-        variant: "destructive",
-      });
-      
-      // Restore credit if there was an error
-      if (currentMode === 'ruang_cerita') {
-        setRuangCeriteCredits(prev => prev + 1);
-      } else {
-        setAssistantCredits(prev => prev + 1);
-      }
     } finally {
       setIsLoading(false);
     }
