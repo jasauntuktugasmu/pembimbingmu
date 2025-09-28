@@ -22,6 +22,7 @@ import { SubscriberLayout } from "./components/layout/SubscriberLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { ManageSubscribers } from "./pages/admin/ManageSubscribers";
 import { ManagePackages } from "./pages/admin/ManagePackages";
+import ManagePayments from "./pages/admin/ManagePayments";
 import { SubscriberDashboard } from "./pages/subscriber/SubscriberDashboard";
 import { MyPackages } from "./pages/subscriber/MyPackages";
 import Learning from "./pages/subscriber/Learning";
@@ -52,6 +53,7 @@ const App = () => (
               <Route index element={<AdminDashboard />} />
               <Route path="subscribers" element={<ManageSubscribers />} />
               <Route path="packages" element={<ManagePackages />} />
+              <Route path="payments" element={<ManagePayments />} />
             </Route>
             
             {/* Subscriber Routes */}

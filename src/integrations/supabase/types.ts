@@ -308,6 +308,51 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          credits_amount: number
+          customer_email: string
+          id: string
+          lynk_transaction_id: string | null
+          order_id: string
+          payment_method: string | null
+          processed_at: string | null
+          status: string
+          updated_at: string
+          webhook_data: Json | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          credits_amount: number
+          customer_email: string
+          id?: string
+          lynk_transaction_id?: string | null
+          order_id: string
+          payment_method?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_data?: Json | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          credits_amount?: number
+          customer_email?: string
+          id?: string
+          lynk_transaction_id?: string | null
+          order_id?: string
+          payment_method?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          webhook_data?: Json | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           credits: number

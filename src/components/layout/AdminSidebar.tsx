@@ -19,7 +19,8 @@ import {
   Package, 
   LogOut,
   GraduationCap,
-  ArrowLeft
+  ArrowLeft,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -27,6 +28,7 @@ const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Manage Subscribers', url: '/admin/subscribers', icon: Users },
   { title: 'Manage Packages', url: '/admin/packages', icon: Package },
+  { title: 'Manage Payments', url: '/admin/payments', icon: CreditCard },
 ];
 
 export const AdminSidebar = () => {
