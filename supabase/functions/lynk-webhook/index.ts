@@ -55,9 +55,8 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    // Calculate credits based on amount (customize this logic as needed)
-    // Example: 1 credit per 1000 IDR
-    const creditsAmount = Math.floor(payload.amount / 1000);
+    // Flat credit system: Every order gets 100 credits regardless of payment amount
+    const creditsAmount = 100;
 
     // Check if transaction already exists
     const { data: existingTransaction } = await supabase
@@ -109,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // If payment is successful, add credits to user profile
     if (transactionStatus === 'completed') {
-      console.log('Processing successful payment, adding credits and authorizing email...');
+      console.log(`Processing successful payment, granting flat 100 credits regardless of amount (${payload.amount})...`);
       
       // 1. Add email to authorized_emails if not exists
       const { error: authorizedEmailError } = await supabase
@@ -169,7 +168,7 @@ const handler = async (req: Request): Promise<Response> => {
           });
         }
 
-        console.log(`Successfully added ${creditsAmount} credits to user ${profile.id}`);
+        console.log(`Successfully added 100 credits to user ${profile.id} (payment amount: ${payload.amount})`);
       }
     }
 
