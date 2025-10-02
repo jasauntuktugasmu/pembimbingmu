@@ -109,9 +109,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     // If payment is successful, add credits to user profile
     if (transactionStatus === 'completed') {
-      console.log('Processing successful payment, adding credits...');
+      console.log('Processing successful payment, adding credits and authorizing email...');
       
-      // Find user profile by email
+      // 1. Add email to authorized_emails if not exists
+      const { error: authorizedEmailError } = await supabase
+        .from('authorized_emails')
+        .upsert({
+          email: payload.customer_email.toLowerCase()
+        }, {
+          onConflict: 'email',
+          ignoreDuplicates: true
+        });
+
+      if (authorizedEmailError) {
+        console.error('Error adding to authorized_emails:', authorizedEmailError);
+      } else {
+        console.log(`Email ${payload.customer_email} added to authorized_emails`);
+      }
+      
+      // 2. Find user profile by email
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id, credits')
@@ -133,6 +149,8 @@ const handler = async (req: Request): Promise<Response> => {
 
         if (topupError) {
           console.error('Error creating credit topup:', topupError);
+        } else {
+          console.log(`Credit topup record created for ${payload.customer_email}`);
         }
       } else {
         // Update user credits directly
