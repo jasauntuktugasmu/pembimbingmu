@@ -330,7 +330,7 @@ export type Database = {
           customer_email: string
           id?: string
           lynk_transaction_id?: string | null
-          order_id: string
+          order_id?: string
           payment_method?: string | null
           processed_at?: string | null
           status?: string
@@ -368,7 +368,7 @@ export type Database = {
           cv_credits?: number | null
           email?: string | null
           full_name?: string | null
-          id: string
+          id?: string
           role?: Database["public"]["Enums"]["user_role"] | null
           skripsi_credits?: number | null
         }
