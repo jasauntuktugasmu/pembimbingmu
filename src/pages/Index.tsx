@@ -19,6 +19,7 @@ const Index = () => {
   const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [currentMode, setCurrentMode] = useState<'ruang_cerita' | 'asisten_akademik'>('ruang_cerita');
   const [sessionDocumentId, setSessionDocumentId] = useState<string>('');
   const [sessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
@@ -67,6 +68,16 @@ const Index = () => {
     ruang_cerita: "✅ **Bisa untuk:** Berbagi cerita, mengatasi stres, & mencari motivasi. ❌ **Tidak bisa untuk:** Analisis dokumen & pertanyaan teknis.",
     asisten_akademik: "✅ **Bisa untuk:** Analisis dokumen, cari referensi, & tanya metodologi. ❌ **Wajib:** Unggah dokumen skripsi Anda terlebih dahulu."
   };
+
+  // Scroll detection for header
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Load credits from localStorage on component mount
   useEffect(() => {
@@ -397,16 +408,34 @@ const Index = () => {
       />
       <div className="min-h-screen bg-white">
         {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className={`
+        bg-white/95 backdrop-blur-md 
+        sticky top-0 z-50
+        transition-all duration-300 ease-in-out
+        ${isScrolled 
+          ? 'shadow-lg py-3' 
+          : 'shadow-sm py-4'
+        }
+      `}>
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
                 src="/lovable-uploads/4138f2ab-bad4-411f-9975-e8576da5b472.png" 
                 alt="Pembimbingmu Logo" 
-                className="h-10 md:h-12 w-auto"
+                className={`
+                  w-auto transition-all duration-300 ease-in-out
+                  ${isScrolled 
+                    ? 'h-8 md:h-10' 
+                    : 'h-10 md:h-12'
+                  }
+                `}
               />
-              <div className="hidden sm:block">
+              <div className={`
+                hidden sm:block 
+                transition-opacity duration-300
+                ${isScrolled ? 'opacity-90' : 'opacity-100'}
+              `}>
                 <h1 className="text-lg md:text-xl font-bold text-[#81b59a]">Pembimbingmu</h1>
                 <p className="text-xs md:text-sm text-gray-600">Pendamping Terbaikmu Menuju Skripsi Auto ACC!</p>
               </div>
@@ -440,7 +469,7 @@ const Index = () => {
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t pt-4">
+            <div className="md:hidden mt-4 pb-4 border-t pt-4 animate-in slide-in-from-top-2 duration-300">
               <Button 
                 onClick={handleLoginClick}
                 className="bg-[#81b59a] hover:bg-[#6fa085] text-white font-semibold px-6 py-3 rounded-lg flex items-center justify-center space-x-2 w-full"
