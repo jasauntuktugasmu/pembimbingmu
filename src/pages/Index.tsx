@@ -483,12 +483,15 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white py-12 sm:py-16 md:py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+      <section className="relative bg-gradient-to-br from-[#81b59a] via-[#6fa085] to-[#81b59a] text-white py-8 sm:py-12 md:py-16 lg:py-20 overflow-hidden">
+        {/* Gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+        
+        <div className="container mx-auto px-3 sm:px-4 text-center relative z-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6 leading-tight animate-fade-in">
             Bimbingan Skripsi #1 di Indonesia
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 md:mb-8 max-w-3xl mx-auto px-2 leading-relaxed">
             Wujudkan impian lulus tepat waktu dengan bimbingan profesional dari mentor berpengalaman
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-none mx-auto">
@@ -512,48 +515,48 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-12 sm:py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Tentang Pembimbingmu</h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-2">
+      <section className="py-8 sm:py-12 md:py-16 bg-white">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Tentang Pembimbingmu</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-2 leading-relaxed">
               Pembimbingmu adalah platform bimbingan skripsi profesional yang telah membantu ribuan mahasiswa 
               menyelesaikan skripsi dengan sukses. Kami berkomitmen memberikan layanan terbaik dengan mentor 
               berpengalaman dan metode pembelajaran yang terbukti efektif.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="text-center mobile-card-padding">
-              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <Users className="h-6 w-6 sm:h-8 sm:w-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div className="text-center p-4 sm:p-6 rounded-xl transition-all duration-300 hover:bg-gray-50 hover:shadow-md group">
+              <div className="bg-gradient-to-br from-[#81b59a] to-[#6fa085] text-white rounded-full w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">1000+ Mahasiswa</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Telah berhasil lulus dengan bimbingan kami</p>
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">1000+ Mahasiswa</h3>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">Telah berhasil lulus dengan bimbingan kami</p>
             </div>
-            <div className="text-center mobile-card-padding">
-              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <Award className="h-6 w-6 sm:h-8 sm:w-8" />
+            <div className="text-center p-4 sm:p-6 rounded-xl transition-all duration-300 hover:bg-gray-50 hover:shadow-md group">
+              <div className="bg-gradient-to-br from-[#81b59a] to-[#6fa085] text-white rounded-full w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Award className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">Mentor Profesional</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Tim mentor berpengalaman dan tersertifikasi</p>
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">Mentor Profesional</h3>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">Tim mentor berpengalaman dan tersertifikasi</p>
             </div>
-            <div className="text-center mobile-card-padding sm:col-span-2 md:col-span-1">
-              <div className="bg-[#81b59a] text-white rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8" />
+            <div className="text-center p-4 sm:p-6 rounded-xl transition-all duration-300 hover:bg-gray-50 hover:shadow-md group sm:col-span-2 md:col-span-1">
+              <div className="bg-gradient-to-br from-[#81b59a] to-[#6fa085] text-white rounded-full w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">Garansi ACC</h3>
-              <p className="text-gray-600 text-sm sm:text-base">Jaminan ACC untuk paket premium</p>
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">Garansi ACC</h3>
+              <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">Jaminan ACC untuk paket premium</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* AI Assistant Section */}
-      <section className="py-12 sm:py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Asisten AI Pembimbingmu</h2>
-            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 px-2">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
+      <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-[#81b59a]/10 to-[#6fa085]/10">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Asisten AI Pembimbingmu</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6 md:mb-8 px-2 leading-relaxed">Dapatkan bantuan instan untuk perjalanan skripsi Anda</p>
             
             <Button 
               onClick={() => {
@@ -659,8 +662,8 @@ const Index = () => {
                     )}
                   </div>
 
-                  {/* Chat Container - Full Focus */}
-                  <div className="bg-white rounded-xl shadow-sm flex flex-col" style={{ height: '60vh' }}>
+                   {/* Chat Container - Full Focus */}
+                  <div className="bg-white rounded-xl shadow-md flex flex-col" style={{ height: '55vh', maxHeight: '600px' }}>
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
                       {messages.map((message) => (
@@ -761,14 +764,14 @@ const Index = () => {
       </section>
 
       {/* Digital Products Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Produk Digital Kami</h2>
-            <p className="text-lg text-gray-600">Dapatkan panduan dan template untuk mendukung skripsi Anda</p>
+      <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Produk Digital Kami</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">Dapatkan panduan dan template untuk mendukung skripsi Anda</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="hover:shadow-xl transition-shadow">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md">
               <CardHeader>
                 <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
                   <h3 className="text-2xl font-bold">E-Book</h3>
@@ -807,7 +810,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-shadow">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md">
               <CardHeader>
                 <div className="bg-[#81b59a] text-white p-8 rounded-lg text-center mb-4">
                   <h3 className="text-2xl font-bold">Template</h3>
@@ -850,14 +853,14 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Layanan Bimbingan Skripsi Terbaik</h2>
-            <p className="text-lg text-gray-600">Pilih layanan yang sesuai dengan kebutuhan Anda</p>
+      <section className="py-8 sm:py-12 md:py-16 bg-white">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Layanan Bimbingan Skripsi Terbaik</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">Pilih layanan yang sesuai dengan kebutuhan Anda</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-[#81b59a]">Bimbingan Proposal</CardTitle>
               </CardHeader>
@@ -865,7 +868,7 @@ const Index = () => {
                 <p className="text-gray-600">Bimbingan khusus untuk penyusunan proposal skripsi yang solid dan terarah</p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-[#81b59a]">Bimbingan Full Skripsi</CardTitle>
               </CardHeader>
@@ -873,7 +876,7 @@ const Index = () => {
                 <p className="text-gray-600">Bimbingan komprehensif dari proposal hingga skripsi siap sidang</p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-[#81b59a]">Review & Konsultasi</CardTitle>
               </CardHeader>
@@ -1052,40 +1055,40 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing-section" className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12" id="pricing-section">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pricelist Paket Bimbingan Skripsi S1</h2>
-            <p className="text-lg text-gray-600 mb-4">Pilih paket yang sesuai dengan kebutuhan Anda</p>
-            <div className="bg-[#81b59a] text-white px-4 py-2 rounded-lg inline-block">
+      <section id="pricing-section" className="py-8 sm:py-12 md:py-16 bg-white">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12" id="pricing-section">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Pricelist Paket Bimbingan Skripsi S1</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-3 sm:mb-4 leading-relaxed">Pilih paket yang sesuai dengan kebutuhan Anda</p>
+            <div className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white px-3 sm:px-4 py-2 rounded-lg inline-block text-xs sm:text-sm md:text-base shadow-md">
               <strong>NB: Harga sudah fix dan sistem pembayaran lunas di awal</strong>
             </div>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {packages.map((pkg, index) => (
-              <Card key={index} className={`relative hover:shadow-xl transition-shadow ${pkg.popular ? 'border-[#81b59a] border-2' : ''}`}>
+              <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col border-0 shadow-md ${pkg.popular ? 'border-[#81b59a] border-2 scale-105' : ''}`}>
                 {pkg.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#81b59a] text-white">
-                    MOST POPULAR
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white shadow-lg px-3 py-1 text-xs sm:text-sm">
+                    ⭐ MOST POPULAR
                   </Badge>
                 )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl font-bold text-[#81b59a]">{pkg.name}</CardTitle>
-                  <CardDescription className="text-lg">{pkg.sessions}</CardDescription>
-                  <div className="text-3xl font-bold text-gray-800 mt-4">{pkg.price}</div>
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="text-xl sm:text-2xl font-bold text-[#81b59a] mb-1">{pkg.name}</CardTitle>
+                  <CardDescription className="text-sm sm:text-base md:text-lg">{pkg.sessions}</CardDescription>
+                  <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#81b59a] to-[#6fa085] bg-clip-text text-transparent mt-3 sm:mt-4">{pkg.price}</div>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+                <CardContent className="flex-1 flex flex-col">
+                  <ul className="space-y-2 sm:space-y-3 flex-1">
                     {pkg.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-[#81b59a] mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">{feature}</span>
+                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#81b59a] mr-2 mt-0.5 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm text-gray-700 leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <Button 
                     onClick={handleWhatsAppClick}
-                    className={`w-full mt-6 ${pkg.popular ? 'bg-[#81b59a] hover:bg-[#6fa085]' : 'bg-gray-800 hover:bg-gray-700'} text-white`}
+                    className={`w-full mt-4 sm:mt-6 touch-target transition-all duration-300 ${pkg.popular ? 'bg-gradient-to-r from-[#81b59a] to-[#6fa085] hover:shadow-lg hover:scale-105' : 'bg-gray-800 hover:bg-gray-700'} text-white text-sm sm:text-base`}
                   >
                     Pilih Paket {pkg.name}
                   </Button>
@@ -1097,9 +1100,9 @@ const Index = () => {
       </section>
 
       {/* Legality Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Legalitas & Kepercayaan</h2>
+      <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
+        <div className="container mx-auto px-3 sm:px-4 text-center">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 sm:mb-6 md:mb-8">Legalitas & Kepercayaan</h2>
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
             <div className="flex items-center justify-center mb-6">
               <Award className="h-12 w-12 text-[#81b59a] mr-4" />
@@ -1123,11 +1126,11 @@ const Index = () => {
 
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pertanyaan yang Sering Diajukan</h2>
-            <p className="text-lg text-gray-600">Temukan jawaban untuk pertanyaan umum</p>
+      <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Pertanyaan yang Sering Diajukan</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">Temukan jawaban untuk pertanyaan umum</p>
           </div>
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full">
