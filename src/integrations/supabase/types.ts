@@ -585,26 +585,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      decrement_credits: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      decrement_credits: { Args: never; Returns: number }
       get_user_role: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: Database["public"]["Enums"]["user_role"]
       }
-      has_paket_access: {
-        Args: { paket_id_input: string }
-        Returns: boolean
-      }
+      has_paket_access: { Args: { paket_id_input: string }; Returns: boolean }
       is_email_authorized: {
         Args: { email_to_check: string }
         Returns: boolean
       }
-      is_superadmin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_superadmin: { Args: never; Returns: boolean }
       kurangi_cv_credit: {
         Args: { jumlah: number; user_id_input: string }
         Returns: undefined
