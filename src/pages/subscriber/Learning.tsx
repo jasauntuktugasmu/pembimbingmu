@@ -252,8 +252,8 @@ export default function Learning() {
     setShowVideoList(true);
   };
 
-  const markMateriComplete = async (materiId: string, skor?: number) => {
-    if (!profile) return;
+  const markMateriComplete = async (materiId: string, skor?: number): Promise<boolean> => {
+    if (!profile) return false;
 
     try {
       const { error } = await supabase
@@ -279,6 +279,7 @@ export default function Learning() {
         title: "Berhasil!",
         description: "Materi telah ditandai selesai",
       });
+      return true;
     } catch (error) {
       console.error('Error marking materi complete:', error);
       toast({
@@ -286,6 +287,7 @@ export default function Learning() {
         description: "Gagal menandai materi selesai",
         variant: "destructive"
       });
+      return false;
     }
   };
 
@@ -624,7 +626,10 @@ export default function Learning() {
                 {currentMateri.type === 'posttest' && (
                   <PostTest 
                     materiId={currentMateri.id}
-                    onComplete={(skor) => markMateriComplete(currentMateri.id, skor)}
+                    onComplete={async (skor) => {
+                      await markMateriComplete(currentMateri.id, skor);
+                      navigate('/subscriber/classes');
+                    }}
                   />
                 )}
               </div>
