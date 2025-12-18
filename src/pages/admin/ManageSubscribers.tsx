@@ -53,7 +53,7 @@ export const ManageSubscribers = () => {
         .from('subscribers')
         .select(`
           *,
-          profiles (
+          profiles!subscribers_user_id_profiles_fkey (
             id,
             email,
             full_name
