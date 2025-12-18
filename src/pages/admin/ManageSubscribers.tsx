@@ -128,11 +128,21 @@ export const ManageSubscribers = () => {
     }
   };
 
-  const filteredSubscribers = subscribers.filter(subscriber =>
-    (subscriber.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-    (subscriber.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-    (subscriber.paket_pembelajaran?.nama_paket?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
-  );
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
+  const filteredSubscribers = normalizedSearch
+    ? subscribers.filter((subscriber) => {
+        const email = subscriber.profiles?.email?.toLowerCase() ?? '';
+        const name = subscriber.profiles?.full_name?.toLowerCase() ?? '';
+        const paket = subscriber.paket_pembelajaran?.nama_paket?.toLowerCase() ?? '';
+
+        return (
+          email.includes(normalizedSearch) ||
+          name.includes(normalizedSearch) ||
+          paket.includes(normalizedSearch)
+        );
+      })
+    : subscribers;
 
   if (loading) {
     return (
