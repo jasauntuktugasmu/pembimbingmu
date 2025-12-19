@@ -855,12 +855,12 @@ const Index = () => {
             <Card className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-0">
               <CardContent className="p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 text-center">
-                  Uji Reliabilitas Data Penelitian
+                  Uji Reliabilitas Data Penelitian Kuantitatif
                 </h3>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
                     src="https://www.youtube.com/embed/owErYLnH1n4"
-                    title="Uji Reliabilitas Data Penelitian"
+                    title="Uji Reliabilitas Data Penelitian Kuantitatif"
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
