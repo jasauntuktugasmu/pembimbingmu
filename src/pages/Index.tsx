@@ -989,13 +989,6 @@ const Index = () => {
       {/* Pricing Section */}
       <section id="pricing-section" className="py-8 sm:py-12 md:py-16 bg-white">
         <div className="container mx-auto px-3 sm:px-4">
-          <div className="text-center mb-6 sm:mb-8 md:mb-12" id="pricing-section">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Pricelist Paket Bimbingan Skripsi S1</h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-3 sm:mb-4 leading-relaxed">Pilih paket yang sesuai dengan kebutuhan Anda</p>
-            <div className="bg-gradient-to-r from-[#81b59a] to-[#6fa085] text-white px-3 sm:px-4 py-2 rounded-lg inline-block text-xs sm:text-sm md:text-base shadow-md">
-              <strong>NB: Harga sudah fix dan sistem pembayaran lunas di awal</strong>
-            </div>
-          </div>
           
           {/* E-Course Preview Banner */}
           <div className="bg-gradient-to-br from-[#1a1f2c] via-[#2d3748] to-[#1a1f2c] rounded-2xl mb-10 overflow-hidden shadow-2xl border border-[#81b59a]/20">
