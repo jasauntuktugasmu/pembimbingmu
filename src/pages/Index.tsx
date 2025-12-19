@@ -997,14 +997,58 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Highlight Banner */}
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 sm:px-6 py-4 rounded-xl mb-8 text-center shadow-lg">
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span className="text-lg sm:text-xl">🎁</span>
-              <p className="text-sm sm:text-base md:text-lg font-bold">
-                Free Akses E-Course Skripsi Senilai 2jt, Berisi Ratusan Video Pembelajaran Untuk Mengerjakan Skripsi
-              </p>
-              <span className="text-lg sm:text-xl">🎁</span>
+          {/* E-Course Preview Banner */}
+          <div className="bg-gradient-to-br from-[#1a1f2c] via-[#2d3748] to-[#1a1f2c] rounded-2xl mb-10 overflow-hidden shadow-2xl border border-[#81b59a]/20">
+            <div className="grid md:grid-cols-2 gap-0 items-center">
+              {/* Text Content */}
+              <div className="p-6 sm:p-8 md:p-10 text-center md:text-left order-2 md:order-1">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold mb-4 shadow-lg">
+                  <span>🎁</span>
+                  <span>BONUS EKSKLUSIF</span>
+                  <span>🎁</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                  Free Akses <span className="text-[#81b59a]">E-Course Skripsi</span>
+                </h3>
+                <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4 leading-relaxed">
+                  Senilai <span className="text-amber-400 font-bold text-lg sm:text-xl">Rp2.000.000</span>
+                </p>
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg">
+                    <svg className="w-5 h-5 text-[#81b59a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-white text-sm font-medium">Ratusan Video</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg">
+                    <svg className="w-5 h-5 text-[#81b59a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span className="text-white text-sm font-medium">Materi Lengkap</span>
+                  </div>
+                </div>
+                <p className="text-gray-400 text-xs sm:text-sm">
+                  Pembelajaran lengkap untuk mengerjakan skripsi dari awal hingga selesai
+                </p>
+              </div>
+              
+              {/* Image Preview */}
+              <div className="relative order-1 md:order-2 p-4 sm:p-6">
+                <div className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-white/10 transform hover:scale-[1.02] transition-transform duration-300">
+                  <img 
+                    src="/assets/ecourse-preview.png" 
+                    alt="Preview E-Course Skripsi - Daftar Kelas Pembelajaran"
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      <span className="text-xs sm:text-sm font-medium text-gray-800">Akses selamanya setelah pembelian</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
