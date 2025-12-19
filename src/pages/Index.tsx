@@ -279,13 +279,20 @@ const Index = () => {
       name: "BASIC",
       price: "Rp400.000",
       originalPrice: "Rp400K",
-      sessions: "3X Bimbingan Online",
+      sessions: "6X Bimbingan Online",
       features: [
         "Bimbingan dan Review Proposal",
-        "3 kali bimbingan via GMeet/Zoom",
-        "Free konsultasi by WA Group",
-        "Free E-Book (Skripsi? Gampang Kok!)",
-        "Free cek turnitin 3X"
+        "6 kali bimbingan via GMeet/Zoom",
+        "Free bimbingan by WA Group",
+        "Free E-Book Promt Master Mencari Judul yang Auto ACC (paling dicari)",
+        "Free E-Book Promt Master Proposal BAB 1-3 (paling dicari)",
+        "Free Template Proposal BAB 1-3 sudah rapi & siap pakai (paling dicari)",
+        "Free E-Book (Skripsi? Gampang Kok!) (paling dicari)",
+        "Free Template PPT",
+        "Free Akses Diskusi dengan Dosen Pembimbing AI by Pembimbingmu.com",
+        "Free Template Planing Skripsi (Jadwal Terstruktur Skripsi Selesai Maksimal 4 Bulan)",
+        "Free cek turnitin 3X",
+        "Durasi Kelas Maksimal 1 Bulan"
       ],
       popular: false
     },
@@ -293,13 +300,19 @@ const Index = () => {
       name: "PRO",
       price: "Rp700.000",
       originalPrice: "Rp700K",
-      sessions: "6X Bimbingan Online",
+      sessions: "12X Bimbingan Online",
       features: [
-        "Bimbingan dan Review Proposal/Full Skripsi",
-        "6 kali bimbingan via GMeet/Zoom",
-        "Free konsultasi by WA Group",
-        "Free E-Book (Skripsi? Gampang Kok!)",
+        "Bimbingan dan Review Proposal/Full Skripsi & Tesis",
+        "12 kali bimbingan via GMeet/Zoom",
+        "Free bimbingan by WA Group",
+        "Free E-Book Promt Master BAB 4-5 Hasil & Pembahasan (paling dicari)",
+        "Free E-Book Promt Master Mencari Judul yang Auto ACC (paling dicari)",
+        "Free E-Book Promt Master Proposal BAB 1-3 (paling dicari)",
+        "Free Template Proposal BAB 1-3 sudah rapi & siap pakai (paling dicari)",
+        "Free E-Book (Skripsi? Gampang Kok!) (paling dicari)",
         "Free ratusan template PPT",
+        "Free Akses Diskusi dengan Dosen Pembimbing AI by Pembimbingmu.com",
+        "Free Template Planing Skripsi (Jadwal Terstruktur Skripsi Selesai Maksimal 4 Bulan)",
         "Tutorial Parafrase & Turnitin",
         "Durasi kelas maksimal 2 Bulan",
         "Free cek turnitin 6X"
@@ -310,15 +323,23 @@ const Index = () => {
       name: "PREMIUM",
       price: "Rp1.200.000",
       originalPrice: "Rp1.200K",
-      sessions: "9X Bimbingan Online",
+      sessions: "18X Bimbingan Online",
       features: [
-        "Bimbingan dan Review Proposal/Full Skripsi",
-        "9 kali bimbingan via GMeet/Zoom",
-        "Free konsultasi by WA Group",
-        "Free E-Book (Skripsi? Gampang Kok!)",
+        "Bimbingan dan Review Proposal/Full Skripsi & Tesis",
+        "18 kali bimbingan via GMeet/Zoom",
+        "Free bimbingan by WA Group",
+        "Free E-Book Promt Master BAB 4-5 Hasil & Pembahasan (paling dicari)",
+        "Free E-Book Promt Master Mencari Judul yang Auto ACC (paling dicari)",
+        "Free E-Book Promt Master Proposal BAB 1-3 (paling dicari)",
+        "Free Template Proposal BAB 1-3 sudah rapi & siap pakai (paling dicari)",
+        "Free Template Artikel & Jurnal Siap pakai (paling dicari)",
+        "Free E-Book 50+ Pertanyaan Sidang & Cara Jawabnya (paling dicari)",
+        "Free E-Book (Skripsi? Gampang Kok!) (paling dicari)",
         "Free ratusan template PPT",
         "Tutorial Parafrase & Turnitin",
         "Tutorial Mendeley & Zotero",
+        "Free Akses Diskusi dengan Dosen Pembimbing AI by Pembimbingmu.com",
+        "Free Template Planing Skripsi (Jadwal Terstruktur Skripsi Selesai Maksimal 4 Bulan)",
         "Jadwal Fleksibel",
         "Durasi kelas maksimal 3 Bulan",
         "Free cek turnitin 12X",
@@ -975,6 +996,18 @@ const Index = () => {
               <strong>NB: Harga sudah fix dan sistem pembayaran lunas di awal</strong>
             </div>
           </div>
+          
+          {/* Highlight Banner */}
+          <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 sm:px-6 py-4 rounded-xl mb-8 text-center shadow-lg">
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <span className="text-lg sm:text-xl">🎁</span>
+              <p className="text-sm sm:text-base md:text-lg font-bold">
+                Free Akses E-Course Skripsi Senilai 2jt, Berisi Ratusan Video Pembelajaran Untuk Mengerjakan Skripsi
+              </p>
+              <span className="text-lg sm:text-xl">🎁</span>
+            </div>
+          </div>
+          
           <div className="grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {packages.map((pkg, index) => (
               <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col border-0 shadow-md ${pkg.popular ? 'border-[#81b59a] border-2 scale-105' : ''}`}>
