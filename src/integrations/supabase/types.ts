@@ -528,13 +528,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subscribers_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "subscribers_user_id_profiles_fkey"
             columns: ["user_id"]
             isOneToOne: false
