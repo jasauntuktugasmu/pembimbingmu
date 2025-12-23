@@ -52,8 +52,7 @@ const Index = () => {
   
   // Database packages state
   const [dbPackages, setDbPackages] = useState<any[]>([]);
-  const whatsappNumber = "6289525035845";
-  const whatsappMessage = "Halo! Saya tertarik dengan layanan bimbingan skripsi Pembimbingmu";
+  const whatsappLink = "https://wa.me/+6285111023200?%20text=Halo,+Kak+tolong+bantuin+skripsiku,+butuh+bimbingan.";
   
   // Get current messages and setters based on mode
   const messages = currentMode === 'ruang_cerita' ? ruangCeritaMessages : asistenAkademikMessages;
@@ -136,7 +135,7 @@ const Index = () => {
   }, []);
 
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+    window.open(whatsappLink, '_blank');
   };
 
   const handleLoginClick = () => {
@@ -1318,7 +1317,7 @@ const Index = () => {
               <div className="space-y-2 text-green-100">
                 <p className="flex items-center">
                   <Phone className="h-4 w-4 mr-2" />
-                  089525035845
+                  085111023200
                 </p>
                 <p className="flex items-center">
                   <Mail className="h-4 w-4 mr-2" />
