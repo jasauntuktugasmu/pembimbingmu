@@ -56,14 +56,12 @@ const Index = () => {
   // Contact / WhatsApp
   const whatsappPhoneE164 = "6285111023200"; // for WhatsApp links (no leading 0, no '+')
   const whatsappPhoneDisplay = "085111023200";
-  const whatsappMessage = "Halo, Kak tolong bantuin skripsiku, butuh bimbingan.";
+  const whatsappMessage = "Halo Kak, saya ingin konsultasi bimbingan skripsi. Bisa dibantu?";
 
   const getWhatsAppLink = () => {
     const text = encodeURIComponent(whatsappMessage);
-    const isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    return isMobile
-      ? `https://wa.me/${whatsappPhoneE164}?text=${text}`
-      : `https://web.whatsapp.com/send?phone=${whatsappPhoneE164}&text=${text}`;
+    // Universal WhatsApp link: opens app on mobile, WhatsApp Web on desktop
+    return `https://wa.me/${whatsappPhoneE164}?text=${text}`;
   };
   
   // Get current messages and setters based on mode
@@ -146,9 +144,6 @@ const Index = () => {
     fetchPackages();
   }, []);
 
-  const handleWhatsAppClick = () => {
-    window.open(getWhatsAppLink(), '_blank', 'noopener,noreferrer');
-  };
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -528,12 +523,14 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-md sm:max-w-none mx-auto">
             <Button 
-              onClick={handleWhatsAppClick}
+              asChild
               size="lg" 
               className="w-full sm:w-auto bg-white text-[#81b59a] hover:bg-gray-100 font-semibold px-6 sm:px-8 py-3 sm:py-4 touch-target"
             >
-              <Phone className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-sm sm:text-base">Konsultasi Gratis Sekarang</span>
+              <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
+                <Phone className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-base">Konsultasi Gratis Sekarang</span>
+              </a>
             </Button>
             <Button 
               size="lg" 
@@ -785,11 +782,13 @@ const Index = () => {
           <div className="text-center mt-8">
             <p className="text-gray-600 mb-4">Ingin kredit tambahan atau bimbingan penuh?</p>
             <Button 
-              onClick={handleWhatsAppClick}
+              asChild
               className="bg-[#81b59a] hover:bg-[#6fa085] text-white px-6 py-3"
             >
-              <Phone className="mr-2 h-4 w-4" />
-              Hubungi Kami di WhatsApp
+              <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
+                <Phone className="mr-2 h-4 w-4" />
+                Hubungi Kami di WhatsApp
+              </a>
             </Button>
           </div>
         </div>
@@ -1079,10 +1078,12 @@ const Index = () => {
                     ))}
                   </ul>
                   <Button 
-                    onClick={handleWhatsAppClick}
+                    asChild
                     className={`w-full mt-4 sm:mt-6 touch-target transition-all duration-300 ${pkg.popular ? 'bg-gradient-to-r from-[#81b59a] to-[#6fa085] hover:shadow-lg hover:scale-105' : 'bg-gray-800 hover:bg-gray-700'} text-white text-sm sm:text-base`}
                   >
-                    Pilih Paket {pkg.name}
+                    <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
+                      Pilih Paket {pkg.name}
+                    </a>
                   </Button>
                 </CardContent>
               </Card>
@@ -1283,11 +1284,13 @@ const Index = () => {
                 </p>
                 <div className="space-y-4">
                   <Button 
-                    onClick={handleWhatsAppClick}
+                    asChild
                     className="w-full bg-[#81b59a] hover:bg-[#6fa085] text-white py-3"
                   >
-                    <Phone className="mr-2 h-5 w-5" />
-                    Chat WhatsApp
+                    <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
+                      <Phone className="mr-2 h-5 w-5" />
+                      Chat WhatsApp
+                    </a>
                   </Button>
                   <Button 
                     onClick={() => window.open('https://www.instagram.com/pembimbingmu.co/', '_blank')}
