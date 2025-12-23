@@ -52,7 +52,7 @@ const Index = () => {
   
   // Database packages state
   const [dbPackages, setDbPackages] = useState<any[]>([]);
-  const whatsappLink = "https://wa.me/+6285111023200?%20text=Halo,+Kak+tolong+bantuin+skripsiku,+butuh+bimbingan.";
+  const whatsappLink = "https://wa.me/6285111023200?text=Halo%2C%20Kak%20tolong%20bantuin%20skripsiku%2C%20butuh%20bimbingan.";
   
   // Get current messages and setters based on mode
   const messages = currentMode === 'ruang_cerita' ? ruangCeritaMessages : asistenAkademikMessages;
