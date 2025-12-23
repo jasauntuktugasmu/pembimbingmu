@@ -52,7 +52,19 @@ const Index = () => {
   
   // Database packages state
   const [dbPackages, setDbPackages] = useState<any[]>([]);
-  const whatsappLink = "https://wa.me/+6285111023200?text=Halo,+Kak+tolong+bantuin+skripsiku,+butuh+bimbingan.";
+
+  // Contact / WhatsApp
+  const whatsappPhoneE164 = "6285111023200"; // for WhatsApp links (no leading 0, no '+')
+  const whatsappPhoneDisplay = "085111023200";
+  const whatsappMessage = "Halo, Kak tolong bantuin skripsiku, butuh bimbingan.";
+
+  const getWhatsAppLink = () => {
+    const text = encodeURIComponent(whatsappMessage);
+    const isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return isMobile
+      ? `https://wa.me/${whatsappPhoneE164}?text=${text}`
+      : `https://web.whatsapp.com/send?phone=${whatsappPhoneE164}&text=${text}`;
+  };
   
   // Get current messages and setters based on mode
   const messages = currentMode === 'ruang_cerita' ? ruangCeritaMessages : asistenAkademikMessages;
@@ -135,7 +147,7 @@ const Index = () => {
   }, []);
 
   const handleWhatsAppClick = () => {
-    window.open(whatsappLink, '_blank');
+    window.open(getWhatsAppLink(), '_blank', 'noopener,noreferrer');
   };
 
   const handleLoginClick = () => {
@@ -1235,7 +1247,7 @@ const Index = () => {
                     <Phone className="h-5 w-5 text-[#81b59a] mr-3" />
                     <div>
                       <p className="font-semibold">WhatsApp</p>
-                      <p className="text-gray-600">089525035845</p>
+                      <p className="text-gray-600">{whatsappPhoneDisplay}</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -1317,7 +1329,7 @@ const Index = () => {
               <div className="space-y-2 text-green-100">
                 <p className="flex items-center">
                   <Phone className="h-4 w-4 mr-2" />
-                  085111023200
+                  {whatsappPhoneDisplay}
                 </p>
                 <p className="flex items-center">
                   <Mail className="h-4 w-4 mr-2" />
