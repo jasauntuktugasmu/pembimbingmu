@@ -851,6 +851,7 @@ const Index = () => {
                     title="Menyusun Judul + Mencari Puluhan Jurnal Pendukung Menggunakan AI"
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     frameBorder="0"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   />
@@ -873,6 +874,7 @@ const Index = () => {
                     title="Uji Reliabilitas Data Penelitian Kuantitatif"
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     frameBorder="0"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                   />

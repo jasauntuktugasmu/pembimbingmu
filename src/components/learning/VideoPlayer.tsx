@@ -229,7 +229,8 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
                 <a 
                   href={videoLinks[currentVideoIndex].link_youtube} 
                   target="_blank" 
-                  rel="noopener noreferrer"
+                  rel="noopener"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -239,7 +240,8 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
                 <a 
                   href={materi.link_video} 
                   target="_blank" 
-                  rel="noopener noreferrer"
+                  rel="noopener"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
                 >
                   <ExternalLink className="h-4 w-4" />

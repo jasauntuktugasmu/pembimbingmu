@@ -795,7 +795,8 @@ function VideoCard({
               <a 
                 href={video.link_youtube} 
                 target="_blank" 
-                rel="noopener noreferrer"
+                rel="noopener"
+                referrerPolicy="strict-origin-when-cross-origin"
                 className="text-xs text-blue-600 hover:underline"
               >
                 Lihat di YouTube
