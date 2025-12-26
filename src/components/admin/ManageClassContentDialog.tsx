@@ -628,10 +628,12 @@ function VideoManager({
                     const videoId = extractVideoId(newVideo.link_youtube);
                     return videoId ? (
                       <iframe
-                        src={`https://www.youtube.com/embed/${videoId}`}
+                        src={`https://www.youtube.com/embed/${videoId}?rel=0&origin=${encodeURIComponent(window.location.origin)}`}
                         title="Video Preview"
                         className="w-full h-full"
                         allowFullScreen
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white">
@@ -709,10 +711,12 @@ function VideoManager({
                     const videoId = extractVideoId(editingVideo.link_youtube);
                     return videoId ? (
                       <iframe
-                        src={`https://www.youtube.com/embed/${videoId}`}
+                        src={`https://www.youtube.com/embed/${videoId}?rel=0&origin=${encodeURIComponent(window.location.origin)}`}
                         title="Video Preview"
                         className="w-full h-full"
                         allowFullScreen
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white">
