@@ -847,13 +847,14 @@ const Index = () => {
                 </h3>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
-                    src="https://www.youtube.com/embed/3Rgxq5kdrJw"
+                    src={`https://www.youtube.com/embed/3Rgxq5kdrJw?rel=0&origin=${encodeURIComponent(window.location.origin)}`}
                     title="Menyusun Judul + Mencari Puluhan Jurnal Pendukung Menggunakan AI"
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     frameBorder="0"
                     referrerPolicy="strict-origin-when-cross-origin"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    loading="lazy"
                   />
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 mt-4 text-center">
@@ -870,13 +871,14 @@ const Index = () => {
                 </h3>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <iframe
-                    src="https://www.youtube.com/embed/owErYLnH1n4"
+                    src={`https://www.youtube.com/embed/owErYLnH1n4?rel=0&origin=${encodeURIComponent(window.location.origin)}`}
                     title="Uji Reliabilitas Data Penelitian Kuantitatif"
                     className="absolute top-0 left-0 w-full h-full rounded-lg"
                     frameBorder="0"
                     referrerPolicy="strict-origin-when-cross-origin"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    loading="lazy"
                   />
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 mt-4 text-center">

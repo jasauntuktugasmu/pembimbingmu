@@ -138,11 +138,13 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
         <div className="aspect-video bg-black">
           {videoId ? (
             <iframe
-              src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+              src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&origin=${encodeURIComponent(window.location.origin)}&enablejsapi=1`}
               title={videoTitle || materi.judul}
               className="w-full h-full"
               allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
