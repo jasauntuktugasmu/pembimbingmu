@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, CheckCircle, ExternalLink } from 'lucide-react';
+import { Play, CheckCircle } from 'lucide-react';
 
 interface Materi {
   id: string;
@@ -133,19 +133,30 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
         </CardHeader>
       </Card>
 
-      {/* Video Player */}
+      {/* Video Player with Protection */}
       <Card className="overflow-hidden">
-        <div className="aspect-video bg-black">
+        <div 
+          className="aspect-video bg-black relative select-none"
+          onContextMenu={(e) => e.preventDefault()}
+        >
           {videoId ? (
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&origin=${encodeURIComponent(window.location.origin)}&enablejsapi=1`}
-              title={videoTitle || materi.judul}
-              className="w-full h-full"
-              allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              loading="lazy"
-            />
+            <>
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&origin=${encodeURIComponent(window.location.origin)}&enablejsapi=1&showinfo=0&controls=1&disablekb=0`}
+                title={videoTitle || materi.judul}
+                className="w-full h-full pointer-events-auto"
+                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                loading="lazy"
+                style={{ border: 'none' }}
+              />
+              {/* Invisible overlay to prevent right-click on iframe */}
+              <div 
+                className="absolute inset-0 bg-transparent pointer-events-none"
+                onContextMenu={(e) => e.preventDefault()}
+              />
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
               <div className="text-center">
@@ -208,48 +219,22 @@ export default function VideoPlayer({ materi, videoLinks, onComplete }: VideoPla
         <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-2xl font-bold mb-3">{videoTitle || materi.judul}</h1>
+              <h1 className="text-2xl font-bold mb-3 select-none">{videoTitle || materi.judul}</h1>
               
               {videoDescription && (
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold mb-2">Tentang Video Ini</h3>
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap select-none">
                     {videoDescription}
                   </p>
                 </div>
               )}
               
-              <p className="text-muted-foreground mb-4">
-                {videoDescription ? 
-                  "Tonton video pembelajaran di atas sampai selesai, kemudian klik tombol di bawah untuk melanjutkan." :
-                  "Tonton video pembelajaran ini sampai selesai, kemudian klik tombol di bawah untuk melanjutkan."
-                }
+              <p className="text-muted-foreground mb-4 select-none">
+                Tonton video pembelajaran ini sampai selesai, kemudian klik tombol di bawah untuk melanjutkan.
               </p>
               
-              {/* Show current video link */}
-              {videoLinks && videoLinks.length > 0 && videoLinks[currentVideoIndex] ? (
-                <a 
-                  href={videoLinks[currentVideoIndex].link_youtube} 
-                  target="_blank" 
-                  rel="noopener"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Buka di YouTube
-                </a>
-              ) : materi.link_video ? (
-                <a 
-                  href={materi.link_video} 
-                  target="_blank" 
-                  rel="noopener"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Buka di YouTube
-                </a>
-              ) : null}
+              {/* Link YouTube dihilangkan untuk mencegah pencurian video */}
             </div>
             
             <div className="ml-6">
