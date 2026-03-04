@@ -1266,7 +1266,7 @@ const Index = () => {
                     <MapPin className="h-5 w-5 text-[#81b59a] mr-3" />
                     <div>
                       <p className="font-semibold">Alamat</p>
-                      <p className="text-gray-600">Perum Puspa Asri Blok R1 No 2<br />Plalangan Jenangan Ponorogo</p>
+                      <p className="text-gray-600">Jl. Arif Rahman Hakim Gg. II No.54, Kertosari,<br />Babadan, Kec. Ponorogo, Kabupaten Ponorogo,<br />Jawa Timur 63491</p>
                     </div>
                   </div>
                   <div className="flex items-center">
