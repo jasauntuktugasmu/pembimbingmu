@@ -135,9 +135,23 @@ export function BlogArticlesList({ scope }: Props) {
 
         {!loading && totalCount > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
-            <p className="text-sm text-muted-foreground">
-              Menampilkan {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} dari {totalCount} artikel
-            </p>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>
+                Menampilkan {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} dari {totalCount}
+              </span>
+              <div className="flex items-center gap-2">
+                <span>Per halaman:</span>
+                <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+                  <SelectTrigger className="w-20 h-8"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PAGE_SIZE_OPTIONS.map((n) => (
+                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="flex items-center gap-1 flex-wrap justify-center">
               <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
                 Sebelumnya
