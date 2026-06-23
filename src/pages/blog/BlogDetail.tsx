@@ -68,7 +68,7 @@ export default function BlogDetail() {
     keywords: article.meta_keywords || article.focus_keyword || undefined,
   };
 
-  const safeHtml = DOMPurify.sanitize(article.content_html || "", { ADD_ATTR: ["data-baca-juga", "data-items", "target", "rel"] });
+  const safeHtml = DOMPurify.sanitize(article.content_html || "", { ADD_ATTR: ["data-baca-juga", "data-items", "data-align", "target", "rel", "style"] });
 
   return (
     <article className="container max-w-3xl mx-auto py-8 px-4">

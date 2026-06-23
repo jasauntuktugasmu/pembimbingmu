@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { TiptapToolbar } from "./TiptapToolbar";
 import { SeoAnalysisPanel } from "./SeoAnalysisPanel";
 import { RelatedArticlePickerDialog } from "./RelatedArticlePickerDialog";
+import { ImageInsertDialog } from "./ImageInsertDialog";
+import { LinkInsertDialog } from "./LinkInsertDialog";
 import { BacaJugaNode, type BacaJugaItem } from "./extensions/BacaJugaNode";
 import { analyzeSeo, toSlug } from "@/lib/seo-utils";
 import { Loader2, Upload, X } from "lucide-react";
@@ -74,11 +76,30 @@ export function ArticleEditor({ articleId, backHref }: Props) {
   const [saving, setSaving] = useState(false);
   const [uploadingFeatured, setUploadingFeatured] = useState(false);
   const [relatedPickerOpen, setRelatedPickerOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [currentLink, setCurrentLink] = useState<{ url: string; newTab: boolean }>({ url: "", newTab: true });
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({ HTMLAttributes: { class: "rounded-lg max-w-full h-auto" } }),
+      Image.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            width: {
+              default: null,
+              parseHTML: (el) => (el as HTMLElement).style.width || (el as HTMLElement).getAttribute("width") || null,
+              renderHTML: (attrs: any) => (attrs.width ? { style: `width:${attrs.width}; height:auto;` } : {}),
+            },
+            "data-align": {
+              default: "center",
+              parseHTML: (el) => (el as HTMLElement).getAttribute("data-align") || "center",
+              renderHTML: (attrs: any) => ({ "data-align": attrs["data-align"] || "center" }),
+            },
+          };
+        },
+      }).configure({ HTMLAttributes: { class: "rounded-lg max-w-full h-auto" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Mulai tulis artikelmu di sini..." }),
       BacaJugaNode,
@@ -89,12 +110,25 @@ export function ArticleEditor({ articleId, backHref }: Props) {
     },
   });
 
-  const handleInlineImageUpload = async (file: File) => {
-    const url = await uploadImage(file);
-    if (!url || !editor) return;
-    const alt = window.prompt("Alt text (untuk SEO):") || "";
-    editor.chain().focus().setImage({ src: url, alt }).run();
+  const handleInsertImage = (v: { src: string; alt: string; width: string | null; align: "left" | "center" | "right" }) => {
+    if (!editor) return;
+    editor.chain().focus().setImage({ src: v.src, alt: v.alt, ...(v.width ? { width: v.width } : {}), "data-align": v.align } as any).run();
   };
+
+  const openLinkDialog = () => {
+    if (!editor) return;
+    const attrs = editor.getAttributes("link");
+    setCurrentLink({ url: attrs.href || "", newTab: attrs.target === "_blank" });
+    setLinkDialogOpen(true);
+  };
+
+  const handleSubmitLink = (url: string, newTab: boolean) => {
+    if (!editor) return;
+    const chain = editor.chain().focus().extendMarkRange("link");
+    chain.setLink({ href: url, target: newTab ? "_blank" : null, rel: newTab ? "noopener noreferrer nofollow" : null } as any).run();
+  };
+
+  const handleRemoveLink = () => editor?.chain().focus().extendMarkRange("link").unsetLink().run();
 
   const handleInsertRelated = (items: BacaJugaItem[]) => {
     editor?.chain().focus().insertBacaJuga(items).run();
@@ -246,8 +280,13 @@ export function ArticleEditor({ articleId, backHref }: Props) {
         <Card>
           <CardHeader><CardTitle className="text-base">Konten Artikel</CardTitle></CardHeader>
           <CardContent className="p-0">
-            <TiptapToolbar editor={editor} onUploadImage={handleInlineImageUpload} onInsertRelated={() => setRelatedPickerOpen(true)} />
-            <div className="article-editor-content rounded-b-md border-t bg-background px-6 py-5 min-h-[560px] focus-within:outline-none">
+            <TiptapToolbar
+              editor={editor}
+              onInsertImage={() => setImageDialogOpen(true)}
+              onInsertLink={openLinkDialog}
+              onInsertRelated={() => setRelatedPickerOpen(true)}
+            />
+            <div className="article-editor-content rounded-b-md border-t bg-background px-4 sm:px-6 py-5 min-h-[420px] sm:min-h-[560px] focus-within:outline-none">
               <EditorContent editor={editor} />
             </div>
           </CardContent>
@@ -258,6 +297,20 @@ export function ArticleEditor({ articleId, backHref }: Props) {
           onOpenChange={setRelatedPickerOpen}
           excludeId={articleId}
           onInsert={handleInsertRelated}
+        />
+        <ImageInsertDialog
+          open={imageDialogOpen}
+          onOpenChange={setImageDialogOpen}
+          onUpload={uploadImage}
+          onInsert={handleInsertImage}
+        />
+        <LinkInsertDialog
+          open={linkDialogOpen}
+          onOpenChange={setLinkDialogOpen}
+          initialUrl={currentLink.url}
+          initialNewTab={currentLink.newTab}
+          onSubmit={handleSubmitLink}
+          onRemove={currentLink.url ? handleRemoveLink : undefined}
         />
 
         <Card>
