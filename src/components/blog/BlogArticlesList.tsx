@@ -21,7 +21,7 @@ interface Props {
   scope: "admin" | "writer";
 }
 
-const PAGE_SIZE_OPTIONS = [10, 20, 50];
+const pageSize_OPTIONS = [10, 20, 50];
 
 export function BlogArticlesList({ scope }: Props) {
   const { profile } = useAuth();
@@ -36,12 +36,12 @@ export function BlogArticlesList({ scope }: Props) {
 
 
   const base = scope === "admin" ? "/admin/blog" : "/writer";
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
   const load = async () => {
     setLoading(true);
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
     let q = supabase
       .from("blog_articles")
       .select(
@@ -135,7 +135,7 @@ export function BlogArticlesList({ scope }: Props) {
         {!loading && totalCount > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
             <p className="text-sm text-muted-foreground">
-              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} dari {totalCount} artikel
+              Menampilkan {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} dari {totalCount} artikel
             </p>
             <div className="flex items-center gap-1 flex-wrap justify-center">
               <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
