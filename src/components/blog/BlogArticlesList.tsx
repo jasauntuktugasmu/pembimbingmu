@@ -21,7 +21,7 @@ interface Props {
   scope: "admin" | "writer";
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 export function BlogArticlesList({ scope }: Props) {
   const { profile } = useAuth();
@@ -31,15 +31,17 @@ export function BlogArticlesList({ scope }: Props) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
 
+
   const base = scope === "admin" ? "/admin/blog" : "/writer";
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
   const load = async () => {
     setLoading(true);
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
     let q = supabase
       .from("blog_articles")
       .select(
@@ -56,10 +58,11 @@ export function BlogArticlesList({ scope }: Props) {
     setLoading(false);
   };
 
-  // Reset to page 1 when filters change
-  useEffect(() => { setPage(1); }, [statusFilter, search]);
+  // Reset to page 1 when filters/pageSize change
+  useEffect(() => { setPage(1); }, [statusFilter, search, pageSize]);
 
-  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search, page]);
+  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search, page, pageSize]);
+
 
 
   const handleDelete = async (id: string) => {
@@ -132,9 +135,23 @@ export function BlogArticlesList({ scope }: Props) {
 
         {!loading && totalCount > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
-            <p className="text-sm text-muted-foreground">
-              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} dari {totalCount} artikel
-            </p>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>
+                Menampilkan {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} dari {totalCount}
+              </span>
+              <div className="flex items-center gap-2">
+                <span>Per halaman:</span>
+                <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+                  <SelectTrigger className="w-20 h-8"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PAGE_SIZE_OPTIONS.map((n) => (
+                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="flex items-center gap-1 flex-wrap justify-center">
               <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
                 Sebelumnya
