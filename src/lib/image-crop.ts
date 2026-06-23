@@ -78,18 +78,20 @@ export interface CropTemplate {
 }
 
 export const FEATURED_TEMPLATES: CropTemplate[] = [
-  { id: "16x9", label: "Landscape 16:9", aspect: 16 / 9, maxWidth: 1600, recommended: "1600 × 900 px", hint: "Direkomendasikan untuk thumbnail blog & OG image" },
+  { id: "16x9", label: "Hero 16:9", aspect: 16 / 9, maxWidth: 1600, recommended: "1600 × 900 px", hint: "Direkomendasikan — pas untuk thumbnail blog, OG image & tampilan halaman artikel" },
+  { id: "21x9", label: "Ultrawide 21:9", aspect: 21 / 9, maxWidth: 1680, recommended: "1680 × 720 px", hint: "Gaya banner sinematik seperti hero blog modern" },
   { id: "4x3", label: "Klasik 4:3", aspect: 4 / 3, maxWidth: 1600, recommended: "1600 × 1200 px", hint: "Cocok untuk foto / ilustrasi" },
   { id: "1x1", label: "Persegi 1:1", aspect: 1, maxWidth: 1200, recommended: "1200 × 1200 px", hint: "Bagus untuk feed sosial media" },
   { id: "3x2", label: "Foto 3:2", aspect: 3 / 2, maxWidth: 1500, recommended: "1500 × 1000 px", hint: "Rasio standar kamera" },
 ];
 
 export const CONTENT_TEMPLATES: CropTemplate[] = [
-  { id: "original", label: "Asli (tanpa crop)", aspect: 0, maxWidth: 1600, recommended: "Pakai gambar apa adanya" },
-  { id: "16x9", label: "Landscape 16:9", aspect: 16 / 9, maxWidth: 1200, recommended: "1200 × 675 px", hint: "Pas untuk gambar utama paragraf" },
+  { id: "16x9", label: "Hero 16:9", aspect: 16 / 9, maxWidth: 1200, recommended: "1200 × 675 px", hint: "Direkomendasikan — bentuk landscape khas hero artikel" },
+  { id: "21x9", label: "Ultrawide 21:9", aspect: 21 / 9, maxWidth: 1400, recommended: "1400 × 600 px", hint: "Gaya banner sinematik" },
   { id: "4x3", label: "Klasik 4:3", aspect: 4 / 3, maxWidth: 1200, recommended: "1200 × 900 px" },
   { id: "1x1", label: "Persegi 1:1", aspect: 1, maxWidth: 900, recommended: "900 × 900 px" },
   { id: "3x2", label: "Foto 3:2", aspect: 3 / 2, maxWidth: 1200, recommended: "1200 × 800 px" },
+  { id: "original", label: "Asli (tanpa crop)", aspect: 0, maxWidth: 1600, recommended: "Pakai gambar apa adanya" },
 ];
 
 export const blobToFile = (blob: Blob, name: string): File =>
