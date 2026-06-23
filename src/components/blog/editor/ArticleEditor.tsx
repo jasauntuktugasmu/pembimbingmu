@@ -81,6 +81,8 @@ export function ArticleEditor({ articleId, backHref }: Props) {
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [currentLink, setCurrentLink] = useState<{ url: string; newTab: boolean }>({ url: "", newTab: true });
+  const [featuredCropSource, setFeaturedCropSource] = useState<File | null>(null);
+  const [featuredCropOpen, setFeaturedCropOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
