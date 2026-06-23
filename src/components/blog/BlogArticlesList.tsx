@@ -58,10 +58,11 @@ export function BlogArticlesList({ scope }: Props) {
     setLoading(false);
   };
 
-  // Reset to page 1 when filters change
-  useEffect(() => { setPage(1); }, [statusFilter, search]);
+  // Reset to page 1 when filters/pageSize change
+  useEffect(() => { setPage(1); }, [statusFilter, search, pageSize]);
 
-  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search, page]);
+  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search, page, pageSize]);
+
 
 
   const handleDelete = async (id: string) => {
