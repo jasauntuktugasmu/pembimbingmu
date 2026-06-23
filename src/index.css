@@ -339,6 +339,52 @@ All colors MUST be HSL.
   margin: 1.25em 0;
 }
 
+/* "Baca Juga" inline block — works in editor & public article */
+.baca-juga-block {
+  border-left: 4px solid hsl(var(--primary));
+  background: hsl(var(--muted) / 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5em 0;
+  font-family: 'Inter', sans-serif;
+}
+.baca-juga-block .baca-juga-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(var(--primary));
+  margin-bottom: 0.6rem;
+}
+.baca-juga-block .baca-juga-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.baca-juga-block .baca-juga-list li { margin: 0; }
+.baca-juga-block .baca-juga-list a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: hsl(var(--foreground));
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+.baca-juga-block .baca-juga-list a:hover { color: hsl(var(--primary)); }
+.baca-juga-block .baca-juga-list img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  margin: 0;
+  flex-shrink: 0;
+}
+
 .article-editor-content .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: hsl(var(--muted-foreground));

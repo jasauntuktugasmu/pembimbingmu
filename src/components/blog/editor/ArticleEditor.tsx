@@ -17,6 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { TiptapToolbar } from "./TiptapToolbar";
 import { SeoAnalysisPanel } from "./SeoAnalysisPanel";
+import { RelatedArticlePickerDialog } from "./RelatedArticlePickerDialog";
+import { BacaJugaNode, type BacaJugaItem } from "./extensions/BacaJugaNode";
 import { analyzeSeo, toSlug } from "@/lib/seo-utils";
 import { Loader2, Upload, X } from "lucide-react";
 
@@ -71,6 +73,7 @@ export function ArticleEditor({ articleId, backHref }: Props) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingFeatured, setUploadingFeatured] = useState(false);
+  const [relatedPickerOpen, setRelatedPickerOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -78,12 +81,24 @@ export function ArticleEditor({ articleId, backHref }: Props) {
       Image.configure({ HTMLAttributes: { class: "rounded-lg max-w-full h-auto" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Mulai tulis artikelmu di sini..." }),
+      BacaJugaNode,
     ],
     content: "",
     onUpdate: ({ editor }) => {
       setData((d) => ({ ...d, content: editor.getJSON(), content_html: editor.getHTML() }));
     },
   });
+
+  const handleInlineImageUpload = async (file: File) => {
+    const url = await uploadImage(file);
+    if (!url || !editor) return;
+    const alt = window.prompt("Alt text (untuk SEO):") || "";
+    editor.chain().focus().setImage({ src: url, alt }).run();
+  };
+
+  const handleInsertRelated = (items: BacaJugaItem[]) => {
+    editor?.chain().focus().insertBacaJuga(items).run();
+  };
 
   // Load article + meta data
   useEffect(() => {
@@ -231,12 +246,19 @@ export function ArticleEditor({ articleId, backHref }: Props) {
         <Card>
           <CardHeader><CardTitle className="text-base">Konten Artikel</CardTitle></CardHeader>
           <CardContent className="p-0">
-            <TiptapToolbar editor={editor} />
+            <TiptapToolbar editor={editor} onUploadImage={handleInlineImageUpload} onInsertRelated={() => setRelatedPickerOpen(true)} />
             <div className="article-editor-content rounded-b-md border-t bg-background px-6 py-5 min-h-[560px] focus-within:outline-none">
               <EditorContent editor={editor} />
             </div>
           </CardContent>
         </Card>
+
+        <RelatedArticlePickerDialog
+          open={relatedPickerOpen}
+          onOpenChange={setRelatedPickerOpen}
+          excludeId={articleId}
+          onInsert={handleInsertRelated}
+        />
 
         <Card>
           <CardHeader><CardTitle className="text-base">Pengaturan SEO</CardTitle></CardHeader>
