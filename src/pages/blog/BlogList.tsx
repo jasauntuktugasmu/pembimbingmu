@@ -75,26 +75,41 @@ export default function BlogList() {
       </div>
       {articles.length === 0 && <div className="text-center py-12 text-muted-foreground">Belum ada artikel.</div>}
 
-      {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center items-center gap-1 mt-8">
-          <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setParams({ page: String(page - 1) })}>
-            Sebelumnya
-          </Button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-            .map((p, idx, arr) => (
-              <span key={p} className="flex items-center">
-                {idx > 0 && p - arr[idx - 1] > 1 && <span className="px-1 text-muted-foreground">…</span>}
-                <Button size="sm" variant={p === page ? "default" : "outline"} onClick={() => setParams({ page: String(p) })}>
-                  {p}
-                </Button>
-              </span>
-            ))}
-          <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setParams({ page: String(page + 1) })}>
-            Berikutnya
-          </Button>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Per halaman:</span>
+          <Select value={String(pageSize)} onValueChange={(v) => setParams({ page: "1", size: v })}>
+            <SelectTrigger className="w-20 h-8"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-wrap justify-center items-center gap-1">
+            <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setParams({ page: String(page - 1), size: String(pageSize) })}>
+              Sebelumnya
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+              .map((p, idx, arr) => (
+                <span key={p} className="flex items-center">
+                  {idx > 0 && p - arr[idx - 1] > 1 && <span className="px-1 text-muted-foreground">…</span>}
+                  <Button size="sm" variant={p === page ? "default" : "outline"} onClick={() => setParams({ page: String(p), size: String(pageSize) })}>
+                    {p}
+                  </Button>
+                </span>
+              ))}
+            <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setParams({ page: String(page + 1), size: String(pageSize) })}>
+              Berikutnya
+            </Button>
+          </div>
+        )}
+      </div>
+
 
     </div>
   );
