@@ -13,6 +13,7 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
 import TestimonialCarousel from '@/components/TestimonialCarousel';
 import ReviewDisplay from '@/components/learning/ReviewDisplay';
+import LatestArticlesSlider from '@/components/LatestArticlesSlider';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -1310,6 +1311,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Artikel Terbaru */}
+      <LatestArticlesSlider />
 
       {/* Footer */}
       <footer className="bg-[#81b59a] text-white py-12">
