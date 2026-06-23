@@ -22,6 +22,9 @@ Allow: /
 # Block access to private areas
 Disallow: /api/
 Disallow: /admin/
+Disallow: /writer/
+Disallow: /subscriber/
+Disallow: /dashboard/
 Disallow: /_next/
 Disallow: /lovable-uploads/
 
