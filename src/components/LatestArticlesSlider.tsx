@@ -39,22 +39,11 @@ export default function LatestArticlesSlider() {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-8 gap-4">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Artikel Terbaru</h2>
-            <p className="text-lg text-gray-600">Tips, panduan, dan insight terbaru seputar akademik & karier.</p>
-          </div>
-          <Button
-            asChild
-            variant="outline"
-            className="border-[#81b59a] text-[#81b59a] hover:bg-[#81b59a] hover:text-white transition-colors duration-300 self-start md:self-auto"
-          >
-            <Link to="/blog">
-              Lihat Semua Artikel
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Artikel Terbaru</h2>
+          <p className="text-lg text-gray-600">Tips, panduan, dan insight terbaru seputar akademik & karier.</p>
         </div>
+
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -119,6 +108,19 @@ export default function LatestArticlesSlider() {
             <CarouselNext className="hidden md:flex -right-4 lg:-right-12 bg-white border-[#81b59a] text-[#81b59a] hover:bg-[#81b59a] hover:text-white" />
           </Carousel>
         )}
+
+        <div className="text-center mt-10">
+          <Button
+            asChild
+            className="bg-[#81b59a] hover:bg-[#6fa085] text-white transition-colors duration-300"
+          >
+            <Link to="/blog">
+              Lihat Semua Artikel
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
       </div>
     </section>
   );

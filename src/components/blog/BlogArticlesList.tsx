@@ -21,6 +21,8 @@ interface Props {
   scope: "admin" | "writer";
 }
 
+const PAGE_SIZE = 10;
+
 export function BlogArticlesList({ scope }: Props) {
   const { profile } = useAuth();
   const { toast } = useToast();
@@ -28,21 +30,37 @@ export function BlogArticlesList({ scope }: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const base = scope === "admin" ? "/admin/blog" : "/writer";
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const load = async () => {
     setLoading(true);
-    let q = supabase.from("blog_articles").select("id,title,slug,status,views_count,seo_score,published_at,author_id, profiles!blog_articles_author_id_fkey(full_name)").order("updated_at", { ascending: false });
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    let q = supabase
+      .from("blog_articles")
+      .select(
+        "id,title,slug,status,views_count,seo_score,published_at,author_id, profiles!blog_articles_author_id_fkey(full_name)",
+        { count: "exact" }
+      )
+      .order("updated_at", { ascending: false });
     if (scope === "writer" && profile) q = q.eq("author_id", profile.id);
     if (statusFilter !== "all") q = q.eq("status", statusFilter);
     if (search) q = q.ilike("title", `%${search}%`);
-    const { data } = await q;
+    const { data, count } = await q.range(from, to);
     setArticles((data as any) || []);
+    setTotalCount(count || 0);
     setLoading(false);
   };
 
-  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search]);
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1); }, [statusFilter, search]);
+
+  useEffect(() => { if (profile) load(); /* eslint-disable-next-line */ }, [profile, statusFilter, search, page]);
+
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus artikel ini?")) return;
@@ -111,7 +129,34 @@ export function BlogArticlesList({ scope }: Props) {
             </TableBody>
           </Table>
         )}
+
+        {!loading && totalCount > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+            <p className="text-sm text-muted-foreground">
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} dari {totalCount} artikel
+            </p>
+            <div className="flex items-center gap-1 flex-wrap justify-center">
+              <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                Sebelumnya
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .map((p, idx, arr) => (
+                  <span key={p} className="flex items-center">
+                    {idx > 0 && p - arr[idx - 1] > 1 && <span className="px-1 text-muted-foreground">…</span>}
+                    <Button size="sm" variant={p === page ? "default" : "outline"} onClick={() => setPage(p)}>
+                      {p}
+                    </Button>
+                  </span>
+                ))}
+              <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                Berikutnya
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
+
   );
 }
