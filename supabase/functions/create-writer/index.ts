@@ -34,7 +34,9 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { full_name, email, password } = body ?? {};
+    const full_name = String(body?.full_name ?? "").trim();
+    const email = String(body?.email ?? "").trim().toLowerCase();
+    const password = String(body?.password ?? "");
     if (!full_name || !email || !password || password.length < 6) {
       return new Response(JSON.stringify({ error: "Invalid input. Nama, email, dan password (min 6 char) wajib." }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -48,6 +50,7 @@ Deno.serve(async (req) => {
     });
 
     let userId = created?.user?.id;
+    let convertedFrom: string | null = null;
 
     if (createErr || !userId) {
       const msg = createErr?.message || "";
@@ -61,24 +64,36 @@ Deno.serve(async (req) => {
       if (!existing) {
         return new Response(JSON.stringify({ error: "Email sudah terdaftar di sistem auth tetapi profil tidak ditemukan. Hubungi admin." }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      if (existing.role && existing.role !== "writer") {
-        return new Response(JSON.stringify({ error: `Email sudah terdaftar sebagai ${existing.role}. Tidak bisa dijadikan writer.` }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (existing.role === "superadmin") {
+        return new Response(JSON.stringify({ error: "Email ini adalah akun superadmin dan tidak bisa dijadikan writer." }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      // Promote to writer + update password
-      await admin.auth.admin.updateUserById(existing.id, { password, email_confirm: true, user_metadata: { full_name } });
+      convertedFrom = existing.role ?? null;
+
+      // Existing subscriber/writer accounts can be converted/updated as writer.
+      const { error: updateAuthErr } = await admin.auth.admin.updateUserById(existing.id, {
+        password,
+        email_confirm: true,
+        user_metadata: { full_name },
+      });
+      if (updateAuthErr) {
+        return new Response(JSON.stringify({ error: updateAuthErr.message || "Gagal memperbarui akun writer" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       userId = existing.id;
     }
 
     // Upsert profile with writer role
-    await admin.from("profiles").upsert({
+    const { error: profileErr } = await admin.from("profiles").upsert({
       id: userId,
       email,
       full_name,
       role: "writer",
     }, { onConflict: "id" });
+    if (profileErr) {
+      return new Response(JSON.stringify({ error: profileErr.message || "Gagal menyimpan profil writer" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
 
-    return new Response(JSON.stringify({ success: true, user_id: userId }), {
+    return new Response(JSON.stringify({ success: true, user_id: userId, converted_from: convertedFrom }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
