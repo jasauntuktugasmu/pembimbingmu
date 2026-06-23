@@ -4,12 +4,14 @@ import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArticleCard } from "@/components/blog/public/ArticleCard";
 import { Breadcrumb } from "@/components/blog/public/Breadcrumb";
 import { BLOG_BASE_URL } from "@/lib/seo-utils";
 import { Search } from "lucide-react";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE_OPTIONS = [9, 18, 30];
+
 
 export default function BlogList() {
   const [params, setParams] = useSearchParams();
