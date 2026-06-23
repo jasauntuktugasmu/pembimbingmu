@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Trash2, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface Writer { id: string; full_name: string | null; email: string | null; created_at: string; }
+interface Writer { id: string; full_name: string | null; email: string | null; }
 
 export default function ManageWriters() {
   const { toast } = useToast();
