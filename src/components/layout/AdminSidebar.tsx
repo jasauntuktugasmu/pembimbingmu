@@ -49,7 +49,10 @@ export const AdminSidebar = () => {
   const { signOut, profile } = useAuth();
   const { state } = useSidebar();
   const navigate = useNavigate();
+  const location = useLocation();
   const collapsed = state === "collapsed";
+  const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith('/admin/blog'));
+
 
   const handleLogout = async () => {
     await signOut();
