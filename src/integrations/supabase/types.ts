@@ -71,6 +71,275 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_article_tags: {
+        Row: {
+          article_id: string
+          created_at: string
+          tag_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          tag_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_article_tags_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_article_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "blog_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_article_views: {
+        Row: {
+          article_id: string
+          id: string
+          ip_hash: string | null
+          referrer: string | null
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          article_id: string
+          id?: string
+          ip_hash?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          article_id?: string
+          id?: string
+          ip_hash?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_article_views_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_articles: {
+        Row: {
+          author_id: string
+          canonical_url: string | null
+          category_id: string | null
+          content: Json | null
+          content_html: string | null
+          created_at: string
+          excerpt: string | null
+          featured_image: string | null
+          focus_keyword: string | null
+          id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          og_description: string | null
+          og_image: string | null
+          og_title: string | null
+          published_at: string | null
+          reading_time_minutes: number | null
+          robots_meta: string | null
+          seo_score: number | null
+          seo_title: string | null
+          slug: string
+          status: string
+          thumbnail_seo: string | null
+          title: string
+          twitter_image: string | null
+          updated_at: string
+          views_count: number
+          word_count: number | null
+        }
+        Insert: {
+          author_id: string
+          canonical_url?: string | null
+          category_id?: string | null
+          content?: Json | null
+          content_html?: string | null
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          focus_keyword?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          robots_meta?: string | null
+          seo_score?: number | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          thumbnail_seo?: string | null
+          title: string
+          twitter_image?: string | null
+          updated_at?: string
+          views_count?: number
+          word_count?: number | null
+        }
+        Update: {
+          author_id?: string
+          canonical_url?: string | null
+          category_id?: string | null
+          content?: Json | null
+          content_html?: string | null
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          focus_keyword?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          robots_meta?: string | null
+          seo_score?: number | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          thumbnail_seo?: string | null
+          title?: string
+          twitter_image?: string | null
+          updated_at?: string
+          views_count?: number
+          word_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "blog_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          meta_description: string | null
+          name: string
+          seo_title: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          meta_description?: string | null
+          name: string
+          seo_title?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          meta_description?: string | null
+          name?: string
+          seo_title?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      blog_related_articles: {
+        Row: {
+          article_id: string
+          created_at: string
+          position: number | null
+          related_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          position?: number | null
+          related_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          position?: number | null
+          related_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_related_articles_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_related_articles_related_id_fkey"
+            columns: ["related_id"]
+            isOneToOne: false
+            referencedRelation: "blog_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credit_topups: {
         Row: {
           applied: boolean
@@ -596,6 +865,7 @@ export type Database = {
         Returns: boolean
       }
       is_superadmin: { Args: never; Returns: boolean }
+      is_writer: { Args: never; Returns: boolean }
       kurangi_cv_credit: {
         Args: { jumlah: number; user_id_input: string }
         Returns: undefined
