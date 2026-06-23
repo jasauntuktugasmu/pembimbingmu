@@ -38,7 +38,7 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
@@ -49,8 +49,14 @@ export default function Login() {
         description: error.message,
         variant: "destructive"
       });
-    } else {
-      navigate('/dashboard');
+    } else if (data.user) {
+      // Look up role to route correctly
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
+      const role = profile?.role;
+      if (role === 'superadmin') navigate('/admin');
+      else if (role === 'writer') navigate('/writer');
+      else if (role === 'subscriber') navigate('/subscriber');
+      else navigate('/dashboard');
     }
     setIsLoading(false);
   };

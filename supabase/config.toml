@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.lynk-webhook]
 verify_jwt = false
+
+[functions.create-writer]
+verify_jwt = false
+
+[functions.reset-writer-password]
+verify_jwt = false
+
+[functions.increment-article-view]
+verify_jwt = false

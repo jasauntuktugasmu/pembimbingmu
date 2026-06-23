@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireRole?: 'superadmin' | 'subscriber';
+  requireRole?: 'superadmin' | 'subscriber' | 'writer';
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
@@ -21,16 +21,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check role requirements
   if (requireRole && profile?.role !== requireRole) {
-    // Redirect based on user's actual role
     if (profile?.role === 'superadmin') {
       return <Navigate to="/admin" replace />;
+    } else if (profile?.role === 'writer') {
+      return <Navigate to="/writer" replace />;
     } else {
       return <Navigate to="/subscriber" replace />;
     }

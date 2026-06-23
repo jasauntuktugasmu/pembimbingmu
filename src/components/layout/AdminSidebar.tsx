@@ -20,7 +20,12 @@ import {
   LogOut,
   GraduationCap,
   ArrowLeft,
-  CreditCard
+  CreditCard,
+  FileText,
+  FolderTree,
+  Tags,
+  PenSquare,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -29,6 +34,11 @@ const menuItems = [
   { title: 'Manage Subscribers', url: '/admin/subscribers', icon: Users },
   { title: 'Manage Packages', url: '/admin/packages', icon: Package },
   { title: 'Manage Payments', url: '/admin/payments', icon: CreditCard },
+  { title: 'Blog Articles', url: '/admin/blog/articles', icon: FileText },
+  { title: 'Blog Categories', url: '/admin/blog/categories', icon: FolderTree },
+  { title: 'Blog Tags', url: '/admin/blog/tags', icon: Tags },
+  { title: 'Manage Writers', url: '/admin/blog/writers', icon: PenSquare },
+  { title: 'Blog Analytics', url: '/admin/blog/analytics', icon: BarChart3 },
 ];
 
 export const AdminSidebar = () => {

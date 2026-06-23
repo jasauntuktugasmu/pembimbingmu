@@ -19,6 +19,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import { SubscriberLayout } from "./components/layout/SubscriberLayout";
+import WriterLayout from "./components/layout/WriterLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { ManageSubscribers } from "./pages/admin/ManageSubscribers";
 import { ManagePackages } from "./pages/admin/ManagePackages";
@@ -28,6 +29,27 @@ import { MyPackages } from "./pages/subscriber/MyPackages";
 import Learning from "./pages/subscriber/Learning";
 import ClassList from "./pages/subscriber/ClassList";
 import ClassDetail from "./pages/subscriber/ClassDetail";
+
+// Blog admin
+import AdminBlogArticles from "./pages/admin/blog/BlogArticles";
+import AdminBlogArticleForm from "./pages/admin/blog/BlogArticleForm";
+import AdminBlogCategories from "./pages/admin/blog/BlogCategories";
+import AdminBlogTags from "./pages/admin/blog/BlogTags";
+import ManageWriters from "./pages/admin/blog/ManageWriters";
+import BlogAnalytics from "./pages/admin/blog/BlogAnalytics";
+
+// Writer
+import WriterDashboard from "./pages/writer/WriterDashboard";
+import WriterArticles from "./pages/writer/WriterArticles";
+import WriterArticleForm from "./pages/writer/WriterArticleForm";
+
+// Public blog
+import BlogList from "./pages/blog/BlogList";
+import BlogDetail from "./pages/blog/BlogDetail";
+import CategoryPage from "./pages/blog/CategoryPage";
+import TagPage from "./pages/blog/TagPage";
+import AuthorPage from "./pages/blog/AuthorPage";
+import SearchPage from "./pages/blog/SearchPage";
 
 
 const queryClient = new QueryClient();
@@ -43,6 +65,14 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+
+            {/* Public Blog */}
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/cari" element={<SearchPage />} />
+            <Route path="/blog/kategori/:slug" element={<CategoryPage />} />
+            <Route path="/blog/tag/:slug" element={<TagPage />} />
+            <Route path="/blog/penulis/:authorId" element={<AuthorPage />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={
@@ -54,6 +84,25 @@ const App = () => (
               <Route path="subscribers" element={<ManageSubscribers />} />
               <Route path="packages" element={<ManagePackages />} />
               <Route path="payments" element={<ManagePayments />} />
+              <Route path="blog/articles" element={<AdminBlogArticles />} />
+              <Route path="blog/articles/new" element={<AdminBlogArticleForm />} />
+              <Route path="blog/articles/:id/edit" element={<AdminBlogArticleForm />} />
+              <Route path="blog/categories" element={<AdminBlogCategories />} />
+              <Route path="blog/tags" element={<AdminBlogTags />} />
+              <Route path="blog/writers" element={<ManageWriters />} />
+              <Route path="blog/analytics" element={<BlogAnalytics />} />
+            </Route>
+
+            {/* Writer Routes */}
+            <Route path="/writer" element={
+              <ProtectedRoute requireRole="writer">
+                <WriterLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<WriterDashboard />} />
+              <Route path="articles" element={<WriterArticles />} />
+              <Route path="articles/new" element={<WriterArticleForm />} />
+              <Route path="articles/:id/edit" element={<WriterArticleForm />} />
             </Route>
             
             {/* Subscriber Routes */}
