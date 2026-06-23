@@ -246,12 +246,19 @@ export function ArticleEditor({ articleId, backHref }: Props) {
         <Card>
           <CardHeader><CardTitle className="text-base">Konten Artikel</CardTitle></CardHeader>
           <CardContent className="p-0">
-            <TiptapToolbar editor={editor} />
+            <TiptapToolbar editor={editor} onUploadImage={handleInlineImageUpload} onInsertRelated={() => setRelatedPickerOpen(true)} />
             <div className="article-editor-content rounded-b-md border-t bg-background px-6 py-5 min-h-[560px] focus-within:outline-none">
               <EditorContent editor={editor} />
             </div>
           </CardContent>
         </Card>
+
+        <RelatedArticlePickerDialog
+          open={relatedPickerOpen}
+          onOpenChange={setRelatedPickerOpen}
+          excludeId={articleId}
+          onInsert={handleInsertRelated}
+        />
 
         <Card>
           <CardHeader><CardTitle className="text-base">Pengaturan SEO</CardTitle></CardHeader>
