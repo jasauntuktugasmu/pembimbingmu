@@ -78,10 +78,11 @@ Deno.serve(async (req) => {
     }, { onConflict: "id" });
 
 
-    return new Response(JSON.stringify({ success: true, user_id: created.user.id }), {
+    return new Response(JSON.stringify({ success: true, user_id: userId }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: msg }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
