@@ -205,6 +205,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const isSubscriber = profile?.role === 'subscriber';
   const isSuperAdmin = profile?.role === 'superadmin';
+  const isWriter = profile?.role === 'writer';
 
   const value = {
     user,
@@ -218,6 +219,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     isSubscriber,
     isSuperAdmin,
+    isWriter,
     refreshProfile,
   };
 
