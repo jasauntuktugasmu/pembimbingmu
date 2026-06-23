@@ -21,7 +21,7 @@ interface Props {
   scope: "admin" | "writer";
 }
 
-const pageSize_OPTIONS = [10, 20, 50];
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 export function BlogArticlesList({ scope }: Props) {
   const { profile } = useAuth();
