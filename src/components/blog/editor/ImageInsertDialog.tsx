@@ -31,27 +31,44 @@ const SIZE_PRESETS = [
 
 export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Props) {
   const [tab, setTab] = useState<"upload" | "url">("upload");
-  const [src, setSrc] = useState("");
+  const [origSrc, setOrigSrc] = useState(""); // raw url/dataUrl before crop
+  const [origMeta, setOrigMeta] = useState<{ w: number; h: number } | null>(null);
+  const [previewSrc, setPreviewSrc] = useState(""); // shown preview (post-crop dataUrl)
+  const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null); // raw upload before cropping
+  const [templateId, setTemplateId] = useState<string>("original");
   const [alt, setAlt] = useState("");
   const [sizeId, setSizeId] = useState<string>("medium");
   const [customPx, setCustomPx] = useState<string>("500");
   const [align, setAlign] = useState<"left" | "center" | "right">("center");
   const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) {
-      setSrc(""); setAlt(""); setSizeId("medium"); setCustomPx("500");
-      setAlign("center"); setTab("upload"); setUploading(false);
+      setOrigSrc(""); setPreviewSrc(""); setCroppedBlob(null); setPendingFile(null);
+      setOrigMeta(null); setTemplateId("original");
+      setAlt(""); setSizeId("medium"); setCustomPx("500");
+      setAlign("center"); setTab("upload"); setUploading(false); setProcessing(false);
     }
   }, [open]);
 
+  // Load raw image into origSrc + measure dimensions
+  const ingestSource = async (src: string) => {
+    setOrigSrc(src);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
+    await new Promise((r) => { img.onload = r; img.onerror = r; });
+    setOrigMeta({ w: img.naturalWidth || 0, h: img.naturalHeight || 0 });
+  };
+
   const handleFile = async (file: File) => {
-    setUploading(true);
-    const url = await onUpload(file);
-    setUploading(false);
-    if (url) setSrc(url);
+    setPendingFile(file);
+    const dataUrl = await fileToDataUrl(file);
+    await ingestSource(dataUrl);
   };
 
   const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +81,29 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
     const f = e.dataTransfer.files?.[0];
     if (f && f.type.startsWith("image/")) handleFile(f);
   };
+
+  // Recompute crop preview when template or source changes
+  useEffect(() => {
+    if (!origSrc) { setPreviewSrc(""); setCroppedBlob(null); return; }
+    const tpl = CONTENT_TEMPLATES.find((t) => t.id === templateId);
+    if (!tpl || tpl.aspect === 0) {
+      setPreviewSrc(origSrc); setCroppedBlob(null); return;
+    }
+    let cancelled = false;
+    (async () => {
+      setProcessing(true);
+      try {
+        const res = await cropImageCenter(origSrc, { aspect: tpl.aspect, maxWidth: tpl.maxWidth });
+        if (cancelled) return;
+        setPreviewSrc(res.dataUrl);
+        setCroppedBlob(res.blob);
+      } finally {
+        if (!cancelled) setProcessing(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [origSrc, templateId]);
+
 
   const getWidth = (): string | null => {
     const preset = SIZE_PRESETS.find((p) => p.id === sizeId);
