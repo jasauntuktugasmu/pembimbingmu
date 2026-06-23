@@ -1,11 +1,11 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -13,12 +13,12 @@ import {
   SidebarFooter,
   useSidebar
 } from '@/components/ui/sidebar';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Package, 
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  LayoutDashboard,
+  Users,
+  Package,
   LogOut,
-  GraduationCap,
   ArrowLeft,
   CreditCard,
   FileText,
@@ -26,14 +26,18 @@ import {
   Tags,
   PenSquare,
   BarChart3,
+  Newspaper,
+  ChevronDown,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Manage Subscribers', url: '/admin/subscribers', icon: Users },
   { title: 'Manage Packages', url: '/admin/packages', icon: Package },
   { title: 'Manage Payments', url: '/admin/payments', icon: CreditCard },
+];
+
+const blogMenuItems = [
   { title: 'Blog Articles', url: '/admin/blog/articles', icon: FileText },
   { title: 'Blog Categories', url: '/admin/blog/categories', icon: FolderTree },
   { title: 'Blog Tags', url: '/admin/blog/tags', icon: Tags },
