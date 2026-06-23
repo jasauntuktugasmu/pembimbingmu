@@ -49,7 +49,7 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
   useEffect(() => {
     if (!open) {
       setOrigSrc(""); setPreviewSrc(""); setCroppedBlob(null); setPendingFile(null);
-      setOrigMeta(null); setTemplateId("original");
+      setOrigMeta(null); setTemplateId("16x9");
       setAlt(""); setSizeId("medium"); setCustomPx("500");
       setAlign("center"); setTab("upload"); setUploading(false); setProcessing(false);
     }
