@@ -232,7 +232,7 @@ export function ArticleEditor({ articleId, backHref }: Props) {
           <CardHeader><CardTitle className="text-base">Konten Artikel</CardTitle></CardHeader>
           <CardContent className="p-0">
             <TiptapToolbar editor={editor} />
-            <div className="prose prose-sm max-w-none p-4 min-h-[400px] focus-within:outline-none">
+            <div className="article-editor-content rounded-b-md border-t bg-background px-6 py-5 min-h-[560px] focus-within:outline-none">
               <EditorContent editor={editor} />
             </div>
           </CardContent>
