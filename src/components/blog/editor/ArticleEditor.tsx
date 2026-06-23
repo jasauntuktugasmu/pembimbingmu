@@ -20,8 +20,10 @@ import { SeoAnalysisPanel } from "./SeoAnalysisPanel";
 import { RelatedArticlePickerDialog } from "./RelatedArticlePickerDialog";
 import { ImageInsertDialog } from "./ImageInsertDialog";
 import { LinkInsertDialog } from "./LinkInsertDialog";
+import { ImageCropDialog } from "./ImageCropDialog";
 import { BacaJugaNode, type BacaJugaItem } from "./extensions/BacaJugaNode";
 import { analyzeSeo, toSlug } from "@/lib/seo-utils";
+import { FEATURED_TEMPLATES, blobToFile } from "@/lib/image-crop";
 import { Loader2, Upload, X } from "lucide-react";
 
 interface Category { id: string; name: string; }
