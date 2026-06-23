@@ -129,7 +129,34 @@ export function BlogArticlesList({ scope }: Props) {
             </TableBody>
           </Table>
         )}
+
+        {!loading && totalCount > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+            <p className="text-sm text-muted-foreground">
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} dari {totalCount} artikel
+            </p>
+            <div className="flex items-center gap-1 flex-wrap justify-center">
+              <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                Sebelumnya
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .map((p, idx, arr) => (
+                  <span key={p} className="flex items-center">
+                    {idx > 0 && p - arr[idx - 1] > 1 && <span className="px-1 text-muted-foreground">…</span>}
+                    <Button size="sm" variant={p === page ? "default" : "outline"} onClick={() => setPage(p)}>
+                      {p}
+                    </Button>
+                  </span>
+                ))}
+              <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                Berikutnya
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
+
   );
 }
