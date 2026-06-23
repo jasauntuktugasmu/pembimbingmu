@@ -332,11 +332,29 @@ All colors MUST be HSL.
   text-underline-offset: 2px;
 }
 
-.article-editor-content .ProseMirror img {
+.article-editor-content .ProseMirror img,
+.prose img {
   border-radius: 0.5rem;
   max-width: 100%;
   height: auto;
-  margin: 1.25em 0;
+  margin: 1.25em auto;
+  display: block;
+}
+
+.article-editor-content .ProseMirror img[data-align="left"],
+.prose img[data-align="left"] {
+  margin-left: 0;
+  margin-right: auto;
+}
+.article-editor-content .ProseMirror img[data-align="right"],
+.prose img[data-align="right"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+.article-editor-content .ProseMirror img[data-align="center"],
+.prose img[data-align="center"] {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* "Baca Juga" inline block — works in editor & public article */
