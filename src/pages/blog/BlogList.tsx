@@ -16,6 +16,7 @@ const PAGE_SIZE_OPTIONS = [9, 18, 30];
 export default function BlogList() {
   const [params, setParams] = useSearchParams();
   const page = Number(params.get("page") || 1);
+  const pageSize = Number(params.get("size") || PAGE_SIZE_OPTIONS[0]);
   const [articles, setArticles] = useState<any[]>([]);
   const [count, setCount] = useState(0);
   const [categories, setCategories] = useState<any[]>([]);
@@ -23,22 +24,23 @@ export default function BlogList() {
 
   useEffect(() => {
     (async () => {
-      const from = (page - 1) * PAGE_SIZE;
+      const from = (page - 1) * pageSize;
       const { data, count: c } = await supabase
         .from("blog_articles")
         .select("slug,title,excerpt,featured_image,published_at,reading_time_minutes, blog_categories(name,slug)", { count: "exact" })
         .eq("status", "published")
         .order("published_at", { ascending: false })
-        .range(from, from + PAGE_SIZE - 1);
+        .range(from, from + pageSize - 1);
       setArticles(data || []);
       setCount(c || 0);
 
       const { data: cats } = await supabase.from("blog_categories").select("name,slug").order("name");
       setCategories(cats || []);
     })();
-  }, [page]);
+  }, [page, pageSize]);
 
-  const totalPages = Math.ceil(count / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(count / pageSize));
+
   const url = `${BLOG_BASE_URL}/blog`;
 
   return (
