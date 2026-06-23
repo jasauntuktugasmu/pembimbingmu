@@ -1312,6 +1312,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Artikel Terbaru */}
+      <LatestArticlesSlider />
+
       {/* Footer */}
       <footer className="bg-[#81b59a] text-white py-12">
         <div className="container mx-auto px-4">
