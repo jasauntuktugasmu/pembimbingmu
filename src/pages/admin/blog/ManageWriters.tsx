@@ -21,8 +21,8 @@ export default function ManageWriters() {
   const [newPassword, setNewPassword] = useState("");
 
   const load = async () => {
-    const { data } = await supabase.from("profiles").select("id,full_name,email,created_at").eq("role", "writer").order("created_at", { ascending: false });
-    setItems(data || []);
+    const { data } = await supabase.from("profiles").select("id,full_name,email").eq("role", "writer");
+    setItems((data as any) || []);
   };
   useEffect(() => { load(); }, []);
 
