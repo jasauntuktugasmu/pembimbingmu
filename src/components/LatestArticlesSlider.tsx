@@ -108,6 +108,19 @@ export default function LatestArticlesSlider() {
             <CarouselNext className="hidden md:flex -right-4 lg:-right-12 bg-white border-[#81b59a] text-[#81b59a] hover:bg-[#81b59a] hover:text-white" />
           </Carousel>
         )}
+
+        <div className="text-center mt-10">
+          <Button
+            asChild
+            className="bg-[#81b59a] hover:bg-[#6fa085] text-white transition-colors duration-300"
+          >
+            <Link to="/blog">
+              Lihat Semua Artikel
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
       </div>
     </section>
   );
