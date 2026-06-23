@@ -325,6 +325,15 @@ export function ArticleEditor({ articleId, backHref }: Props) {
           onSubmit={handleSubmitLink}
           onRemove={currentLink.url ? handleRemoveLink : undefined}
         />
+        <ImageCropDialog
+          open={featuredCropOpen}
+          onOpenChange={setFeaturedCropOpen}
+          source={featuredCropSource}
+          templates={FEATURED_TEMPLATES}
+          defaultTemplateId="16x9"
+          title="Atur Thumbnail / Featured Image"
+          onConfirm={handleFeaturedCropped}
+        />
 
         <Card>
           <CardHeader><CardTitle className="text-base">Pengaturan SEO</CardTitle></CardHeader>
