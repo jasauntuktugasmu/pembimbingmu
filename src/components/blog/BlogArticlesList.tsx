@@ -21,7 +21,7 @@ interface Props {
   scope: "admin" | "writer";
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 export function BlogArticlesList({ scope }: Props) {
   const { profile } = useAuth();
@@ -31,7 +31,9 @@ export function BlogArticlesList({ scope }: Props) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
+
 
   const base = scope === "admin" ? "/admin/blog" : "/writer";
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
