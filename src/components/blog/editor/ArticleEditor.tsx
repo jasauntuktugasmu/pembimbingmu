@@ -278,8 +278,13 @@ export function ArticleEditor({ articleId, backHref }: Props) {
         <Card>
           <CardHeader><CardTitle className="text-base">Konten Artikel</CardTitle></CardHeader>
           <CardContent className="p-0">
-            <TiptapToolbar editor={editor} onUploadImage={handleInlineImageUpload} onInsertRelated={() => setRelatedPickerOpen(true)} />
-            <div className="article-editor-content rounded-b-md border-t bg-background px-6 py-5 min-h-[560px] focus-within:outline-none">
+            <TiptapToolbar
+              editor={editor}
+              onInsertImage={() => setImageDialogOpen(true)}
+              onInsertLink={openLinkDialog}
+              onInsertRelated={() => setRelatedPickerOpen(true)}
+            />
+            <div className="article-editor-content rounded-b-md border-t bg-background px-4 sm:px-6 py-5 min-h-[420px] sm:min-h-[560px] focus-within:outline-none">
               <EditorContent editor={editor} />
             </div>
           </CardContent>
@@ -290,6 +295,20 @@ export function ArticleEditor({ articleId, backHref }: Props) {
           onOpenChange={setRelatedPickerOpen}
           excludeId={articleId}
           onInsert={handleInsertRelated}
+        />
+        <ImageInsertDialog
+          open={imageDialogOpen}
+          onOpenChange={setImageDialogOpen}
+          onUpload={uploadImage}
+          onInsert={handleInsertImage}
+        />
+        <LinkInsertDialog
+          open={linkDialogOpen}
+          onOpenChange={setLinkDialogOpen}
+          initialUrl={currentLink.url}
+          initialNewTab={currentLink.newTab}
+          onSubmit={handleSubmitLink}
+          onRemove={currentLink.url ? handleRemoveLink : undefined}
         />
 
         <Card>
