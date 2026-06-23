@@ -283,8 +283,10 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
-          <Button onClick={handleInsert} disabled={!canInsert}>Sisipkan</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={uploading}>Batal</Button>
+          <Button onClick={handleInsert} disabled={!canInsert}>
+            {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Mengunggah...</> : "Sisipkan"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
