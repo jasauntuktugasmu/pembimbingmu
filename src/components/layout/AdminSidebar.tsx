@@ -107,7 +107,55 @@ export const AdminSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <Collapsible open={blogOpen} onOpenChange={setBlogOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-200 hover:bg-white/10 hover:text-white transition-colors w-full"
+                    >
+                      <Newspaper className="h-5 w-5" />
+                      {!collapsed && (
+                        <>
+                          <span className="text-sm flex-1 text-left">Blog Management</span>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${blogOpen ? 'rotate-180' : ''}`} />
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                  {blogMenuItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink
+                          to={item.url}
+                          className={({ isActive }) =>
+                            `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                              collapsed ? '' : 'pl-9'
+                            } ${
+                              isActive
+                                ? "bg-white/20 text-white font-medium"
+                                : "text-gray-200 hover:bg-white/10 hover:text-white"
+                            }`
+                          }
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && <span className="text-sm">{item.title}</span>}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
+
 
       <SidebarFooter className="p-4 bg-[#81b59a] space-y-2">
         <SidebarMenuItem>
