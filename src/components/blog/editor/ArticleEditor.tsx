@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { TiptapToolbar } from "./TiptapToolbar";
 import { SeoAnalysisPanel } from "./SeoAnalysisPanel";
 import { RelatedArticlePickerDialog } from "./RelatedArticlePickerDialog";
+import { ImageInsertDialog } from "./ImageInsertDialog";
+import { LinkInsertDialog } from "./LinkInsertDialog";
 import { BacaJugaNode, type BacaJugaItem } from "./extensions/BacaJugaNode";
 import { analyzeSeo, toSlug } from "@/lib/seo-utils";
 import { Loader2, Upload, X } from "lucide-react";
