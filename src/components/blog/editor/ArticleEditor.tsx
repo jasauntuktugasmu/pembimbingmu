@@ -197,14 +197,23 @@ export function ArticleEditor({ articleId, backHref }: Props) {
     return pub.publicUrl;
   };
 
-  const onFeaturedChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFeaturedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    setFeaturedCropSource(file);
+    setFeaturedCropOpen(true);
+  };
+
+  const handleFeaturedCropped = async ({ blob }: { blob: Blob }) => {
     setUploadingFeatured(true);
+    const file = blobToFile(blob, `featured-${Date.now()}.jpg`);
     const url = await uploadImage(file);
     setUploadingFeatured(false);
     if (url) setData((d) => ({ ...d, featured_image: url }));
   };
+
+
 
   const handleCreateTag = async () => {
     const name = newTag.trim();
