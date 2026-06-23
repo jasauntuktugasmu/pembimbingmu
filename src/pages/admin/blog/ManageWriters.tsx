@@ -38,7 +38,7 @@ export default function ManageWriters() {
       toast({ title: "Gagal", description: error?.message || data?.error, variant: "destructive" });
       return;
     }
-    toast({ title: "Writer berhasil dibuat" });
+    toast({ title: data?.converted_from ? "Akun berhasil dijadikan writer" : "Writer berhasil dibuat" });
     setForm({ full_name: "", email: "", password: "" });
     setOpen(false);
     load();
