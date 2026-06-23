@@ -439,6 +439,9 @@ export function ArticleEditor({ articleId, backHref }: Props) {
               <span className="text-sm">{uploadingFeatured ? "Mengunggah..." : "Upload gambar"}</span>
               <input type="file" accept="image/*" className="hidden" onChange={onFeaturedChange} />
             </Label>
+            <div className="rounded-md bg-muted/40 p-2.5 text-[11px] text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">Rekomendasi ukuran:</strong> 1600 × 900 px (rasio 16:9), format JPG/WebP &lt; 300KB. Setelah upload, gambar akan dipotong otomatis sesuai template yang dipilih.
+            </div>
             <div>
               <Label className="text-xs">Atau URL Featured Image</Label>
               <Input value={data.featured_image} onChange={(e) => setData({ ...data, featured_image: e.target.value })} />
