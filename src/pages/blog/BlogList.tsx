@@ -72,12 +72,26 @@ export default function BlogList() {
       {articles.length === 0 && <div className="text-center py-12 text-muted-foreground">Belum ada artikel.</div>}
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Button key={p} size="sm" variant={p === page ? "default" : "outline"} onClick={() => setParams({ page: String(p) })}>{p}</Button>
-          ))}
+        <div className="flex flex-wrap justify-center items-center gap-1 mt-8">
+          <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setParams({ page: String(page - 1) })}>
+            Sebelumnya
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+            .map((p, idx, arr) => (
+              <span key={p} className="flex items-center">
+                {idx > 0 && p - arr[idx - 1] > 1 && <span className="px-1 text-muted-foreground">…</span>}
+                <Button size="sm" variant={p === page ? "default" : "outline"} onClick={() => setParams({ page: String(p) })}>
+                  {p}
+                </Button>
+              </span>
+            ))}
+          <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setParams({ page: String(page + 1) })}>
+            Berikutnya
+          </Button>
         </div>
       )}
+
     </div>
   );
 }
