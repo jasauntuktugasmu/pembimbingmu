@@ -26,6 +26,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   isSubscriber: boolean;
   isSuperAdmin: boolean;
+  isWriter: boolean;
   refreshProfile: () => Promise<void>;
 }
 
