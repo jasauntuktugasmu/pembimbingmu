@@ -36,7 +36,7 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
   const [previewSrc, setPreviewSrc] = useState(""); // shown preview (post-crop dataUrl)
   const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null); // raw upload before cropping
-  const [templateId, setTemplateId] = useState<string>("original");
+  const [templateId, setTemplateId] = useState<string>("16x9");
   const [alt, setAlt] = useState("");
   const [sizeId, setSizeId] = useState<string>("medium");
   const [customPx, setCustomPx] = useState<string>("500");
@@ -49,7 +49,7 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
   useEffect(() => {
     if (!open) {
       setOrigSrc(""); setPreviewSrc(""); setCroppedBlob(null); setPendingFile(null);
-      setOrigMeta(null); setTemplateId("original");
+      setOrigMeta(null); setTemplateId("16x9");
       setAlt(""); setSizeId("medium"); setCustomPx("500");
       setAlign("center"); setTab("upload"); setUploading(false); setProcessing(false);
     }
