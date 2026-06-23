@@ -47,22 +47,42 @@ Deno.serve(async (req) => {
       user_metadata: { full_name },
     });
 
-    if (createErr || !created.user) {
-      return new Response(JSON.stringify({ error: createErr?.message || "Gagal membuat user" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    let userId = created?.user?.id;
+
+    if (createErr || !userId) {
+      const msg = createErr?.message || "";
+      const alreadyExists = /already|registered|exists/i.test(msg);
+      if (!alreadyExists) {
+        return new Response(JSON.stringify({ error: msg || "Gagal membuat user" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      // Find existing user by email
+      const { data: existing } = await admin.from("profiles").select("id, role").eq("email", email).maybeSingle();
+      if (!existing) {
+        return new Response(JSON.stringify({ error: "Email sudah terdaftar di sistem auth tetapi profil tidak ditemukan. Hubungi admin." }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (existing.role && existing.role !== "writer") {
+        return new Response(JSON.stringify({ error: `Email sudah terdaftar sebagai ${existing.role}. Tidak bisa dijadikan writer.` }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      // Promote to writer + update password
+      await admin.auth.admin.updateUserById(existing.id, { password, email_confirm: true, user_metadata: { full_name } });
+      userId = existing.id;
     }
 
     // Upsert profile with writer role
     await admin.from("profiles").upsert({
-      id: created.user.id,
+      id: userId,
       email,
       full_name,
       role: "writer",
     }, { onConflict: "id" });
 
-    return new Response(JSON.stringify({ success: true, user_id: created.user.id }), {
+
+    return new Response(JSON.stringify({ success: true, user_id: userId }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: msg }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
