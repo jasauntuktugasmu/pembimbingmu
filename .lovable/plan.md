@@ -1,51 +1,79 @@
 
 ## Tujuan
 
-Di dalam editor konten artikel (TipTap), tambahkan:
-1. **Upload gambar inline** langsung dari perangkat (bukan hanya prompt URL).
-2. **Blok "Baca Juga"** — sisipkan satu/lebih rekomendasi artikel (dipilih dari artikel `published` yang sudah ada) di posisi kursor.
-
-Keduanya tersimpan sebagai bagian dari `content` (JSON TipTap) + `content_html`, sehingga tampil otomatis di halaman publik `/blog/:slug`.
+Hilangkan `window.prompt` (alert dari atas browser) di editor artikel, ganti dengan dialog modal yang rapi. Tambah pengaturan ukuran gambar dengan rekomendasi siap pakai. Pastikan responsif di HP, tablet, dan desktop.
 
 ## Perubahan
 
-### 1. Toolbar editor (`TiptapToolbar.tsx`)
-- Tombol **Image** diubah: buka menu kecil dengan dua opsi:
-  - **Upload dari komputer** → trigger `<input type="file">` tersembunyi → upload ke bucket `package-images` folder `blog/inline/` → minta alt text → insert `setImage({src,alt})`.
-  - **Dari URL** (perilaku lama, tetap dipertahankan).
-- Tombol baru **Baca Juga** (ikon BookOpen) → buka dialog pemilih artikel.
+### 1. Dialog baru: `ImageInsertDialog`
+File baru `src/components/blog/editor/ImageInsertDialog.tsx` — modal shadcn `<Dialog>` dengan dua tab:
+- **Upload** — drag-drop area + tombol pilih file, preview thumbnail setelah dipilih.
+- **Dari URL** — input URL + preview otomatis.
 
-Toolbar perlu menerima callback dari `ArticleEditor` (untuk akses `uploadImage` dan dialog state), jadi prop di-extend: `onUploadImage`, `onInsertRelated`.
+Field bersama di bawah preview:
+- **Alt text** (wajib, dengan helper "penting untuk SEO").
+- **Ukuran tampilan** — pilihan chip:
+  - Kecil (300px) — cocok untuk ikon/diagram kecil
+  - Sedang (600px) — default, untuk kebanyakan gambar konten
+  - Besar (900px) — untuk screenshot/ilustrasi penting
+  - Penuh (100%) — full-width artikel
+  - Custom (px) — input angka manual
+- **Perataan** — kiri / tengah / kanan (tombol toggle).
+- Catatan rekomendasi: "Rasio 16:9 atau 4:3, max 1600px, format JPG/WebP <300KB untuk performa terbaik."
 
-### 2. Ekstensi TipTap baru: `BacaJugaNode`
-File baru `src/components/blog/editor/extensions/BacaJugaNode.ts`:
-- Custom Node TipTap (`group: "block"`, `atom: true`, `selectable: true`).
-- Attributes: `articleIds: string[]` (atau lebih sederhana: array `{id, title, slug, image}` di-cache supaya render HTML lengkap tanpa fetch).
-- `renderHTML`: keluarkan markup statis (div) dengan class `baca-juga-block` dan link `<a href="/blog/{slug}">`. Karena `content_html` disimpan & di-render di publik dengan DOMPurify, struktur HTML-nya harus self-contained.
-- `parseHTML`: kenali `div[data-baca-juga]` agar editor bisa re-load saat edit artikel.
-- `addNodeView` (React): tampilkan kartu cantik di dalam editor dengan tombol hapus + edit pilihan.
+Tombol: Batal · Sisipkan (disabled sampai gambar + alt terisi).
 
-### 3. Dialog pemilih artikel
-Komponen baru `src/components/blog/editor/RelatedArticlePickerDialog.tsx`:
-- Query `blog_articles` `status='published'`, exclude artikel yang sedang diedit.
-- Search box + checkbox multi-select (limit 5).
-- Tombol "Sisipkan" → panggil `editor.chain().focus().insertContent({ type: "bacaJuga", attrs: { items: [...] }}).run()`.
+Hasil insert ke TipTap: `setImage({ src, alt, width, 'data-align' })` — node Image dikonfigurasi menerima atribut `width` dan `data-align`.
 
-### 4. `ArticleEditor.tsx`
-- Daftarkan ekstensi `BacaJugaNode` di `useEditor`.
-- State `relatedPickerOpen`, render `RelatedArticlePickerDialog`.
-- Helper `insertInlineImage(file)` reuse `uploadImage` lalu `editor.chain().focus().setImage(...).run()`.
-- Pass callback ke `TiptapToolbar`.
+### 2. Dialog baru: `LinkInsertDialog`
+File baru `src/components/blog/editor/LinkInsertDialog.tsx` — modal kecil:
+- Input URL (auto-prefix `https://` kalau kosong protokol)
+- Checkbox "Buka di tab baru" (set `target="_blank" rel="noopener noreferrer nofollow"`)
+- Tombol Batal · Sisipkan / Update · Hapus link (jika edit)
 
-### 5. Render publik (`src/pages/blog/BlogDetail.tsx`)
-- Tambah `div[data-baca-juga]` + `a` ke allowlist DOMPurify (default sudah mengizinkan, jadi cukup pastikan `ADD_ATTR: ['data-baca-juga']`).
-- Tambah CSS di `src/index.css` untuk class `.baca-juga-block` (kotak highlight dengan border + judul "Baca Juga") supaya konsisten di editor maupun halaman publik.
+Menggantikan `window.prompt` untuk link.
 
-### 6. Tidak diubah
-- Schema database (semua tersimpan di kolom `content`/`content_html` yang sudah ada).
-- Tabel `blog_related_articles` tetap untuk "related otomatis di bawah artikel" — fitur baru ini independen (inline di tengah konten).
+### 3. Update TipTap Image extension (di `ArticleEditor.tsx`)
+Extend `Image` dengan atribut tambahan supaya bisa simpan width/align:
+```ts
+Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: { default: null, renderHTML: a => a.width ? { style: `width:${typeof a.width==='number'?a.width+'px':a.width};` } : {} },
+      'data-align': { default: 'center', renderHTML: a => ({ 'data-align': a['data-align'] || 'center' }) },
+    };
+  },
+})
+```
++ CSS di `index.css`: `.ProseMirror img[data-align="left"]{margin-right:auto;margin-left:0}` dst, `.baca-juga-block` & `img` sudah ada — tambah aturan align.
 
-## Catatan
-- Gambar inline diupload ke bucket existing `package-images` (sudah public).
-- Pemilihan artikel rekomendasi minimal 1, maksimal 5 per blok. Blok bisa disisipkan beberapa kali di posisi berbeda.
-- Saat editor dimuat ulang dari `content_html`, `parseHTML` `BacaJugaNode` akan mengubah div kembali jadi node interaktif.
+### 4. `TiptapToolbar.tsx`
+Hapus `window.prompt` untuk link & image URL. Toolbar terima callback baru:
+- `onInsertImage()` → buka `ImageInsertDialog`
+- `onInsertLink()` → buka `LinkInsertDialog`
+- `onInsertRelated()` (sudah ada)
+
+Toolbar dibuat responsif: di mobile, tombol wrap dengan `flex-wrap gap-1`, label "Baca Juga" disembunyikan (`sm:inline`), tombol tetap 32px (mudah disentuh).
+
+### 5. `ArticleEditor.tsx`
+- Kelola state `imageDialogOpen`, `linkDialogOpen`.
+- Render kedua dialog baru, kirim handler upload (reuse `uploadImage`) ke `ImageInsertDialog`.
+- Pass callback ke toolbar.
+- Hapus prop `onUploadImage` lama (logika upload pindah ke dalam dialog, tapi tetap pakai helper `uploadImage` lewat prop `onUpload`).
+
+### 6. Responsif
+- `ImageInsertDialog` & `RelatedArticlePickerDialog`: `max-w-xl` di desktop, `w-[95vw] max-h-[90vh] overflow-y-auto` di mobile.
+- Grid editor: sudah `lg:grid-cols-3` — di tablet/mobile sidebar SEO turun ke bawah (sudah jalan).
+- Toolbar: `flex flex-wrap`, tombol pakai size icon kompak.
+- `RelatedArticlePickerDialog`: list pakai font/spacing yang nyaman di sentuhan (min h-target 44px).
+
+## Tidak diubah
+
+- Skema database (gambar tetap disimpan inline di `content_html` dengan style width).
+- Halaman publik `/blog/:slug` otomatis menghormati `width` & `data-align` lewat CSS yang sama (akan ditambah di scope `.prose img[data-align]`).
+
+## Catatan teknis
+
+- DOMPurify config sudah meng-allow `style` & `data-align`? Default DOMPurify mengizinkan inline `style`. Tambah `ADD_ATTR: ['data-align','style']` di `BlogDetail.tsx` untuk jaga-jaga.
+- Ukuran rekomendasi ditulis sebagai chip preset; user tetap bisa override via Custom.
