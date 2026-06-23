@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2, AlignLeft, AlignCenter, AlignRight, X } from "lucide-react";
+import { CONTENT_TEMPLATES, cropImageCenter, blobToFile, fileToDataUrl } from "@/lib/image-crop";
 
 export interface ImageInsertValue {
   src: string;
@@ -30,27 +31,44 @@ const SIZE_PRESETS = [
 
 export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Props) {
   const [tab, setTab] = useState<"upload" | "url">("upload");
-  const [src, setSrc] = useState("");
+  const [origSrc, setOrigSrc] = useState(""); // raw url/dataUrl before crop
+  const [origMeta, setOrigMeta] = useState<{ w: number; h: number } | null>(null);
+  const [previewSrc, setPreviewSrc] = useState(""); // shown preview (post-crop dataUrl)
+  const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null); // raw upload before cropping
+  const [templateId, setTemplateId] = useState<string>("original");
   const [alt, setAlt] = useState("");
   const [sizeId, setSizeId] = useState<string>("medium");
   const [customPx, setCustomPx] = useState<string>("500");
   const [align, setAlign] = useState<"left" | "center" | "right">("center");
   const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) {
-      setSrc(""); setAlt(""); setSizeId("medium"); setCustomPx("500");
-      setAlign("center"); setTab("upload"); setUploading(false);
+      setOrigSrc(""); setPreviewSrc(""); setCroppedBlob(null); setPendingFile(null);
+      setOrigMeta(null); setTemplateId("original");
+      setAlt(""); setSizeId("medium"); setCustomPx("500");
+      setAlign("center"); setTab("upload"); setUploading(false); setProcessing(false);
     }
   }, [open]);
 
+  // Load raw image into origSrc + measure dimensions
+  const ingestSource = async (src: string) => {
+    setOrigSrc(src);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
+    await new Promise((r) => { img.onload = r; img.onerror = r; });
+    setOrigMeta({ w: img.naturalWidth || 0, h: img.naturalHeight || 0 });
+  };
+
   const handleFile = async (file: File) => {
-    setUploading(true);
-    const url = await onUpload(file);
-    setUploading(false);
-    if (url) setSrc(url);
+    setPendingFile(file);
+    const dataUrl = await fileToDataUrl(file);
+    await ingestSource(dataUrl);
   };
 
   const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +82,29 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
     if (f && f.type.startsWith("image/")) handleFile(f);
   };
 
+  // Recompute crop preview when template or source changes
+  useEffect(() => {
+    if (!origSrc) { setPreviewSrc(""); setCroppedBlob(null); return; }
+    const tpl = CONTENT_TEMPLATES.find((t) => t.id === templateId);
+    if (!tpl || tpl.aspect === 0) {
+      setPreviewSrc(origSrc); setCroppedBlob(null); return;
+    }
+    let cancelled = false;
+    (async () => {
+      setProcessing(true);
+      try {
+        const res = await cropImageCenter(origSrc, { aspect: tpl.aspect, maxWidth: tpl.maxWidth });
+        if (cancelled) return;
+        setPreviewSrc(res.dataUrl);
+        setCroppedBlob(res.blob);
+      } finally {
+        if (!cancelled) setProcessing(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [origSrc, templateId]);
+
+
   const getWidth = (): string | null => {
     const preset = SIZE_PRESETS.find((p) => p.id === sizeId);
     if (!preset) return null;
@@ -74,13 +115,37 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
     return preset.value || null;
   };
 
-  const handleInsert = () => {
-    if (!src || !alt.trim()) return;
-    onInsert({ src, alt: alt.trim(), width: getWidth(), align });
+  const handleInsert = async () => {
+    if (!origSrc || !alt.trim()) return;
+    let finalSrc = previewSrc || origSrc;
+
+    // Upload to storage when we have local bytes (pendingFile uncropped, or any cropped blob)
+    try {
+      setUploading(true);
+      if (croppedBlob) {
+        const f = blobToFile(croppedBlob, `image-${Date.now()}.jpg`);
+        const url = await onUpload(f);
+        if (!url) { setUploading(false); return; }
+        finalSrc = url;
+      } else if (pendingFile) {
+        const url = await onUpload(pendingFile);
+        if (!url) { setUploading(false); return; }
+        finalSrc = url;
+      }
+      // else: origSrc is a remote URL with template=original → use as-is
+    } finally {
+      setUploading(false);
+    }
+
+    onInsert({ src: finalSrc, alt: alt.trim(), width: getWidth(), align });
     onOpenChange(false);
   };
 
-  const canInsert = !!src && !!alt.trim() && !uploading;
+  const clearSource = () => {
+    setOrigSrc(""); setPreviewSrc(""); setCroppedBlob(null); setPendingFile(null); setOrigMeta(null);
+  };
+
+  const canInsert = !!origSrc && !!alt.trim() && !uploading && !processing;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -103,36 +168,64 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
               onClick={() => fileRef.current?.click()}
               className={`border-2 border-dashed rounded-lg p-6 sm:p-10 text-center cursor-pointer transition-colors ${dragOver ? "border-primary bg-primary/5" : "border-muted-foreground/30 hover:bg-muted/30"}`}
             >
-              {uploading ? (
-                <div className="flex flex-col items-center gap-2 text-sm">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                  Mengunggah...
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
-                  <Upload className="h-7 w-7" />
-                  <span><span className="text-foreground font-medium">Klik untuk pilih file</span> atau drag &amp; drop di sini</span>
-                  <span className="text-xs">PNG, JPG, WebP — max 5MB</span>
-                </div>
-              )}
+              <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                <Upload className="h-7 w-7" />
+                <span><span className="text-foreground font-medium">Klik untuk pilih file</span> atau drag &amp; drop di sini</span>
+                <span className="text-xs">PNG, JPG, WebP — max 5MB</span>
+              </div>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFileInput} />
             </div>
           </TabsContent>
 
           <TabsContent value="url" className="mt-3 space-y-2">
             <Label>URL Gambar</Label>
-            <Input value={src} onChange={(e) => setSrc(e.target.value)} placeholder="https://..." />
+            <Input
+              value={tab === "url" ? origSrc : ""}
+              onChange={(e) => { setPendingFile(null); ingestSource(e.target.value); }}
+              placeholder="https://..."
+            />
           </TabsContent>
         </Tabs>
 
-        {src && (
-          <div className="rounded-md border p-2 bg-muted/20">
-            <img src={src} alt="" className="max-h-48 mx-auto rounded" />
-            <button type="button" onClick={() => setSrc("")} className="text-xs text-muted-foreground hover:text-destructive mt-2 mx-auto flex items-center gap-1">
+        {origSrc && (
+          <div className="rounded-md border p-2 bg-muted/20 space-y-2">
+            <div className="flex items-center justify-center min-h-[80px]">
+              {processing ? <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /> : <img src={previewSrc || origSrc} alt="" className="max-h-48 rounded" />}
+            </div>
+            {origMeta && origMeta.w > 0 && (
+              <p className="text-[11px] text-muted-foreground text-center">
+                Asli: {origMeta.w} × {origMeta.h} px
+              </p>
+            )}
+            <button type="button" onClick={clearSource} className="text-xs text-muted-foreground hover:text-destructive mx-auto flex items-center gap-1">
               <X className="h-3 w-3" /> Hapus
             </button>
           </div>
         )}
+
+        {origSrc && (
+          <div className="space-y-2">
+            <Label>Template potong otomatis</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {CONTENT_TEMPLATES.map((t) => {
+                const active = t.id === templateId;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTemplateId(t.id)}
+                    className={`text-left rounded-md border p-2 transition-colors ${active ? "border-primary bg-primary/5 ring-1 ring-primary" : "hover:bg-muted/50 border-input"}`}
+                  >
+                    <div className="text-xs font-medium">{t.label}</div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">{t.recommended}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-muted-foreground">Gambar dipotong otomatis dari tengah agar pas template. Rekomendasi sumber: minimal 1200px sisi terpanjang, format JPG/WebP &lt; 300KB.</p>
+          </div>
+        )}
+
 
         <div className="space-y-2">
           <Label>Alt text <span className="text-destructive">*</span></Label>
@@ -190,8 +283,10 @@ export function ImageInsertDialog({ open, onOpenChange, onUpload, onInsert }: Pr
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
-          <Button onClick={handleInsert} disabled={!canInsert}>Sisipkan</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={uploading}>Batal</Button>
+          <Button onClick={handleInsert} disabled={!canInsert}>
+            {uploading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Mengunggah...</> : "Sisipkan"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

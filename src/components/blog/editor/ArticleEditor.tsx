@@ -20,8 +20,10 @@ import { SeoAnalysisPanel } from "./SeoAnalysisPanel";
 import { RelatedArticlePickerDialog } from "./RelatedArticlePickerDialog";
 import { ImageInsertDialog } from "./ImageInsertDialog";
 import { LinkInsertDialog } from "./LinkInsertDialog";
+import { ImageCropDialog } from "./ImageCropDialog";
 import { BacaJugaNode, type BacaJugaItem } from "./extensions/BacaJugaNode";
 import { analyzeSeo, toSlug } from "@/lib/seo-utils";
+import { FEATURED_TEMPLATES, blobToFile } from "@/lib/image-crop";
 import { Loader2, Upload, X } from "lucide-react";
 
 interface Category { id: string; name: string; }
@@ -79,6 +81,8 @@ export function ArticleEditor({ articleId, backHref }: Props) {
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [currentLink, setCurrentLink] = useState<{ url: string; newTab: boolean }>({ url: "", newTab: true });
+  const [featuredCropSource, setFeaturedCropSource] = useState<File | null>(null);
+  const [featuredCropOpen, setFeaturedCropOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -193,14 +197,23 @@ export function ArticleEditor({ articleId, backHref }: Props) {
     return pub.publicUrl;
   };
 
-  const onFeaturedChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFeaturedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
+    setFeaturedCropSource(file);
+    setFeaturedCropOpen(true);
+  };
+
+  const handleFeaturedCropped = async ({ blob }: { blob: Blob }) => {
     setUploadingFeatured(true);
+    const file = blobToFile(blob, `featured-${Date.now()}.jpg`);
     const url = await uploadImage(file);
     setUploadingFeatured(false);
     if (url) setData((d) => ({ ...d, featured_image: url }));
   };
+
+
 
   const handleCreateTag = async () => {
     const name = newTag.trim();
@@ -312,6 +325,15 @@ export function ArticleEditor({ articleId, backHref }: Props) {
           onSubmit={handleSubmitLink}
           onRemove={currentLink.url ? handleRemoveLink : undefined}
         />
+        <ImageCropDialog
+          open={featuredCropOpen}
+          onOpenChange={setFeaturedCropOpen}
+          source={featuredCropSource}
+          templates={FEATURED_TEMPLATES}
+          defaultTemplateId="16x9"
+          title="Atur Thumbnail / Featured Image"
+          onConfirm={handleFeaturedCropped}
+        />
 
         <Card>
           <CardHeader><CardTitle className="text-base">Pengaturan SEO</CardTitle></CardHeader>
@@ -417,6 +439,9 @@ export function ArticleEditor({ articleId, backHref }: Props) {
               <span className="text-sm">{uploadingFeatured ? "Mengunggah..." : "Upload gambar"}</span>
               <input type="file" accept="image/*" className="hidden" onChange={onFeaturedChange} />
             </Label>
+            <div className="rounded-md bg-muted/40 p-2.5 text-[11px] text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">Rekomendasi ukuran:</strong> 1600 × 900 px (rasio 16:9), format JPG/WebP &lt; 300KB. Setelah upload, gambar akan dipotong otomatis sesuai template yang dipilih.
+            </div>
             <div>
               <Label className="text-xs">Atau URL Featured Image</Label>
               <Input value={data.featured_image} onChange={(e) => setData({ ...data, featured_image: e.target.value })} />
