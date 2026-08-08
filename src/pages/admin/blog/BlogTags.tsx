@@ -14,24 +14,43 @@ export default function AdminBlogTags() {
   const { toast } = useToast();
   const [items, setItems] = useState<Tag[]>([]);
   const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const { data } = await supabase.from("blog_tags").select("*").order("name");
+    const { data, error } = await supabase.from("blog_tags").select("*").order("name");
+    if (error) toast({ title: "Gagal memuat tag", description: error.message, variant: "destructive" });
     setItems(data || []);
   };
   useEffect(() => { load(); }, []);
 
   const add = async () => {
-    if (!name.trim()) return;
-    const { error } = await supabase.from("blog_tags").insert({ name: name.trim(), slug: toSlug(name) });
-    if (error) toast({ title: "Gagal", description: error.message, variant: "destructive" });
-    else { setName(""); load(); }
+    const clean = name.trim();
+    if (!clean) return;
+    const slug = toSlug(clean);
+    if (!slug) { toast({ title: "Nama tag tidak valid", variant: "destructive" }); return; }
+    if (items.some((t) => t.slug === slug)) { toast({ title: "Tag sudah ada", variant: "destructive" }); return; }
+    setSaving(true);
+    const { data, error } = await supabase.from("blog_tags").insert({ name: clean, slug }).select().single();
+    setSaving(false);
+    if (error) {
+      toast({
+        title: "Gagal menambah tag",
+        description: error.code === "23505" ? "Tag dengan nama/slug ini sudah ada." : `${error.message} (${error.code ?? "-"})`,
+        variant: "destructive",
+      });
+      return;
+    }
+    setName("");
+    setItems((prev) => [...prev, data as Tag].sort((a, b) => a.name.localeCompare(b.name)));
+    toast({ title: "Tag ditambahkan" });
   };
   const remove = async (id: string) => {
     if (!confirm("Hapus tag?")) return;
-    await supabase.from("blog_tags").delete().eq("id", id);
-    load();
+    const { error } = await supabase.from("blog_tags").delete().eq("id", id);
+    if (error) { toast({ title: "Gagal menghapus", description: error.message, variant: "destructive" }); return; }
+    setItems((prev) => prev.filter((t) => t.id !== id));
   };
+
 
   return (
     <Card>
