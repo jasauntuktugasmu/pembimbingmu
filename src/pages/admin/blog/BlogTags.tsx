@@ -57,8 +57,9 @@ export default function AdminBlogTags() {
       <CardHeader><CardTitle>Tags</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
-          <Input placeholder="Nama tag baru" value={name} onChange={(e) => setName(e.target.value)} />
-          <Button onClick={add}><Plus className="h-4 w-4 mr-1" /> Tambah</Button>
+          <Input placeholder="Nama tag baru" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") add(); }} />
+          <Button onClick={add} disabled={saving}><Plus className="h-4 w-4 mr-1" /> {saving ? "Menyimpan..." : "Tambah"}</Button>
+
         </div>
         <Table>
           <TableHeader><TableRow><TableHead>Nama</TableHead><TableHead>Slug</TableHead><TableHead className="text-right">Aksi</TableHead></TableRow></TableHeader>
