@@ -33,16 +33,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://pembimbingmu.lovable.app/blog/pembimbingmupertama</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://pembimbingmu.lovable.app/blog/kategori/bimbinganonline</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://pembimbingmu.lovable.app/blog/tag/bimbingan</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://pembimbingmu.lovable.app/blog/tag/bimbingan-skripsi</loc>
