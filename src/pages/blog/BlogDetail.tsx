@@ -106,7 +106,7 @@ export default function BlogDetail() {
 
       {article.featured_image && <img src={article.featured_image} alt={article.title} className="w-full rounded-lg mb-6" />}
 
-      <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: safeHtml }} />
+      <div className="article-content prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: safeHtml }} />
 
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-8">
