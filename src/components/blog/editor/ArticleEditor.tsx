@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
@@ -65,6 +65,19 @@ interface Props {
   backHref: string;
 }
 
+function serializeArticleContent(editor: Editor) {
+  const document = new DOMParser().parseFromString(editor.getHTML(), "text/html");
+
+  document.body.querySelectorAll("p:empty").forEach((paragraph) => {
+    paragraph.append(document.createElement("br"));
+  });
+
+  return {
+    content: editor.getJSON(),
+    content_html: document.body.innerHTML,
+  };
+}
+
 export function ArticleEditor({ articleId, backHref }: Props) {
   const { profile } = useAuth();
   const { toast } = useToast();
@@ -110,7 +123,7 @@ export function ArticleEditor({ articleId, backHref }: Props) {
     ],
     content: "",
     onUpdate: ({ editor }) => {
-      setData((d) => ({ ...d, content: editor.getJSON(), content_html: editor.getHTML() }));
+      setData((d) => ({ ...d, ...serializeArticleContent(editor) }));
     },
   });
 
@@ -163,7 +176,10 @@ export function ArticleEditor({ articleId, backHref }: Props) {
             og_image: art.og_image || "", twitter_image: art.twitter_image || "",
             robots_meta: art.robots_meta || "index,follow", canonical_url: art.canonical_url || "",
           });
-          editor?.commands.setContent(art.content_html || "");
+          const savedContent = art.content && typeof art.content === "object" && !Array.isArray(art.content)
+            ? art.content as JSONContent
+            : art.content_html || "";
+          editor?.commands.setContent(savedContent);
           const { data: artTags } = await supabase.from("blog_article_tags").select("tag_id").eq("article_id", articleId);
           setSelectedTags(artTags?.map((t) => t.tag_id) || []);
         }
@@ -231,9 +247,14 @@ export function ArticleEditor({ articleId, backHref }: Props) {
     if (!data.title || !data.slug) { toast({ title: "Judul & slug wajib diisi", variant: "destructive" }); return; }
     setSaving(true);
 
+    const editorContent = editor ? serializeArticleContent(editor) : {
+      content: data.content,
+      content_html: data.content_html,
+    };
+
     const payload: any = {
       title: data.title, slug: data.slug, excerpt: data.excerpt,
-      content: data.content, content_html: data.content_html,
+      content: editorContent.content, content_html: editorContent.content_html,
       featured_image: data.featured_image || null, thumbnail_seo: data.thumbnail_seo || null,
       category_id: data.category_id, status: newStatus || data.status,
       seo_title: data.seo_title || null, meta_description: data.meta_description || null,
