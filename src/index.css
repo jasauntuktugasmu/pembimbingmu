@@ -252,6 +252,21 @@ All colors MUST be HSL.
   }
 }
 
+/* Published article: keep empty paragraphs (enter) and multiple spaces */
+.article-content p,
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content li {
+  white-space: pre-wrap;
+}
+
+.article-content p:empty,
+.article-content p > br:only-child {
+  display: block;
+  min-height: 1.6em;
+}
+
 /* Article editor (Tiptap) typography — comfortable writing surface */
 .article-editor-content .ProseMirror {
   min-height: 520px;
