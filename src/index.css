@@ -252,19 +252,26 @@ All colors MUST be HSL.
   }
 }
 
-/* Published article: keep empty paragraphs (enter) and multiple spaces */
+/* Keep intentional spaces and empty paragraphs in editor and published articles. */
 .article-content p,
 .article-content h1,
 .article-content h2,
 .article-content h3,
-.article-content li {
+.article-content li,
+.article-editor-content .ProseMirror p,
+.article-editor-content .ProseMirror h1,
+.article-editor-content .ProseMirror h2,
+.article-editor-content .ProseMirror h3,
+.article-editor-content .ProseMirror li {
   white-space: pre-wrap;
 }
 
 .article-content p:empty,
-.article-content p > br:only-child {
+.article-content p:has(> br:only-child),
+.article-editor-content .ProseMirror p:empty,
+.article-editor-content .ProseMirror p:has(> br:only-child) {
   display: block;
-  min-height: 1.6em;
+  min-height: 1.75em;
 }
 
 /* Article editor (Tiptap) typography — comfortable writing surface */
