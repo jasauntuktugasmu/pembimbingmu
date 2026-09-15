@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
@@ -65,7 +65,7 @@ interface Props {
   backHref: string;
 }
 
-function serializeArticleContent(editor: NonNullable<ReturnType<typeof useEditor>>) {
+function serializeArticleContent(editor: Editor) {
   const document = new DOMParser().parseFromString(editor.getHTML(), "text/html");
 
   document.body.querySelectorAll("p:empty").forEach((paragraph) => {
@@ -176,7 +176,10 @@ export function ArticleEditor({ articleId, backHref }: Props) {
             og_image: art.og_image || "", twitter_image: art.twitter_image || "",
             robots_meta: art.robots_meta || "index,follow", canonical_url: art.canonical_url || "",
           });
-          editor?.commands.setContent(art.content || art.content_html || "");
+          const savedContent = art.content && typeof art.content === "object" && !Array.isArray(art.content)
+            ? art.content as JSONContent
+            : art.content_html || "";
+          editor?.commands.setContent(savedContent);
           const { data: artTags } = await supabase.from("blog_article_tags").select("tag_id").eq("article_id", articleId);
           setSelectedTags(artTags?.map((t) => t.tag_id) || []);
         }
