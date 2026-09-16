@@ -66,17 +66,36 @@ interface Props {
   backHref: string;
 }
 
+function normalizeEmptyParagraphs(root: Document | HTMLElement) {
+  const paragraphs = root.querySelectorAll("p");
+  paragraphs.forEach((paragraph) => {
+    // A paragraph is considered empty if its visible text (including &nbsp;) is blank.
+    const text = paragraph.textContent || "";
+    const hasOnlyWhitespace = /^\s*$/.test(text);
+    const hasOnlyBr = Array.from(paragraph.childNodes).every(
+      (node) => node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "BR"
+    );
+    if (hasOnlyWhitespace || hasOnlyBr) {
+      paragraph.innerHTML = "";
+      paragraph.append(root.ownerDocument?.createElement("br") || document.createElement("br"));
+    }
+  });
+}
+
 function serializeArticleContent(editor: Editor) {
   const document = new DOMParser().parseFromString(editor.getHTML(), "text/html");
-
-  document.body.querySelectorAll("p:empty").forEach((paragraph) => {
-    paragraph.append(document.createElement("br"));
-  });
+  normalizeEmptyParagraphs(document.body);
 
   return {
     content: editor.getJSON(),
     content_html: document.body.innerHTML,
   };
+}
+
+function normalizeArticleHTML(html: string) {
+  const document = new DOMParser().parseFromString(html, "text/html");
+  normalizeEmptyParagraphs(document.body);
+  return document.body.innerHTML;
 }
 
 export function ArticleEditor({ articleId, backHref }: Props) {
