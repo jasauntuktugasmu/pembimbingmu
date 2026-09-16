@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+import TextAlign from "@tiptap/extension-text-align";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -65,17 +66,36 @@ interface Props {
   backHref: string;
 }
 
+function normalizeEmptyParagraphs(root: Document | HTMLElement) {
+  const paragraphs = root.querySelectorAll("p");
+  paragraphs.forEach((paragraph) => {
+    // A paragraph is considered empty if its visible text (including &nbsp;) is blank.
+    const text = paragraph.textContent || "";
+    const hasOnlyWhitespace = /^\s*$/.test(text);
+    const hasOnlyBr = Array.from(paragraph.childNodes).every(
+      (node) => node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "BR"
+    );
+    if (hasOnlyWhitespace || hasOnlyBr) {
+      paragraph.innerHTML = "";
+      paragraph.append(root.ownerDocument?.createElement("br") || document.createElement("br"));
+    }
+  });
+}
+
 function serializeArticleContent(editor: Editor) {
   const document = new DOMParser().parseFromString(editor.getHTML(), "text/html");
-
-  document.body.querySelectorAll("p:empty").forEach((paragraph) => {
-    paragraph.append(document.createElement("br"));
-  });
+  normalizeEmptyParagraphs(document.body);
 
   return {
     content: editor.getJSON(),
     content_html: document.body.innerHTML,
   };
+}
+
+function normalizeArticleHTML(html: string) {
+  const document = new DOMParser().parseFromString(html, "text/html");
+  normalizeEmptyParagraphs(document.body);
+  return document.body.innerHTML;
 }
 
 export function ArticleEditor({ articleId, backHref }: Props) {
@@ -119,6 +139,7 @@ export function ArticleEditor({ articleId, backHref }: Props) {
       }).configure({ HTMLAttributes: { class: "rounded-lg max-w-full h-auto" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Mulai tulis artikelmu di sini..." }),
+      TextAlign.configure({ types: ["paragraph", "heading"], defaultAlignment: "left" }),
       BacaJugaNode,
     ],
     content: "",
@@ -176,9 +197,10 @@ export function ArticleEditor({ articleId, backHref }: Props) {
             og_image: art.og_image || "", twitter_image: art.twitter_image || "",
             robots_meta: art.robots_meta || "index,follow", canonical_url: art.canonical_url || "",
           });
-          const savedContent = art.content && typeof art.content === "object" && !Array.isArray(art.content)
-            ? art.content as JSONContent
-            : art.content_html || "";
+          const hasJsonContent = art.content && typeof art.content === "object" && !Array.isArray(art.content);
+          const savedContent: JSONContent | string = hasJsonContent
+            ? (art.content as JSONContent)
+            : normalizeArticleHTML(art.content_html || "");
           editor?.commands.setContent(savedContent);
           const { data: artTags } = await supabase.from("blog_article_tags").select("tag_id").eq("article_id", articleId);
           setSelectedTags(artTags?.map((t) => t.tag_id) || []);
