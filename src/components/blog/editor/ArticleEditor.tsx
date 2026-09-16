@@ -139,6 +139,7 @@ export function ArticleEditor({ articleId, backHref }: Props) {
       }).configure({ HTMLAttributes: { class: "rounded-lg max-w-full h-auto" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Mulai tulis artikelmu di sini..." }),
+      TextAlign.configure({ types: ["paragraph", "heading"], defaultAlignment: "left" }),
       BacaJugaNode,
     ],
     content: "",
