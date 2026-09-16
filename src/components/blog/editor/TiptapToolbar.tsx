@@ -1,6 +1,25 @@
 import { Editor } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
-import { Bold, Italic, List, ListOrdered, Heading1, Heading2, Heading3, Link as LinkIcon, Image as ImageIcon, Quote, Code, Undo, Redo, BookOpen } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Heading1,
+  Heading2,
+  Heading3,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Quote,
+  Code,
+  Undo,
+  Redo,
+  BookOpen,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+} from "lucide-react";
 
 interface Props {
   editor: Editor | null;
@@ -16,8 +35,8 @@ export function TiptapToolbar({ editor, onInsertImage, onInsertLink, onInsertRel
   const btn = "h-8 w-8 p-0";
   return (
     <div className="flex flex-wrap gap-1 border-b p-2 bg-muted/40">
-      <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleBold().run()}><Bold className="h-4 w-4" /></Button>
-      <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleItalic().run()}><Italic className="h-4 w-4" /></Button>
+      <Button type="button" size="sm" variant={editor.isActive("bold") ? "secondary" : "ghost"} className={btn} onClick={() => chain().toggleBold().run()}><Bold className="h-4 w-4" /></Button>
+      <Button type="button" size="sm" variant={editor.isActive("italic") ? "secondary" : "ghost"} className={btn} onClick={() => chain().toggleItalic().run()}><Italic className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleHeading({ level: 1 }).run()}><Heading1 className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleHeading({ level: 2 }).run()}><Heading2 className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleHeading({ level: 3 }).run()}><Heading3 className="h-4 w-4" /></Button>
@@ -25,6 +44,16 @@ export function TiptapToolbar({ editor, onInsertImage, onInsertLink, onInsertRel
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleBlockquote().run()}><Quote className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => chain().toggleCodeBlock().run()}><Code className="h-4 w-4" /></Button>
+
+      <div className="w-px h-6 bg-border mx-1 self-center" />
+
+      <Button type="button" size="sm" variant={editor.isActive({ textAlign: "left" }) ? "secondary" : "ghost"} className={btn} onClick={() => chain().setTextAlign("left").run()} title="Rata kiri"><AlignLeft className="h-4 w-4" /></Button>
+      <Button type="button" size="sm" variant={editor.isActive({ textAlign: "center" }) ? "secondary" : "ghost"} className={btn} onClick={() => chain().setTextAlign("center").run()} title="Rata tengah"><AlignCenter className="h-4 w-4" /></Button>
+      <Button type="button" size="sm" variant={editor.isActive({ textAlign: "right" }) ? "secondary" : "ghost"} className={btn} onClick={() => chain().setTextAlign("right").run()} title="Rata kanan"><AlignRight className="h-4 w-4" /></Button>
+      <Button type="button" size="sm" variant={editor.isActive({ textAlign: "justify" }) ? "secondary" : "ghost"} className={btn} onClick={() => chain().setTextAlign("justify").run()} title="Rata kanan-kiri"><AlignJustify className="h-4 w-4" /></Button>
+
+      <div className="w-px h-6 bg-border mx-1 self-center" />
+
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => onInsertLink?.()} title="Sisipkan link"><LinkIcon className="h-4 w-4" /></Button>
       <Button type="button" size="sm" variant="ghost" className={btn} onClick={() => onInsertImage?.()} title="Sisipkan gambar"><ImageIcon className="h-4 w-4" /></Button>
 
