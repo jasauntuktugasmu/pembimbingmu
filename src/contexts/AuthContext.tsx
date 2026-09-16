@@ -84,32 +84,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    let profileSubscription: any = null;
-    
+    let profileChannelName: string | null = null;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id);
-        
-        // Clean up previous subscription
-        if (profileSubscription) {
-          profileSubscription.unsubscribe();
-          profileSubscription = null;
+
+        // Fully remove previous realtime channel so the same name can be reused safely.
+        if (profileChannelName) {
+          supabase.removeChannel(supabase.channel(profileChannelName));
+          profileChannelName = null;
         }
-        
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           // Defer profile fetch to avoid deadlock
           setTimeout(() => {
             fetchProfile(session.user.id);
           }, 0);
-          
+
           // Set up realtime subscription for profile changes
           setTimeout(() => {
-            profileSubscription = supabase
-              .channel(`profile-${session.user.id}`)
+            const channelName = `profile-${session.user.id}`;
+            profileChannelName = channelName;
+            supabase
+              .channel(channelName)
               .on(
                 'postgres_changes',
                 {
@@ -130,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
           setProfile(null);
         }
-        
+
         setLoading(false);
       }
     );
@@ -139,14 +141,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        
+
         if (error) {
           console.error('Session error:', error);
           setAuthError('Authentication error');
           setLoading(false);
           return;
         }
-        
+
         if (session?.user) {
           setSession(session);
           setUser(session.user);
@@ -165,8 +167,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       subscription.unsubscribe();
-      if (profileSubscription) {
-        profileSubscription.unsubscribe();
+      if (profileChannelName) {
+        supabase.removeChannel(supabase.channel(profileChannelName));
       }
     };
   }, []);
